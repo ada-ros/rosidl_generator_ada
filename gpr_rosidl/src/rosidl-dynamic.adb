@@ -1,4 +1,4 @@
-with Ada.Text_IO; use Ada.Text_IO;
+--  with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
 with C_Strings;
@@ -146,7 +146,7 @@ package body ROSIDL.Dynamic is
          if not Support.To_Boolean
            (Rosidl_Generator_C_U_String_U_Assign
               (To_Str_Ptr (Ref.Ptr).Data'Access,
-               C_Strings.To_Ptr (Str)))
+               C_Strings.To_C (Str).To_Ptr))
          then
             raise Constraint_Error with "Setting string value failed";
          end if;
