@@ -1,3 +1,7 @@
+with "clib_rosidl_generator_c";
+with "clib_rosidl_typesupport_c";
+with "clib_rosidl_typesupport_introspection_c";
+
 with "c_typesupport";
 with "dl-ada/dl.gpr";
 

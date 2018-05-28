@@ -1,9 +1,11 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
+with C_Strings;
+
 with Interfaces.C.Strings;
 
-with ROSIDL.Types;
+with Rosidl_Generator_C_String_Functions_H; use Rosidl_Generator_C_String_Functions_H;
 
 with Std_Msgs_Msg_String_Ustruct_H; use Std_Msgs_Msg_String_Ustruct_H;
 
@@ -14,7 +16,6 @@ package body ROSIDL.Dynamic is
    package CS renames Interfaces.C.Strings;
 
    use all type System.Address;
-   use all type Uint8_T;
 
    Global_Void : aliased Void;
 
@@ -31,6 +32,13 @@ package body ROSIDL.Dynamic is
       end if;
    end Finalize;
 
+   -----------------
+   -- Get_Boolean --
+   -----------------
+
+   function Get_Boolean (Ref : aliased in out Ref_Type) return Boolean is
+      (Support.To_Boolean (Ref.As_Bool));
+
    ----------------
    -- Get_String --
    ----------------
@@ -40,7 +48,7 @@ package body ROSIDL.Dynamic is
       function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
    begin
       if Ref.Member.Type_Id_U /= Rti_String_Id then
-         raise Constraint_Error with "Field is not of type string but " & Types.Type_Name (Integer (Ref.Member.Type_Id_U));
+         raise Constraint_Error with "Field is not of type string but " & Types.Name (Ref.Member.Type_Id_U);
       else
          return CS.Value (To_Str_Ptr (Ref.Ptr).Data.Data);
       end if;
@@ -115,12 +123,41 @@ package body ROSIDL.Dynamic is
       raise Constraint_Error with "Field [" & Field & "] not found in message";
    end Reference;
 
+   -----------------
+   -- Set_Boolean --
+   -----------------
+
+   procedure Set_Boolean (Ref : aliased in out Ref_Type; Bool : Boolean) is
+   begin
+      Ref.As_Bool := (if Bool then 1 else 0);
+   end Set_Boolean;
+
+   ----------------
+   -- Set_String --
+   ----------------
+
+   procedure Set_String (Ref : Ref_Type; Str : String) is
+      type Str_Ptr is access Std_Msgs_U_Msg_U_String with Convention => C;
+      function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
+   begin
+      if Ref.Member.Type_Id_U /= Rti_String_Id then
+         raise Constraint_Error with "Field is not of type string but " & Types.Name (Ref.Member.Type_Id_U);
+      else
+         if not Support.To_Boolean
+           (Rosidl_Generator_C_U_String_U_Assign
+              (To_Str_Ptr (Ref.Ptr).Data'Access,
+               C_Strings.To_Ptr (Str)))
+         then
+            raise Constraint_Error with "Setting string value failed";
+         end if;
+      end if;
+   end Set_String;
+
    ------------
    -- To_Ptr --
    ------------
 
-   function To_Ptr (This : in out Message) return System.Address is
-     (This.Msg);
+   function To_Ptr (This : in out Message) return System.Address is (This.Msg);
 
    -----------------
    -- Typesupport --

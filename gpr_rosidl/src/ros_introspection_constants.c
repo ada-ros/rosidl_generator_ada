@@ -1,5 +1,7 @@
 #include "rosidl_typesupport_introspection_c/field_types.h"
 
+//  This shouldn't be necessary but -fdump-ada-spec fails on the above file for some reason
+
 int rti_bool_id   (void) { return rosidl_typesupport_introspection_c__ROS_TYPE_BOOL; }
 int rti_byte_id   (void) { return rosidl_typesupport_introspection_c__ROS_TYPE_BYTE; }
 int rti_float32_id(void) { return rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT32; }
