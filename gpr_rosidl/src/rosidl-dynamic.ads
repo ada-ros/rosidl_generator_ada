@@ -1,9 +1,9 @@
 with Ada.Finalization;
 
-with Rosidl_Typesupport_Introspection_C_Message_Introspection_H; use Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
-
 with ROSIDL.Field_References;
+with ROSIDL.Introspection;
 with ROSIDL.Support;
+with ROSIDL.Typesupport;
 with ROSIDL.Types;
 
 with System;
@@ -14,8 +14,8 @@ package ROSIDL.Dynamic is
    --  Pros: do not require the dreadful code-from-template generators
    --  Cons: might incur a speed penalty, runtime-only checks
    
-   type Message (<>) is tagged limited private
-     with Variable_Indexing => Reference;
+   type Message (<>) is tagged limited Private with 
+     Variable_Indexing => Reference;
    
    type Void is null record;
    type Ref_Type (Reserved : not null access Void) is tagged limited private
@@ -34,22 +34,20 @@ package ROSIDL.Dynamic is
                   Msg : String)  -- Type of the message / name of *.msg e.g. string
                   return Message;
    
+   function Init (Msg_Support : Typesupport.Message_Support) return Message;
+   
    function Reference (This  : in out Message'Class;
                        Field :        String) return Ref_Type;
    
    function To_Ptr (This : in out Message) return System.Address;
    --  Returns the raw C ptr used by receiving/sending functions
    
-   function Typesupport (This : Message) return ROSIDL.Typesupport.Msg_Support_Ptr;
+   function Introspect (This : Message) return Introspection.Message_Class;
    
-   function Typesupport (Pkg, Msg : String) return ROSIDL.Typesupport.Msg_Support_Ptr;
+   function Typesupport (This : Message) return ROSIDL.Typesupport.Message_Support;
    
    procedure Print_Metadata (This : Message);
    --  Development helper, dumps message metadata
-   
-   function Package_Name (This : Message) return String;
-   function Message_Name (This : Message) return String;
-   function Size (This : Message) return Natural; -- bytes
    
    --------------------------
    -- Ref_type subprograms --
@@ -117,20 +115,19 @@ package ROSIDL.Dynamic is
 private 
    
    type Message is new Ada.Finalization.Limited_Controlled with record
-      Msg         : System.Address;
+      Msg     : System.Address;
       
-      Introspect  : access constant Rosidl_Typesupport_Introspection_C_U_MessageMembers;
-      Typesupport : ROSIDL.Typesupport.Msg_Support_Ptr;
+      Support : ROSIDL.Typesupport.Message_Support;
       
       Fini,
-      Destroy     : Support.Proc_Addr;
+      Destroy : ROSIDL.Support.Proc_Addr;
    end record;
    
    overriding procedure Finalize (This : in out Message);
    
    type Ref_Type (Reserved : not null access Void) is tagged limited 
       record
-         Member : access constant Rosidl_Typesupport_Introspection_C_U_MessageMember; -- Metadata about the field
+         Member : access constant Introspection.Message_Member_Meta; -- Metadata about the field
          Ptr    : System.Address; -- The raw C data
       end record;
    

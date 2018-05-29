@@ -34,11 +34,7 @@ package ROSIDL.Support is
                                   Msg    : String;
                                   Suffix : String) 
                                   return System.Address is
-     (Get_Symbol (Pkg & "__msg__" & Msg & "__" & Suffix));
-   
-   function Get_Msg_Introspect (Pkg, Msg : String) 
-                                return access constant Rosidl_Typesupport_Introspection_C_U_MessageMembers;
-   -- std_msgs__msg__rosidl_typesupport_introspection_c__Bool_message_type_support_handle
+     (Get_Symbol (Pkg & "__msg__" & Msg & "__" & Suffix));      
 
    function Get_Msg_Typesupport (Pkg, Msg : String) return System.Address is
      (Get_Symbol ("rosidl_typesupport_c__get_message_type_support_handle__" &
