@@ -14,8 +14,8 @@ package ROSIDL.Support is
    package C  renames Interfaces.C;
    package CX renames Interfaces.C.Extensions;
    
-   subtype Message_Members is Rosidl_Typesupport_Introspection_C_U_MessageMembers;
-   subtype Message_Member  is Rosidl_Typesupport_Introspection_C_U_MessageMember;
+   subtype Message_Members_Meta is Rosidl_Typesupport_Introspection_C_U_MessageMembers;
+   subtype Message_Member_Meta  is Rosidl_Typesupport_Introspection_C_U_MessageMember;
    
    function To_Boolean (B : CX.Bool) return Boolean is (B /= C.Plain_Char'Val (0));
 
@@ -48,7 +48,7 @@ package ROSIDL.Support is
    
    generic
       type Container (<>) is limited private;
-      with function Get_Member (C : Container) return access constant Message_Member;
+      with function Get_Member (C : Container) return access constant Message_Member_Meta;
       with function Get_Field_Ptr (C : Container) return System.Address;
    package Field_Accessor is
       --  This package is used as signature for Field_References      

@@ -1,4 +1,4 @@
---  with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
 with C_Strings;
@@ -18,6 +18,12 @@ package body ROSIDL.Dynamic is
    use all type System.Address;
 
    Global_Void : aliased Void;
+
+   ---------------------
+   -- Metadata access --
+   ---------------------
+
+   type Member_Metadata_Ptr is access constant Rosidl_Typesupport_Introspection_C_U_MessageMember with Convention => C;
 
    --------------
    -- Finalize --
@@ -88,6 +94,55 @@ package body ROSIDL.Dynamic is
       end return;
    end Init;
 
+   ------------------
+   -- Message_Name --
+   ------------------
+
+   function Message_Name (This : Message) return String is
+      (C_Strings.Value (This.Introspect.Message_Name_U));
+
+   ------------------
+   -- Package_Name --
+   ------------------
+
+   function Package_Name (This : Message) return String is
+      (C_Strings.Value (This.Introspect.Package_Name_U));
+
+   --------------------
+   -- Print_Metadata --
+   --------------------
+
+   procedure Print_Metadata (This : Message) is
+
+      procedure Print_Member (M : Rosidl_Typesupport_Introspection_C_U_MessageMember) is
+      begin
+         Put_Line ("=== " & C_Strings.Value (M.Name_U) & " ===");
+         Put_Line ("              Type id:" & M.Type_Id_U'Img);
+         Put_Line ("   String upper bound:" & M.String_Upper_Bound_U'Img);
+         Put_Line ("              members: (rosidl_message_type_support_t *)");
+         Put_Line ("             Is array:" & M.Is_Array_U'Img);
+         Put_Line ("           Array size:" & M.Array_Size_U'Img);
+         Put_Line ("       Is upper bound:" & M.Is_Upper_Bound_U'Img);
+         Put_Line ("               Offset:" & M.Offset_U'Img);
+         Put_Line ("        Default value: (void*)");
+      end Print_Member;
+
+      --  These declarations have to be unfortunately repeated since they depend on the dynamic upper bound
+      type Member_Array is array (1 .. This.Introspect.Member_Count_U) of aliased Rosidl_Typesupport_Introspection_C_U_MessageMember
+        with Convention => C;
+      type Array_Ptr is access Member_Array with Convention => C;
+      function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Metadata_Ptr, Array_Ptr);
+      Members : aliased constant Array_Ptr := To_Array_Ptr (This.Introspect.Members_U);
+   begin
+      Put_Line ("************************************************************");
+      Put_Line ("    Message: " & This.Package_Name & "/" & This.Message_Name);
+      Put_Line ("       Size:"  & This.Size'Img & " bytes");
+      Put_Line ("Field count:" & Members'Length'Img);
+      for Member of Members.all loop
+         Print_Member (Member);
+      end loop;
+   end Print_Metadata;
+
    ---------------
    -- Reference --
    ---------------
@@ -100,10 +155,9 @@ package body ROSIDL.Dynamic is
       type Member_Array is array (1 .. This.Introspect.Member_Count_U) of aliased Rosidl_Typesupport_Introspection_C_U_MessageMember
         with Convention => C;
 
-      type Array_Ptr is access constant Member_Array with Convention => C;
-      type Member_Ptr is access constant Rosidl_Typesupport_Introspection_C_U_MessageMember with Convention => C;
+      type Array_Ptr is access Member_Array with Convention => C;
 
-      function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Ptr, Array_Ptr);
+      function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Metadata_Ptr, Array_Ptr);
 
       Members : aliased constant Array_Ptr := To_Array_Ptr (This.Introspect.Members_U);
    begin
@@ -152,6 +206,13 @@ package body ROSIDL.Dynamic is
          end if;
       end if;
    end Set_String;
+
+   ----------
+   -- Size --
+   ----------
+
+   function Size (This : Message) return Natural is
+      (Natural (This.Introspect.Size_Of_U));
 
    ------------
    -- To_Ptr --

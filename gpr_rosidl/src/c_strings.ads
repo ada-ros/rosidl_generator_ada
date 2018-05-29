@@ -17,6 +17,8 @@ package C_Strings with Preelaborate is
                     Null_Instead_Of_Empty :         Boolean := True) 
                     return CS.Chars_Ptr;
    
+   function Value (Str : CS.Chars_Ptr) return String renames CS.Value;
+   
 -- function To_Ptr (S : String) return CS.Chars_Ptr;
 -- This was a bad idea, because the internal instance goes out of scope
 --   and the pointer is suddenly dangling (which is somewhat concerning, 

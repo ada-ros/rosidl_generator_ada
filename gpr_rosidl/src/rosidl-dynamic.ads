@@ -28,7 +28,7 @@ package ROSIDL.Dynamic is
    
    -------------------------
    -- Message subprograms --
-   -------------------------   
+   -------------------------         
    
    function Init (Pkg : String;  -- ROS2 package declaring the msg; e.g. std_msgs
                   Msg : String)  -- Type of the message / name of *.msg e.g. string
@@ -44,6 +44,13 @@ package ROSIDL.Dynamic is
    
    function Typesupport (Pkg, Msg : String) return ROSIDL.Typesupport.Msg_Support_Ptr;
    
+   procedure Print_Metadata (This : Message);
+   --  Development helper, dumps message metadata
+   
+   function Package_Name (This : Message) return String;
+   function Message_Name (This : Message) return String;
+   function Size (This : Message) return Natural; -- bytes
+   
    --------------------------
    -- Ref_type subprograms --
    --------------------------   
@@ -51,7 +58,7 @@ package ROSIDL.Dynamic is
    --  Preparations
    
    function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access;
-   function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member;
+   function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta;
    function Get_Ptr    (Ref : Ref_Access) return System.Address;
                                    
    package FA is new Support.Field_Accessor (Ref_Access,
@@ -129,7 +136,7 @@ private
    
    function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access is (Ref'Access);
    
-   function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member is (Ref.Member);
+   function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta is (Ref.Member);
    
    function Get_Ptr    (Ref : Ref_Access) return System.Address is (Ref.Ptr);
 
