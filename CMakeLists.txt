@@ -51,14 +51,18 @@ list(APPEND _includes
 ada_generate_binding(
         ada_binding_rosidl_typesupport_c
         gpr_c_typesupport
+        c_typesupport.gpr
         "${_includes}"
         ${_headers})
 
 # Compile & install the high-level rosidl binding and its deps
-ada_add_library(ada_dl gpr_rosidl/dl-ada)
-ada_add_library(ada_rosidl gpr_rosidl)
+ada_add_library(cstrings gpr_rosidl/dl-ada/cstrings c_strings.gpr)
 
-add_dependencies(ada_rosidl ada_binding_rosidl_typesupport_c)
+ada_add_library(ada_dl gpr_rosidl/dl-ada dl.gpr)
+add_dependencies(ada_dl cstrings)
+
+ada_add_library(ada_rosidl gpr_rosidl rosidl.gpr)
+add_dependencies(ada_rosidl ada_dl ada_binding_rosidl_typesupport_c)
 
 # Export package
 ada_export_package()
