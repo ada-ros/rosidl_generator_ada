@@ -35,11 +35,18 @@ ada_find_package_include_dir(_introspection_include ${rosidl_typesupport_introsp
 
 file(GLOB _headers
         "${_builtin_include}/builtin_interfaces/msg/*.h"
-        "${_stdmsgs_include}/std_msgs/msg/*.h"
+#        "${_stdmsgs_include}/std_msgs/msg/*.h"
+        "${_stdmsgs_include}/std_msgs/msg/string*.h" # This should suffice
         "${_generator_include}/rosidl_generator_c/*.h"
         "${_introspection_include}/rosidl_typesupport_introspection_c/*.h")
 
-set(_includes "${_builtin_include};${_stdmsgs_include};${_generator_include};${_introspection_include}")
+list(APPEND _includes
+        ${_builtin_include}
+        ${_stdmsgs_include}
+        ${_generator_include}
+        ${_introspection_include})
+
+#set(_includes "${_builtin_include};${_stdmsgs_include};${_generator_include};${_introspection_include}")
 
 ada_generate_binding(
         ada_binding_rosidl_typesupport_c
