@@ -14,6 +14,13 @@ package ROSIDL.Dynamic is
    --  Pros: do not require the dreadful code-from-template generators
    --  Cons: might incur a speed penalty, runtime-only checks
    
+   --  Intended usage:
+   --  Message ("fieldname").As_Type                 (for read/write)
+   --  Message ("fieldname").Get_Type                (for read-only)
+   --  Message ("fieldname").Set_Type (Value)        (for write only)
+
+   --  For nested messages use: Message ("field.child").etc
+   
    type Message (<>) is tagged limited Private with 
      Variable_Indexing => Reference;
    
@@ -26,6 +33,9 @@ package ROSIDL.Dynamic is
    --  We use this complete type to be able to use Ref_Type in generics right here.
    --  Since Ref_Type is limited private, it should be safe
    
+   procedure Print (This : Ref_Type);
+   --  Debug
+   
    -------------------------
    -- Message subprograms --
    -------------------------         
@@ -36,17 +46,17 @@ package ROSIDL.Dynamic is
    
    function Init (Msg_Support : Typesupport.Message_Support) return Message;
    
-   function Reference (This  : in out Message'Class;
-                       Field :        String) return Ref_Type;
+   function Reference (This  : Message'Class;
+                       Field : String) return Ref_Type;
    
-   function To_Ptr (This : in out Message) return System.Address;
+   function To_Ptr (This : Message) return System.Address;
    --  Returns the raw C ptr used by receiving/sending functions
    
    function Introspect (This : Message) return Introspection.Message_Class;
    
    function Typesupport (This : Message) return ROSIDL.Typesupport.Message_Support;
    
-   procedure Print_Metadata (This : Message);
+   procedure Print_Metadata (This : Message; Prefix : String := "");
    --  Development helper, dumps message metadata
    
    --------------------------
@@ -109,18 +119,26 @@ package ROSIDL.Dynamic is
    function As_Int64  (Ref : aliased in out Ref_Type) return  Int64_Ref.Reference is ( Int64_Ref.Get (Ref'Access));
    function As_Uint64 (Ref : aliased in out Ref_Type) return Uint64_Ref.Reference is (Uint64_Ref.Get (Ref'Access));
    
+   function Get_Message (Ref : Ref_Type) return Message'Class;
+   
    function Get_String (Ref : Ref_Type) return String;
    procedure Set_String (Ref : Ref_Type; Str : String);
    
-private 
-   
-   type Message is new Ada.Finalization.Limited_Controlled with record
-      Msg     : System.Address;
+private       
       
-      Support : ROSIDL.Typesupport.Message_Support;
-      
-      Destroy : ROSIDL.Support.Proc_Addr;
+   type Message (Is_Field : Boolean) is new Ada.Finalization.Limited_Controlled with record
+      Msg      : System.Address;      
+      Support  : ROSIDL.Typesupport.Message_Support;      
+      case Is_Field is 
+         when False => Destroy  : ROSIDL.Support.Proc_Addr;
+         when True  => null; -- Field messages are not finalized; its done by their parent
+      end case;
    end record;
+   
+   function Bind (Is_Field   : Boolean;
+                  Data       : System.Address;
+                  Introspect : access constant Introspection.Message_Members_Meta)
+                  return Message'Class;
    
    overriding procedure Finalize (This : in out Message);
    
@@ -130,10 +148,14 @@ private
          Ptr    : System.Address; -- The raw C data
       end record;
    
+   function Get_Introspection (Ref : Ref_Type) 
+                                  return access constant Introspection.Message_Members_Meta;
+   --  Only valid for message members!
+   
    function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access is (Ref'Access);
    
    function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta is (Ref.Member);
    
-   function Get_Ptr    (Ref : Ref_Access) return System.Address is (Ref.Ptr);
+   function Get_Ptr    (Ref : Ref_Access) return System.Address is (Ref.Ptr);   
 
 end ROSIDL.Dynamic;

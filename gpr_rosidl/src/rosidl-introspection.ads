@@ -7,6 +7,11 @@ package ROSIDL.Introspection is
    subtype Message_Members_Meta is Rosidl_Typesupport_Introspection_C_U_MessageMembers;
    subtype Message_Member_Meta  is Rosidl_Typesupport_Introspection_C_U_MessageMember; 
    
+   type Message_Members_Meta_Ptr is access constant Rosidl_Typesupport_Introspection_C_U_MessageMembers with
+     Convention => C,
+     Storage_Size => 0;
+   pragma No_Strict_Aliasing (Message_Members_Meta_Ptr);
+   
    --  Ada wrapper
    
    type Message_Class is tagged private;

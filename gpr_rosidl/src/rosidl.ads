@@ -26,4 +26,9 @@ private
    function Rti_String_Id  return Uint8_T with Import, Convention => C;
    function Rti_Message_Id return Uint8_T with Import, Convention => C;
 
+   function Head (S : String; Separator : Character := '.') return String;
+   --  Whole string if no separator found
+   function Tail (S : String; Separator : Character := '.') return String;
+   --  Empty if no separator found
+
 end ROSIDL;

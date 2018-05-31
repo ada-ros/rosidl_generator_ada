@@ -1,7 +1,6 @@
 with Ada.Unchecked_Conversion;
 
 with ROSIDL.Support;
-with ROSIDL.Types;
 
 with System;
 
@@ -30,11 +29,13 @@ private
    -- Get --
    ---------
 
-   function Get (C : Field.Container) return Reference is
-     (if Field.Get_Member (C).Type_Id_U /= Type_Id 
-      then raise Constraint_Error with 
-        "Type mismatch: asked for [" & Types.Name (Type_Id) &
-        "] but field is [" & Types.Name (Field.Get_Member (C).Type_Id_U) & "]"
-      else Reference'(Element => To_Value_Ptr (Field.Get_Field_Ptr (C))));
+   --  This bugs out. As regular function it works OK
+   
+--     function Get (C : Field.Container) return Reference is
+--       (if Field.Get_Member (C).Type_Id_U /= Type_Id 
+--        then raise Constraint_Error with 
+--          "Type mismatch: asked for [" & Types.Name (Type_Id) &
+--          "] but field is [" & Types.Name (Field.Get_Member (C).Type_Id_U) & "]"
+--        else Reference'(Element => To_Value_Ptr (Field.Get_Field_Ptr (C))));
 
 end ROSIDL.Field_References;

@@ -7,8 +7,9 @@ package ROSIDL.Typesupport is
    
    --  C equivalent  --
    
-   type Msg_Support_Handle is access constant Rosidl_Message_Type_Support_T
-     with Storage_Size => 0;
+   type Msg_Support_Handle is access constant Rosidl_Message_Type_Support_T with
+     Convention   => C, 
+     Storage_Size => 0;
    pragma No_Strict_Aliasing (Msg_Support_Handle); 
    
    function Get_Message_Handle (Pkg, Msg : String) return Msg_Support_Handle;
