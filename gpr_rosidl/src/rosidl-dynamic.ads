@@ -119,7 +119,6 @@ private
       
       Support : ROSIDL.Typesupport.Message_Support;
       
-      Fini,
       Destroy : ROSIDL.Support.Proc_Addr;
    end record;
    

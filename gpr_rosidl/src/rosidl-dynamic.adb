@@ -33,7 +33,6 @@ package body ROSIDL.Dynamic is
    overriding procedure Finalize (This : in out Message) is
    begin
       if This.Msg /= System.Null_Address then
-         This.Fini    (This.Msg);
          This.Destroy (This.Msg);
          This.Msg   := System.Null_Address;
       end if;
@@ -81,21 +80,13 @@ package body ROSIDL.Dynamic is
 
       Create : constant Support.Func_Ret_Addr :=
                  Support.To_Func (Support.Get_Message_Function (Pkg, Msg, "create"));
-
-      Init   : constant Support.Func_Addr_Ret_Bool :=
-                 Support.To_Func (Support.Get_Message_Function (Pkg, Msg, "init"));
    begin
       return M : Message do
          M.Msg := Create.all;
 
-         if not Support.To_Boolean (Init (M.Msg)) then
-            raise Program_Error with "Message failed to initialize";
-         end if;
-
          M.Support := ROSIDL.Typesupport.Get_Message_Support (Pkg, Msg);
 
          --  Functions we'll need at destroy time:
-         M.Fini    := Support.To_Proc (Support.Get_Message_Function (Pkg, Msg, "fini"));
          M.Destroy := Support.To_Proc (Support.Get_Message_Function (Pkg, Msg, "destroy"));
       end return;
    end Init;
