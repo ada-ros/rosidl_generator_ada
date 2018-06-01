@@ -90,7 +90,7 @@ package body ROSIDL.Dynamic is
       function Get_Item_Addr (Base : System.Address) return System.Address is
         (Base + Storage_Offset ((Index - 1) *
                                 (if Arr.Member.Type_Id_U = Types.Message_Id
-                                 then raise Program_Error with "unimplemented"
+                                 then Integer (Get_Introspection (Arr.Member).Size_Of_U)
                                  else Types.Size_Of (Arr.Member.Type_Id_U))));
 
    begin
@@ -121,17 +121,17 @@ package body ROSIDL.Dynamic is
    -- Get_Introspection --
    -----------------------
 
-   function Get_Introspection (Ref : Ref_Type)
+   function Get_Introspection (Member : access constant Introspection.Message_Member_Meta)
                                return access constant Introspection.Message_Members_Meta
    is
-      function To_Ptr Is
+      function To_Members_Ptr Is
         new Ada.Unchecked_Conversion (System.Address,
                                       Introspection.Message_Members_Meta_Ptr);
    begin
-      if Ref.Member.Type_Id_U /= Types.Message_Id then
+      if Member.Type_Id_U /= Types.Message_Id then
          raise Constraint_Error with "Only valid for message fields";
       else
-         return To_Ptr (Ref.Member.Members_U.Data);
+         return To_Members_Ptr (Member.Members_U.Data);
       end if;
    end Get_Introspection;
 

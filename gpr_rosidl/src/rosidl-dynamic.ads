@@ -168,7 +168,7 @@ private
       end record;
    
    function Get_Introspection (Ref : Ref_Type) 
-                                  return access constant Introspection.Message_Members_Meta;
+                               return access constant Introspection.Message_Members_Meta;
    --  Only valid for message members!
    
    function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access is (Ref'Access);
@@ -183,5 +183,14 @@ private
       Member : access constant Introspection.Message_Member_Meta;
       Ptr    : System.Address;
    end record;
+   
+   function Get_Introspection (Member : access constant Introspection.Message_Member_Meta)
+                               return access constant Introspection.Message_Members_Meta;
+   --  Get the members metadata of a meessage member field
+   --  That is, go down the hierarchy of messages
+   
+   function Get_Introspection (Ref : Ref_Type) 
+                               return access constant Introspection.Message_Members_Meta is
+      (Get_Introspection (Ref.Member));
 
 end ROSIDL.Dynamic;
