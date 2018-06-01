@@ -133,6 +133,8 @@ package ROSIDL.Dynamic is
    
    function As_Array (Ref : Ref_Type) return Array_View'Class;
    
+   function Capacity (Arr : Array_View) return Natural;
+   
    function Element (Arr   : Array_View; 
                      Index : Positive) return Ref_Type'Class;
    
@@ -140,6 +142,10 @@ package ROSIDL.Dynamic is
    --  Static arrays are declared with size in the .msg and cannot be resized
    
    function Length (Arr : Array_View) return Natural;
+   
+   procedure Resize (Arr : Array_View; Length : Natural);
+   --  Reallocates space for a dynamic array
+   --  Raises for a static array
    
 private  
    

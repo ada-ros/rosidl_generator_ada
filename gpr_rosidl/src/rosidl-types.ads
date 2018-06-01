@@ -76,7 +76,7 @@ private
    ----------
 
    function Name (Id : Uint8_T) return String is 
-     (if    Id = Rti_Bool_Id then    "boolean"
+     (if    Id = Rti_Bool_Id then    "bool"
       elsif Id = Rti_Byte_Id then    "byte"
       elsif Id = Rti_Float32_Id then "float32"
       elsif Id = Rti_Float64_Id then "float64"
@@ -88,7 +88,7 @@ private
       elsif Id = Rti_Uint32_Id then  "uint32"
       elsif Id = Rti_Int64_Id then   "int64"        
       elsif Id = Rti_Uint64_Id then  "uint64"
-      elsif Id = Rti_String_Id then  "string"
+      elsif Id = Rti_String_Id then  "String"
       elsif Id = Rti_Message_Id then "message"
       else                           "unknown (id:" & Id'Img & ")");
    

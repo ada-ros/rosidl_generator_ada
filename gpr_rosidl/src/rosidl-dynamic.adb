@@ -17,6 +17,7 @@ with System.Storage_Elements;
 package body ROSIDL.Dynamic is
 
    package CS renames Interfaces.C.Strings;
+   package CX renames Support.CX;
 
    use all type Interfaces.C.Size_T;
    use all type System.Address;
@@ -65,6 +66,19 @@ package body ROSIDL.Dynamic is
          --  Couldn't be done with an aggregate because of gnat bug
       end return;
    end Bind;
+
+   ------------
+   -- Length --
+   ------------
+
+   function Capacity (Arr : Array_View) return Natural is
+   begin
+      if Arr.Member.Array_Size_U /= 0 then
+         return Natural (Arr.Member.Array_Size_U);
+      else
+         return Natural (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Capacity);
+      end if;
+   end Capacity;
 
    --------------
    -- Finalize --
@@ -243,8 +257,10 @@ package body ROSIDL.Dynamic is
       procedure Print_Member (M : Introspection.Message_Member_Meta; Data_Ptr : System.address) is
          type GFA is access function (arg1 : System.Address; arg2 : C.size_t) return System.Address;
          type GSA is access function (arg1 : System.Address) return C.size_t;
+         type RFA is access function (arg1 : System.Address; arg2 : C.size_t) return Support.CX.Bool;
          function To_Addr is new Ada.Unchecked_Conversion (GFA, System.Address);
          function To_Addr is new Ada.Unchecked_Conversion (GSA, System.Address);
+         function To_Addr is new Ada.Unchecked_Conversion (RFA, System.Address);
          function To_Addr is new Ada.Unchecked_Conversion
            (ROSIDL.Typesupport.Msg_Support_Handle, System.Address);
          Name : constant String := C_Strings.Value (M.Name_U);
@@ -264,6 +280,7 @@ package body ROSIDL.Dynamic is
                Put_Line (Prefix & "Array size (declared):"  & M.Array_Size_U'Img);
                if not Arr.Is_Static then
                   Put_Line (Prefix & "  Array size (actual):"  & Arr.Length'Img);
+                  Put_Line (Prefix & "       Array capacity:"  & Arr.Capacity'Img);
                end if;
             end;
          end if;
@@ -275,6 +292,7 @@ package body ROSIDL.Dynamic is
          Put_Line (Prefix & "        size_function: " & System.Address_Image (To_Addr (M.size_function)));
          Put_Line (Prefix & "         get_function: " & System.Address_Image (To_Addr (M.get_function)));
          Put_Line (Prefix & "   get_const_function: " & System.Address_Image (To_Addr (M.get_const_function)));
+         Put_Line (Prefix & "      resize_function: " & System.Address_Image (To_Addr (M.resize_function)));
 
          if M.Type_Id_U = Types.Message_Id then
             This.Reference (C_Strings.Value (M.Name_U))
@@ -335,6 +353,60 @@ package body ROSIDL.Dynamic is
          raise Constraint_Error with "Field [" & Field & "] not found in message";
       end if;
    end Reference;
+
+   ------------
+   -- Resize --
+   ------------
+
+   procedure Resize (Arr : Array_View; Length : Natural) is
+
+      --------------------------
+      -- Resize_Message_Array --
+      --------------------------
+
+      procedure Resize_Message_Array is null;
+
+      ----------------------------
+      -- Resize_Primitive_Array --
+      ----------------------------
+
+      procedure Resize_Primitive_Array is
+         --  bool
+         --  rosidl_generator_c__String__Array__init(
+         --    rosidl_generator_c__String__Array * array, size_t size);
+         type Init is access function (Arr : System.Address; Size : C.Size_T) return CX.Bool with Convention => C;
+         type Fini is access procedure (Arr : System.Address) with Convention => C;
+
+         function  Init_Func is new Ada.Unchecked_Conversion (System.Address, Init);
+         function  Fini_Proc is new Ada.Unchecked_Conversion (System.Address, Fini);
+
+         function Init_Symbol return String is
+            ("rosidl_generator_c__" & Types.Name (Arr.Member.Type_Id_U) & "__Array__init");
+         function Fini_Symbol return String is
+            ("rosidl_generator_c__" & Types.Name (Arr.Member.Type_Id_U) & "__Array__fini");
+      begin
+         Fini_Proc (Support.Get_Symbol (Fini_Symbol)).all (Arr.Ptr);
+
+         if not Support.To_Boolean (Init_Func (Support.Get_Symbol (Init_Symbol)).all (Arr.Ptr, C.Size_T (Length))) then
+            raise Program_Error with "Array initialization failed";
+         end if;
+
+         if Arr.Capacity /= Length then
+            raise Program_Error with "Array capacity is not the requested one";
+         end if;
+      end Resize_Primitive_Array;
+
+   begin
+      if Natural (Arr.Member.Array_Size_U) /= 0 then
+         raise Constraint_Error with "Cannot resize static arrays";
+      end if;
+
+      if Arr.Member.Type_Id_U = Types.Message_Id then
+         Resize_Message_Array;
+      else
+         Resize_Primitive_Array;
+      end if;
+   end Resize;
 
    -----------------
    -- Set_Boolean --
