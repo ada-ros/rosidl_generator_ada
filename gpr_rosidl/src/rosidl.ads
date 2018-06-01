@@ -1,3 +1,5 @@
+with Interfaces.C; pragma Unreferenced (Interfaces.C);
+
 with X86_64_Linux_Gnu_Bits_Stdint_Uintn_H;
 
 package ROSIDL is
@@ -5,6 +7,10 @@ package ROSIDL is
    type Message_Info is record
       Intra_Process : Boolean;
    end record;
+
+   --  DO NOT CROSS --
+
+   package C renames Interfaces.C;
 
    subtype Uint8_T is X86_64_Linux_Gnu_Bits_Stdint_Uintn_H.Uint8_T;
    use all type Uint8_T;

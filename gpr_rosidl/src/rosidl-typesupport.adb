@@ -2,8 +2,6 @@ with Ada.Unchecked_Conversion;
 
 with ROSIDL.Support;
 
-with System;
-
 package body ROSIDL.Typesupport is
 
    ------------------------

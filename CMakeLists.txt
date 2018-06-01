@@ -20,14 +20,12 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_generator_c REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(rosidl_generator_c REQUIRED)
-find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 find_package(rclada_common REQUIRED)
 
 
 # Generate autobinding for std types and rosidl_typesupport_c
-ada_import_c_libraries(${geometry_msgs_LIBRARIES})
 ada_import_c_libraries(${std_msgs_LIBRARIES})
 
 ada_find_package_include_dir(_builtin_include ${builtin_interfaces_DIR})

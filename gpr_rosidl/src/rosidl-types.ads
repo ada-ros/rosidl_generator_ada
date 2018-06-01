@@ -1,5 +1,7 @@
 with Interfaces.C;
 
+with Rosidl_Generator_C_String_H; use Rosidl_Generator_C_String_H;
+
 package Rosidl.Types is
    
    package C renames Interfaces.C;
@@ -31,6 +33,9 @@ package Rosidl.Types is
    ----------
 
    function Name (Id : Uint8_t) return String;
+   
+   function Size_Of (Id : Uint8_T) return Positive;
+   --  bytes
    
    --  Ids of message types
    
@@ -86,5 +91,22 @@ private
       elsif Id = Rti_String_Id then  "string"
       elsif Id = Rti_Message_Id then "message"
       else                           "unknown (id:" & Id'Img & ")");
+   
+   function Size_Of (Id : Uint8_T) return Positive is 
+     ((if    Id = Rti_Bool_Id then     Bool'Size
+      elsif Id = Rti_Byte_Id then     Byte'Size
+      elsif Id = Rti_Float32_Id then  Float32'Size
+      elsif Id = Rti_Float64_Id then  Float64'Size
+      elsif Id = Rti_Int8_Id then      Int8'Size 
+      elsif Id = Rti_Uint8_Id then    Uint8'Size 
+      elsif Id = Rti_Int16_Id then     Int16'Size 
+      elsif Id = Rti_Uint16_Id then   Uint16'Size 
+      elsif Id = Rti_Int32_Id then     Int32'Size 
+      elsif Id = Rti_Uint32_Id then   Uint32'Size 
+      elsif Id = Rti_Int64_Id then     Int64'Size   
+      elsif Id = Rti_Uint64_Id then   Uint64'Size
+      elsif Id = Rti_String_Id then   Rosidl_Generator_C_U_String'Size
+      else raise Constraint_Error with "Message field has unknown size") / 8
+     );
 
 end Rosidl.Types;

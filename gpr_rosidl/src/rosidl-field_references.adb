@@ -4,7 +4,7 @@ with ROSIDL.Types;
 
 package body ROSIDL.Field_References is
 
-   function Get (C : Field.Container) return Reference is
+   function Ref (C : Field.Container) return Reference is
    begin
 --        Put_Line ("At Field_References.get");
 --        Put_Line ("Typeid:" & Type_Id'Img);
@@ -17,6 +17,6 @@ package body ROSIDL.Field_References is
       else
          return Reference'(Element => To_Value_Ptr (Field.Get_Field_Ptr (C)));
       end if;
-   end Get;
+   end Ref;
 
 end ROSIDL.Field_References;

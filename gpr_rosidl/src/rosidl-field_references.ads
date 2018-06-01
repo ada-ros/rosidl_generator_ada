@@ -8,13 +8,13 @@ generic
    with package Field is new Support.Field_Accessor (<>);
    
    Type_Id : Uint8_T; -- The ROS id from field_types.h
-   type Value is limited private;
+   type Value is private;
 package ROSIDL.Field_References is
 
    type Reference (Element : not null access Value) is limited private with
      Implicit_Dereference => Element;
    
-   function Get (C : Field.Container) return Reference;
+   function Ref (C : Field.Container) return Reference;
    
 private 
    

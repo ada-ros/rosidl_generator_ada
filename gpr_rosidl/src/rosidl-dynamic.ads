@@ -21,18 +21,18 @@ package ROSIDL.Dynamic is
 
    --  For nested messages use: Message ("field.child").etc
    
-   type Message (<>) is tagged limited Private with 
-     Variable_Indexing => Reference;
+   type Message (<>) is tagged limited private with 
+     Constant_Indexing => Reference;
    
    type Void is null record;
-   type Ref_Type (Reserved : not null access Void) is tagged limited private
+   type Ref_Type (Reserved : access constant Void) is tagged limited private
      with Implicit_Dereference => Reserved;
    --  The Reserved access is not intended to be used directly, see, accesors below
    
-   type Ref_Access is access all Ref_Type;
+   type Ref_Access is access constant Ref_Type;
    --  We use this complete type to be able to use Ref_Type in generics right here.
    --  Since Ref_Type is limited private, it should be safe
-   
+      
    procedure Print (This : Ref_Type);
    --  Debug
    
@@ -46,8 +46,8 @@ package ROSIDL.Dynamic is
    
    function Init (Msg_Support : Typesupport.Message_Support) return Message;
    
-   function Reference (This  : Message'Class;
-                       Field : String) return Ref_Type;
+   function Reference (This  : Message;
+                       Field : String) return Ref_Type'Class;
    
    function To_Ptr (This : Message) return System.Address;
    --  Returns the raw C ptr used by receiving/sending functions
@@ -97,34 +97,53 @@ package ROSIDL.Dynamic is
    --  Some kind of trick with internal controlled could be attempted...
    --    but it would not work anyway for indefinite types (String)
    
-   function As_Bool (Ref : aliased in out Ref_Type) return Bool_Ref.Reference is (Bool_Ref.Get (Ref'Access));
+   function As_Bool (Ref : aliased Ref_Type) return Bool_Ref.Reference is (Bool_Ref.Ref (Ref'Access));
    
    function  Get_Boolean (Ref : aliased in out Ref_Type) return Boolean;
    procedure Set_Boolean (Ref : aliased in out Ref_Type; Bool : Boolean);
    
-   function As_Byte (Ref : aliased in out Ref_Type) return Byte_Ref.Reference is (Byte_Ref.Get (Ref'Access));
+   function As_Byte (Ref : aliased Ref_Type) return Byte_Ref.Reference is (Byte_Ref.Ref (Ref'Access));
    
-   function As_Float32 (Ref : aliased in out Ref_Type) return Float32_Ref.Reference is (Float32_Ref.Get (Ref'Access));
-   function As_Float64 (Ref : aliased in out Ref_Type) return Float64_Ref.Reference is (Float64_Ref.Get (Ref'Access));
+   function As_Float32 (Ref : aliased Ref_Type) return Float32_Ref.Reference is (Float32_Ref.Ref (Ref'Access));
+   function As_Float64 (Ref : aliased Ref_Type) return Float64_Ref.Reference is (Float64_Ref.Ref (Ref'Access));
    
-   function As_Int8  (Ref : aliased in out Ref_Type) return  Int8_Ref.Reference is ( Int8_Ref.Get (Ref'Access));
-   function As_Uint8 (Ref : aliased in out Ref_Type) return Uint8_Ref.Reference is (Uint8_Ref.Get (Ref'Access));
+   function As_Int8  (Ref : aliased Ref_Type) return  Int8_Ref.Reference is ( Int8_Ref.Ref (Ref'Access));
+   function As_Uint8 (Ref : aliased Ref_Type) return Uint8_Ref.Reference is (Uint8_Ref.Ref (Ref'Access));
    
-   function As_Int16  (Ref : aliased in out Ref_Type) return  Int16_Ref.Reference is ( Int16_Ref.Get (Ref'Access));
-   function As_Uint16 (Ref : aliased in out Ref_Type) return Uint16_Ref.Reference is (Uint16_Ref.Get (Ref'Access));
+   function As_Int16  (Ref : aliased Ref_Type) return  Int16_Ref.Reference is ( Int16_Ref.Ref (Ref'Access));
+   function As_Uint16 (Ref : aliased Ref_Type) return Uint16_Ref.Reference is (Uint16_Ref.Ref (Ref'Access));
    
-   function As_Int32  (Ref : aliased in out Ref_Type) return  Int32_Ref.Reference is ( Int32_Ref.Get (Ref'Access));
-   function As_Uint32 (Ref : aliased in out Ref_Type) return Uint32_Ref.Reference is (Uint32_Ref.Get (Ref'Access));
+   function As_Int32  (Ref : aliased Ref_Type) return  Int32_Ref.Reference is ( Int32_Ref.Ref (Ref'Access));
+   function As_Uint32 (Ref : aliased Ref_Type) return Uint32_Ref.Reference is (Uint32_Ref.Ref (Ref'Access));
    
-   function As_Int64  (Ref : aliased in out Ref_Type) return  Int64_Ref.Reference is ( Int64_Ref.Get (Ref'Access));
-   function As_Uint64 (Ref : aliased in out Ref_Type) return Uint64_Ref.Reference is (Uint64_Ref.Get (Ref'Access));
+   function As_Int64  (Ref : aliased Ref_Type) return  Int64_Ref.Reference is ( Int64_Ref.Ref (Ref'Access));
+   function As_Uint64 (Ref : aliased Ref_Type) return Uint64_Ref.Reference is (Uint64_Ref.Ref (Ref'Access));
    
    function Get_Message (Ref : Ref_Type) return Message'Class;
    
    function Get_String (Ref : Ref_Type) return String;
    procedure Set_String (Ref : Ref_Type; Str : String);
    
-private       
+   ------------
+   -- ARRAYS --
+   ------------
+   
+   type Array_View (<>) is tagged limited private with
+     Constant_Indexing => Element;
+   
+   function As_Array (Ref : Ref_Type) return Array_View'Class;
+   
+   function Element (Arr   : Array_View; 
+                     Index : Positive) return Ref_Type'Class;
+   
+   function Is_Static (Arr : Array_View) return Boolean;
+   --  Static arrays are declared with size in the .msg and cannot be resized
+   
+   function Length (Arr : Array_View) return Natural;
+   
+private  
+   
+   Global_Void : aliased Void;
       
    type Message (Is_Field : Boolean) is new Ada.Finalization.Limited_Controlled with record
       Msg      : System.Address;      
@@ -142,7 +161,7 @@ private
    
    overriding procedure Finalize (This : in out Message);
    
-   type Ref_Type (Reserved : not null access Void) is tagged limited 
+   type Ref_Type (Reserved : access constant Void) is tagged limited 
       record
          Member : access constant Introspection.Message_Member_Meta; -- Metadata about the field
          Ptr    : System.Address; -- The raw C data
@@ -157,5 +176,12 @@ private
    function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta is (Ref.Member);
    
    function Get_Ptr    (Ref : Ref_Access) return System.Address is (Ref.Ptr);   
+   
+   
+   type Array_View is 
+     tagged limited record
+      Member : access constant Introspection.Message_Member_Meta;
+      Ptr    : System.Address;
+   end record;
 
 end ROSIDL.Dynamic;

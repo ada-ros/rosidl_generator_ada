@@ -5,6 +5,8 @@ with C_Strings;
 
 with Interfaces.C.Strings;
 
+with ROSIDL.Impl.Arrays;
+
 with Rosidl_Generator_C_String_Functions_H; use Rosidl_Generator_C_String_Functions_H;
 
 with Std_Msgs_Msg_String_Ustruct_H; use Std_Msgs_Msg_String_Ustruct_H;
@@ -16,9 +18,10 @@ package body ROSIDL.Dynamic is
 
    package CS renames Interfaces.C.Strings;
 
+   use all type Interfaces.C.Size_T;
    use all type System.Address;
 
-   Global_Void : aliased Void;
+
 
    ---------------------
    -- Metadata access --
@@ -26,6 +29,20 @@ package body ROSIDL.Dynamic is
 
    type Member_Metadata_Ptr is access constant Introspection.Message_Member_Meta
      with Convention => C;
+
+   --------------
+   -- As_Array --
+   --------------
+
+   function As_Array (Ref : Ref_Type) return Array_View'Class is
+   begin
+      if Support.To_Boolean (Ref.Member.Is_Array_U) Then
+         return Array_View'(Member => Ref.Member,
+                            Ptr    => Ref.Ptr);
+      else
+         raise Constraint_Error with "Field is not an array";
+      end if;
+   end As_Array;
 
    ----------
    -- Bind --
@@ -60,6 +77,38 @@ package body ROSIDL.Dynamic is
          This.Msg   := System.Null_Address;
       end if;
    end Finalize;
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element (Arr   : Array_View;
+                     Index : Positive) return Ref_Type'Class
+   is
+      use System.Storage_Elements;
+
+      function Get_Item_Addr (Base : System.Address) return System.Address is
+        (Base + Storage_Offset ((Index - 1) *
+                                (if Arr.Member.Type_Id_U = Types.Message_Id
+                                 then raise Program_Error with "unimplemented"
+                                 else Types.Size_Of (Arr.Member.Type_Id_U))));
+
+   begin
+      if Index > Arr.Length then
+         raise Constraint_Error with
+           "Out of bounds, index:" & Index'Img & "; last:" & Arr.Length'Img;
+      end if;
+
+      if Arr.Is_Static then
+         return Ref_Type'(Global_Void'Access,
+                          Arr.Member,
+                          Get_Item_Addr (Arr.Ptr));
+      else
+         return Ref_Type'(Global_Void'Access,
+                          Arr.Member,
+                          Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Data);
+      end if;
+   end Element;
 
    -----------------
    -- Get_Boolean --
@@ -154,6 +203,26 @@ package body ROSIDL.Dynamic is
    function Introspect (This : Message) return Introspection.Message_Class is
      (This.Support.Message_Class);
 
+   ---------------
+   -- Is_Static --
+   ---------------
+
+   function Is_Static (Arr : Array_View) return Boolean is
+      (Arr.Member.Array_Size_U /= 0);
+
+   ------------
+   -- Length --
+   ------------
+
+   function Length (Arr : Array_View) return Natural is
+   begin
+      if Arr.Member.Array_Size_U /= 0 then
+         return Natural (Arr.Member.Array_Size_U);
+      else
+         return Natural (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Size);
+      end if;
+   end Length;
+
    -----------
    -- Print --
    -----------
@@ -172,25 +241,45 @@ package body ROSIDL.Dynamic is
    procedure Print_Metadata (This : Message; Prefix : String := "") is
 
       procedure Print_Member (M : Introspection.Message_Member_Meta; Data_Ptr : System.address) is
+         type GFA is access function (arg1 : System.Address; arg2 : C.size_t) return System.Address;
+         type GSA is access function (arg1 : System.Address) return C.size_t;
+         function To_Addr is new Ada.Unchecked_Conversion (GFA, System.Address);
+         function To_Addr is new Ada.Unchecked_Conversion (GSA, System.Address);
          function To_Addr is new Ada.Unchecked_Conversion
            (ROSIDL.Typesupport.Msg_Support_Handle, System.Address);
+         Name : constant String := C_Strings.Value (M.Name_U);
       begin
-         Put_Line (Prefix & "=== " & C_Strings.Value (M.Name_U) & " ===");
+         Put_Line (Prefix & "=== " & Name & " ===");
          Put_Line (Prefix & "              Type id:" & M.Type_Id_U'Img & " (" & Types.Name (M.Type_Id_U) & ")");
          Put_Line (Prefix & "   String upper bound:" & M.String_Upper_Bound_U'Img);
          Put_Line (Prefix & "              members: (rosidl_message_type_support_t *) " & System.Address_Image (To_Addr (M.Members_U)));
+
          Put_Line (Prefix & "             Is array:" & M.Is_Array_U'Img);
-         Put_Line (Prefix & "           Array size:" & M.Array_Size_U'Img);
+         if Support.To_Boolean (M.Is_Array_U) then
+            declare
+               Arr : constant Array_View'Class := This.Reference (Name).As_Array;
+               --  Indexing instead of calling reference causes a bug here
+            begin
+               Put_Line (Prefix & "      Is static array: " & Arr.Is_Static'Img);
+               Put_Line (Prefix & "Array size (declared):"  & M.Array_Size_U'Img);
+               if not Arr.Is_Static then
+                  Put_Line (Prefix & "  Array size (actual):"  & Arr.Length'Img);
+               end if;
+            end;
+         end if;
+
          Put_Line (Prefix & "       Is upper bound:" & M.Is_Upper_Bound_U'Img);
          Put_Line (Prefix & "               Offset:" & M.Offset_U'Img);
          Put_Line (Prefix & "        Default value: (void*)");
          Put_Line (Prefix & "             Data ptr: (void*) " & System.Address_Image (Data_Ptr));
-
+         Put_Line (Prefix & "        size_function: " & System.Address_Image (To_Addr (M.size_function)));
+         Put_Line (Prefix & "         get_function: " & System.Address_Image (To_Addr (M.get_function)));
+         Put_Line (Prefix & "   get_const_function: " & System.Address_Image (To_Addr (M.get_const_function)));
 
          if M.Type_Id_U = Types.Message_Id then
             This.Reference (C_Strings.Value (M.Name_U))
               .Get_Message
-              .Print_Metadata (Prefix & "--| ");
+                .Print_Metadata (Prefix & "--| ");
          end if;
       end Print_Member;
 
@@ -214,8 +303,8 @@ package body ROSIDL.Dynamic is
    -- Reference --
    ---------------
 
-   function Reference (This  : Message'Class;
-                       Field : String) return Ref_Type
+   function Reference (This  : Message;
+                       Field : String) return Ref_Type'Class
    is
       use System.Storage_Elements;
 
@@ -236,14 +325,10 @@ package body ROSIDL.Dynamic is
       else
          for Member of Members.all loop
             if CS.Value (Member.Name_U) = Field then
-               if Support.To_Boolean (Member.Is_Array_U) then
-                  raise Program_Error with "Access to array fields unimplemented yet";
-               else
-                  --  Put_Line ("Field offset is" & Member.Offset_U'Img);
-                  return (Reserved => Global_Void'Access,
-                          Member   => Member'Unchecked_Access,
-                          Ptr      => This.Msg + Storage_Offset (Member.Offset_U));
-               end if;
+               --  Put_Line ("Field offset is" & Member.Offset_U'Img);
+               return Ref_Type'(Reserved => Global_Void'Access,
+                                Member   => Member'Unchecked_Access,
+                                Ptr      => This.Msg + Storage_Offset (Member.Offset_U));
             end if;
          end loop;
 

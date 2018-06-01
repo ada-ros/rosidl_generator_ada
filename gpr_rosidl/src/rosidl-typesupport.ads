@@ -1,7 +1,11 @@
+with C_Strings;
+
 with Rosidl_Generator_C_Message_Type_Support_Struct_H; 
 use  Rosidl_Generator_C_Message_Type_Support_Struct_H;
 
 with ROSIDL.Introspection;
+
+with System;
 
 package ROSIDL.Typesupport is   
    
@@ -21,6 +25,10 @@ package ROSIDL.Typesupport is
    
    function Get_Message_Support (Pkg, Msg : String) return Message_Support;   
    
+   function Data (This : Message_Support) return System.Address;
+   
+   function Identifier (This : Message_Support) return String;      
+   
    function Message_Class (This : Message_Support) return Introspection.Message_Class;
    
    function To_C (This : Message_Support) return Msg_Support_Handle;      
@@ -36,6 +44,12 @@ private
    function Get_Message_Support (Pkg, Msg : String) return Message_Support is
      (C         => Get_Message_Handle (Pkg, Msg),
       Msg_Class => Introspection.Get_Message_Class (Pkg, Msg));
+   
+   function Data (This : Message_Support) return System.Address is
+      (This.C.Data);
+   
+   function Identifier (This : Message_Support) return String is
+     (C_Strings.Value (This.C.Typesupport_Identifier));
    
    function Message_Class (This : Message_Support) return Introspection.Message_Class is
       (This.Msg_Class);
