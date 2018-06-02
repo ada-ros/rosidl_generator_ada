@@ -36,6 +36,7 @@ ada_find_package_include_dir(_introspection_include ${rosidl_typesupport_introsp
 file(GLOB _headers
         "${_builtin_include}/builtin_interfaces/msg/*.h"
 #        "${_stdmsgs_include}/std_msgs/msg/*.h"
+        "${_stdmsgs_include}/std_msgs/msg/multi_array*.h" # This should suffice
         "${_stdmsgs_include}/std_msgs/msg/string*.h" # This should suffice
         "${_generator_include}/rosidl_generator_c/*.h"
         "${_introspection_include}/rosidl_typesupport_introspection_c/*.h")

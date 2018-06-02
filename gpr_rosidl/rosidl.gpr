@@ -1,5 +1,4 @@
 with "clib_builtin_interfaces_rosidl_typesupport_c";
-with "clib_geometry_msgs_rosidl_typesupport_c";
 with "clib_rosidl_generator_c";
 with "clib_rosidl_typesupport_c";
 with "clib_rosidl_typesupport_introspection_c";
