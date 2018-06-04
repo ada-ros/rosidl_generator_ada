@@ -9,7 +9,8 @@ with ROSIDL.Impl.Arrays;
 
 with Rosidl_Generator_C_String_Functions_H; use Rosidl_Generator_C_String_Functions_H;
 
-with Std_Msgs_Msg_String_Ustruct_H; use Std_Msgs_Msg_String_Ustruct_H;
+--  with Std_Msgs_Msg_Multi_Array_Dimension_Ufunctions_H; use Std_Msgs_Msg_Multi_Array_Dimension_Ufunctions_H;
+with Std_Msgs_Msg_String_Ustruct_H;                   use Std_Msgs_Msg_String_Ustruct_H;
 
 with System.Address_Image;
 with System.Storage_Elements;
@@ -21,15 +22,6 @@ package body ROSIDL.Dynamic is
 
    use all type Interfaces.C.Size_T;
    use all type System.Address;
-
-
-
-   ---------------------
-   -- Metadata access --
-   ---------------------
-
-   type Member_Metadata_Ptr is access constant Introspection.Message_Member_Meta
-     with Convention => C;
 
    --------------
    -- As_Array --
@@ -301,18 +293,17 @@ package body ROSIDL.Dynamic is
          end if;
       end Print_Member;
 
-      --  These declarations have to be unfortunately repeated since they depend on the dynamic upper bound
-      type Member_Array is array (1 .. This.Introspect.To_C.Member_Count_U) of aliased Introspection.Message_Member_Meta
-        with Convention => C;
-      type Array_Ptr is access Member_Array with Convention => C;
-      function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Metadata_Ptr, Array_Ptr);
-      Members : aliased constant Array_Ptr := To_Array_Ptr (This.Introspect.To_C.Members_U);
+      Members : array (1 .. This.Introspect.To_C.Member_Count_U)
+                   of aliased Introspection.Message_Member_Meta with
+        Convention => C,
+        Import,
+        Address => This.Introspect.To_C.Members_U.all'Address;
    begin
       Put_Line (Prefix & "************************************************************");
       Put_Line (Prefix & "    Message: " & This.Introspect.Package_Name & "/" & This.Introspect.Message_Name);
       Put_Line (Prefix & "       Size:"  & This.Introspect.Size'Img & " bytes");
       Put_Line (Prefix & "Field count:" & Members'Length'Img);
-      for Member of Members.all loop
+      for Member of Members loop
          Print_Member (Member, This.Reference (C_Strings.Value (Member.Name_U)).Ptr);
       end loop;
    end Print_Metadata;
@@ -326,14 +317,20 @@ package body ROSIDL.Dynamic is
    is
       use System.Storage_Elements;
 
-      type Member_Array is array (1 .. This.Introspect.To_C.Member_Count_U) of aliased Introspection.Message_Member_Meta
-        with Convention => C;
+--        type Member_Array is array (1 .. This.Introspect.To_C.Member_Count_U) of aliased Introspection.Message_Member_Meta
+--          with Convention => C;
+--
+--        type Array_Ptr is access Member_Array with Convention => C;
+--
+--        function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Metadata_Ptr, Array_Ptr);
+--
+--        Members : aliased constant Array_Ptr := To_Array_Ptr (This.Introspect.To_C.Members_U);
 
-      type Array_Ptr is access Member_Array with Convention => C;
-
-      function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Metadata_Ptr, Array_Ptr);
-
-      Members : aliased constant Array_Ptr := To_Array_Ptr (This.Introspect.To_C.Members_U);
+      Members : array (1 .. This.Introspect.To_C.Member_Count_U)
+                   of aliased Introspection.Message_Member_Meta with
+        Convention => C,
+        Import,
+        Address => This.Introspect.To_C.Members_U.all'Address;
 
       First   : constant String := Head (Field);
       Rest    : constant String := Tail (Field);
@@ -341,7 +338,7 @@ package body ROSIDL.Dynamic is
       if Rest /= "" then
          return This (First).Get_Message.Reference (Rest);
       else
-         for Member of Members.all loop
+         for Member of Members loop
             if CS.Value (Member.Name_U) = Field then
                --  Put_Line ("Field offset is" & Member.Offset_U'Img);
                return Ref_Type'(Reserved => Global_Void'Access,
@@ -360,41 +357,32 @@ package body ROSIDL.Dynamic is
 
    procedure Resize (Arr : Array_View; Length : Natural) is
 
-      --------------------------
-      -- Resize_Message_Array --
-      --------------------------
+      type Init is access function (Arr : System.Address; Size : C.Size_T) return CX.Bool with Convention => C;
+      type Fini is access procedure (Arr : System.Address) with Convention => C;
 
-      procedure Resize_Message_Array is null;
+      function  Init_Func is new Ada.Unchecked_Conversion (System.Address, Init);
+      function  Fini_Proc is new Ada.Unchecked_Conversion (System.Address, Fini);
 
-      ----------------------------
-      -- Resize_Primitive_Array --
-      ----------------------------
+      function Init_Symbol (Pkgname, Typename : String) return String is
+        (Pkgname & "__" & Typename & "__Array__init");
+      function Fini_Symbol (Pkgname, Typename : String) return String is
+        (Pkgname & "__" & TypeName & "__Array__fini");
 
-      procedure Resize_Primitive_Array is
+      procedure Resize (Pkgname, Typename : String) is
          --  bool
          --  rosidl_generator_c__String__Array__init(
          --    rosidl_generator_c__String__Array * array, size_t size);
-         type Init is access function (Arr : System.Address; Size : C.Size_T) return CX.Bool with Convention => C;
-         type Fini is access procedure (Arr : System.Address) with Convention => C;
-
-         function  Init_Func is new Ada.Unchecked_Conversion (System.Address, Init);
-         function  Fini_Proc is new Ada.Unchecked_Conversion (System.Address, Fini);
-
-         function Init_Symbol return String is
-            ("rosidl_generator_c__" & Types.Name (Arr.Member.Type_Id_U) & "__Array__init");
-         function Fini_Symbol return String is
-            ("rosidl_generator_c__" & Types.Name (Arr.Member.Type_Id_U) & "__Array__fini");
       begin
-         Fini_Proc (Support.Get_Symbol (Fini_Symbol)).all (Arr.Ptr);
+         Fini_Proc (Support.Get_Symbol (Fini_Symbol (Pkgname, Typename))).all (Arr.Ptr);
 
-         if not Support.To_Boolean (Init_Func (Support.Get_Symbol (Init_Symbol)).all (Arr.Ptr, C.Size_T (Length))) then
+         if not Support.To_Boolean (Init_Func (Support.Get_Symbol (Init_Symbol (Pkgname, Typename))).all (Arr.Ptr, C.Size_T (Length))) then
             raise Program_Error with "Array initialization failed";
          end if;
 
          if Arr.Capacity /= Length then
             raise Program_Error with "Array capacity is not the requested one";
          end if;
-      end Resize_Primitive_Array;
+      end Resize;
 
    begin
       if Natural (Arr.Member.Array_Size_U) /= 0 then
@@ -402,9 +390,10 @@ package body ROSIDL.Dynamic is
       end if;
 
       if Arr.Member.Type_Id_U = Types.Message_Id then
-         Resize_Message_Array;
+         Resize (C_Strings.Value (Get_Introspection (Arr.Member).Package_Name_U),
+                 C_Strings.Value (Get_Introspection (Arr.Member).Message_Name_U));
       else
-         Resize_Primitive_Array;
+         Resize ("rosidl_generator_c", Types.Name (Arr.Member.Type_Id_U));
       end if;
    end Resize;
 
@@ -449,6 +438,146 @@ package body ROSIDL.Dynamic is
    -----------------
 
    function Typesupport (This : Message) return ROSIDL.Typesupport.Message_Support
-     is (This.Support);
+   is (This.Support);
+
+
+   --------------
+   -- MATRICES --
+   --------------
+
+   ---------------
+   -- As_Matrix --
+   ---------------
+
+   function As_Matrix (Ref : Ref_Type'Class) return Matrix_View is
+     ((Member => Ref.Member,
+       Ptr    => Ref.Ptr));
+
+   ----------------
+   -- As_Message --
+   ----------------
+
+   function As_Message (Mat : Matrix_View) return Message'Class is
+     (Bind (Is_Field   => True,
+            Data       => Mat.Ptr,
+            Introspect => Get_Introspection (Mat.Member)));
+
+   --------------
+   -- Capacity --
+   --------------
+
+   function Capacity (Mat : Matrix_View; Dimension : Positive) return Natural is
+     (Natural (Mat.Get_Dimension (Dimension).Size));
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element (Mat : Matrix_View;
+                     Pos : Matrix_Indices)
+                     return Ref_Type'Class
+   is
+      use System.Storage_Elements;
+
+      Array_Ref : constant Ref_Type'Class := Mat.As_Message.Reference ("data");
+   begin
+      return Ref_Type'(Reserved => Global_Void'Access,
+                       Member   => Array_Ref.Member,
+                       Ptr      =>
+                         Array_Ref.Ptr +
+                           System.Storage_Elements.Storage_Offset
+                             (Types.Size_Of (Array_Ref.Member.Type_Id_U) *
+                              Impl.Matrices.Offset (Pos, Mat.Get_Layout)));
+   end Element;
+
+   -------------------
+   -- Get_Dimension --
+   -------------------
+
+   function Get_Dimension (Mat : Matrix_View; Dim : Positive) return access Std_Msgs_U_Msg_U_MultiArrayDimension is
+      Dimensions : aliased array (1 .. Mat.Get_Layout.Dim.Size) of aliased Std_Msgs_U_Msg_U_MultiArrayDimension with
+        Import,
+        Convention => C,
+        Address    => Mat.Get_Layout.Dim.Data.all'Address; -- First element
+   begin
+      return Dimensions (C.Size_T (Dim))'Unchecked_Access; -- Safe because although declare in stack, it is actually from the message heap
+   end Get_Dimension;
+
+   ----------------
+   -- Get_Layout --
+   ----------------
+
+   function Get_Layout (Mat : Matrix_View) return access constant Std_Msgs_U_Msg_U_MultiArrayLayout is
+      Layout : aliased Std_Msgs_U_Msg_U_MultiArrayLayout with
+        Import,
+        Convention => C,
+        Address    => Mat.As_Message.Reference ("layout").Ptr;
+   begin
+      return Layout'Unchecked_Access; -- Safe because although declare in stack, it is actually from the message heap
+   end Get_Layout;
+
+   -----------
+   -- Label --
+   -----------
+
+   function Label (Mat : Matrix_View; Dimension : Positive) return String is
+     (C_Strings.Value (Mat.Get_Dimension (Dimension).Label.Data));
+
+   ------------
+   -- Length --
+   ------------
+
+   function Length (Mat : Matrix_View; Dimension : Positive) return Natural is
+      (Natural (Mat.Get_Dimension (Dimension).Size));
+
+   ----------
+   -- Size --
+   ----------
+
+   function Size (Mat : Matrix_View) return Natural is
+   begin
+      return Ret : Natural := 1 do
+         for I in 1 .. Natural (Mat.Get_Layout.Dim.Size) loop
+            Ret := Ret * Mat.Length (I);
+         end loop;
+      end return;
+   end Size;
+
+   ------------
+   -- Resize --
+   ------------
+
+   procedure Resize (Mat     : Matrix_View;
+                     Lengths : Matrix_Indices;
+                     Names   : Dimension_Naming_Function := Default_Names'Access)
+   is
+--        Dim_Array : aliased Std_Msgs_U_Msg_U_MultiArrayDimension_U_Array with
+--          Import,
+--          Convention => C,
+--          Address    => Mat.Get_Layout.Dim'Address;
+   begin
+      --  Create layout thing:
+      Mat.As_Message.Reference ("layout.dim").As_Array.Resize (Lengths'Length);
+--        Std_Msgs_U_Msg_U_MultiArrayDimension_U_Array_U_Fini (Dim_Array'Access);
+--
+--        if not Support.To_Boolean
+--          (Std_Msgs_U_Msg_U_MultiArrayDimension_U_Array_U_Init (Dim_Array'Access, C.Size_T (Lengths'Length)))
+--        then
+--           raise Program_Error with "Array initialization failed";
+--        end if;
+
+      for I in reverse Lengths'Range loop
+         Mat.Get_Dimension (I).Size   := C.Unsigned (Lengths (I));
+         Mat.Get_Dimension (I).Stride := C.Unsigned (Lengths (I) *
+           (if I = Lengths'Last
+            then 1
+            else Natural (Mat.Get_Dimension (I + 1).Stride)));
+
+         Mat.As_Message.Field ("layout.dim").As_Array.Element (I).Get_Message.Field ("label").Set_String (Names (I));
+      end loop;
+
+      --  Resize the actual data vector:
+      Mat.As_Message.Reference ("data").As_Array.Resize (Mat.Size);
+   end Resize;
 
 end ROSIDL.Dynamic;

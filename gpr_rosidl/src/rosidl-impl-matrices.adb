@@ -6,7 +6,7 @@ package body ROSIDL.Impl.Matrices is
    -- Offset --
    ------------
 
-   function Offset (Index  : Indexes;
+   function Offset (Index  : Indices;
                     Layout : access constant Std_Msgs_U_Msg_U_MultiArrayLayout)
                     return   Natural
    is
@@ -26,8 +26,8 @@ package body ROSIDL.Impl.Matrices is
            Address    => Layout.Dim.Data.all'Address;
       begin
          return Result : Natural := Natural (Layout.Data_Offset) + Index (Index'Last) do
-            for I in 2 .. Index'Last loop
-               Result := Result + Natural (Dims (I).Stride) * (I - 1);
+            for I in 1 .. Index'Last - 1 loop
+               Result := Result + Natural (Dims (I + 1).Stride) * (Index (I) - 1);
             end loop;
          end return;
       end;

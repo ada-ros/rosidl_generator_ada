@@ -13,9 +13,9 @@ package ROSIDL.Impl.Matrices is
    type Dimension_Ptr is access constant Multi_Array_Dimension
      with Convention => C;
    
-   type Indexes is array (Positive range <>) of Positive;
+   type Indices is array (Positive range <>) of Positive;
    
-   function Offset (Index  : Indexes;
+   function Offset (Index  : Indices;
                     Layout : access constant Std_Msgs_U_Msg_U_MultiArrayLayout)
                     return   Natural
      with Pre => Index'First = 1; -- Should be true but just in case!

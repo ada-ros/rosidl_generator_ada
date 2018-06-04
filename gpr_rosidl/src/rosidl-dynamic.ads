@@ -1,10 +1,15 @@
 with Ada.Finalization;
+with Ada.Strings.Fixed;
 
 with ROSIDL.Field_References;
+with ROSIDL.Impl.Matrices;
 with ROSIDL.Introspection;
 with ROSIDL.Support;
 with ROSIDL.Typesupport;
 with ROSIDL.Types;
+
+with Std_Msgs_Msg_Multi_Array_Dimension_Ustruct_H; use Std_Msgs_Msg_Multi_Array_Dimension_Ustruct_H;
+with Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;    use Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;
 
 with System;
 
@@ -48,6 +53,9 @@ package ROSIDL.Dynamic is
    
    function Reference (This  : Message;
                        Field : String) return Ref_Type'Class;
+   
+   function Field (This  : Message;
+                   Field : String) return Ref_Type'Class renames Reference;
    
    function To_Ptr (This : Message) return System.Address;
    --  Returns the raw C ptr used by receiving/sending functions
@@ -129,7 +137,7 @@ package ROSIDL.Dynamic is
    ------------
    
    type Array_View (<>) is tagged limited private with
-     Constant_Indexing => Element;
+     Constant_Indexing => Array_Element;
    
    function As_Array (Ref : Ref_Type) return Array_View'Class;
    
@@ -137,6 +145,9 @@ package ROSIDL.Dynamic is
    
    function Element (Arr   : Array_View; 
                      Index : Positive) return Ref_Type'Class;
+   
+   function Array_Element (Arr   : Array_View; 
+                           Index : Positive) return Ref_Type'Class renames Element;
    
    function Is_Static (Arr : Array_View) return Boolean;
    --  Static arrays are declared with size in the .msg and cannot be resized
@@ -146,6 +157,45 @@ package ROSIDL.Dynamic is
    procedure Resize (Arr : Array_View; Length : Natural);
    --  Reallocates space for a dynamic array
    --  Raises for a static array
+   
+   --------------
+   -- MATRICES --
+   --------------
+   -- "MultyArrays"
+   
+   type Matrix_View (<>) is tagged limited private
+     with Constant_Indexing => Matrix_Element;
+   
+   subtype Matrix_Indices is Impl.Matrices.Indices;
+   
+   type Dimension_Naming_Function is access function (Dim : Positive) return String;
+   
+   function Default_Names (Dim : Positive) return String is
+      ("dim" & Ada.Strings.Fixed.Trim (Dim'Img, Ada.Strings.Both)); 
+   
+   function As_Matrix (Ref : Ref_Type'Class) return Matrix_View;
+   
+   function Capacity (Mat : Matrix_View; Dimension : Positive) return Natural;
+   
+   function Element (Mat : Matrix_View;
+                     Pos : Matrix_Indices) 
+                     return Ref_Type'Class with
+     Pre => Pos'First = 1;
+   
+   function Matrix_Element (Mat : Matrix_View; Pos : Matrix_Indices) 
+                            return Ref_Type'Class renames Element;
+   
+   function Label (Mat : Matrix_View; Dimension : Positive) return String;
+   
+   function Length (Mat : Matrix_View; Dimension : Positive) return Natural;   
+   
+   function Size (Mat : Matrix_View) return Natural;
+   --  Total number of elements
+   
+   procedure Resize (Mat     : Matrix_View;
+                     Lengths : Matrix_Indices;
+                     Names   : Dimension_Naming_Function := Default_Names'Access) with
+     Pre => Lengths'First = 1;
    
 private  
    
@@ -197,6 +247,21 @@ private
    
    function Get_Introspection (Ref : Ref_Type) 
                                return access constant Introspection.Message_Members_Meta is
-      (Get_Introspection (Ref.Member));
+     (Get_Introspection (Ref.Member));
+   
+   
+   type Matrix_View is tagged limited record
+      Member : access constant Introspection.Message_Member_Meta;
+      Ptr    : System.Address;
+   end record;
+   --  A matrix view points to the base field which contains a XxxxMultyArray.msg
+   --  that is, containing both "layout" and "data" fields
+   
+   function Get_Dimension (Mat : Matrix_View; Dim : Positive) return access Std_Msgs_U_Msg_U_MultiArrayDimension;
+   
+   function Get_Layout (Mat : Matrix_View) return access constant Std_Msgs_U_Msg_U_MultiArrayLayout;
+   
+   function As_Message (Mat : Matrix_View) return Message'Class;
+   --  Rebind the contents as the message which encapsulates the layout and data
 
 end ROSIDL.Dynamic;
