@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(rosidl_generator_ada)
+project(rosidl_generator_ada VERSION 0.1.0)
 
-set(${PROJECT_NAME}_MAJOR_VERSION 0)
-set(${PROJECT_NAME}_MINOR_VERSION 1)
-set(${PROJECT_NAME}_PATCH_VERSION 0)
-set(${PROJECT_NAME}_VERSION
-        ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
-set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
-
+#set(${PROJECT_NAME}_MAJOR_VERSION 0)
+#set(${PROJECT_NAME}_MINOR_VERSION 1)
+#set(${PROJECT_NAME}_PATCH_VERSION 0)
+#set(${PROJECT_NAME}_VERSION
+#        ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
+#set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
+#
 message(" ")
 message("${PROJECT_NAME} version ${PROJECT_VERSION}")
 
@@ -17,6 +17,7 @@ if(BUILD_TESTING)
 endif()
 
 find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 find_package(rosidl_generator_c REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(rosidl_generator_c REQUIRED)
@@ -24,6 +25,13 @@ find_package(std_msgs REQUIRED)
 
 find_package(rclada_common REQUIRED)
 
+# Register message generator
+install(DIRECTORY cmake
+        DESTINATION share/${PROJECT_NAME})
+ament_register_extension(
+        "rosidl_generate_interfaces"
+        "rosidl_generator_ada"
+        "${PROJECT_SOURCE_DIR}/cmake/rosidl_generator_ada_generate_interfaces.cmake")
 
 # Generate autobinding for std types and rosidl_typesupport_c
 ada_import_c_libraries(${std_msgs_LIBRARIES})
@@ -65,8 +73,16 @@ add_dependencies(ada_dl cstrings)
 ada_add_library(ada_rosidl gpr_rosidl rosidl.gpr)
 add_dependencies(ada_rosidl ada_dl ada_binding_rosidl_typesupport_c)
 
+# Generations of test messages
+rosidl_generate_interfaces(${PROJECT_NAME}
+        msg/Test.msg
+        DEPENDENCIES std_msgs
+        )
+
 # Export package
-ada_export_package()
+# ada_export_package()
+
+ament_package()
 
 #get_cmake_property(_variableNames VARIABLES)
 #list (SORT _variableNames)

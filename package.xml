@@ -7,17 +7,22 @@
   <maintainer email="amosteo@unizar.es">Alejandro R. Mosteo</maintainer>
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
   <build_depend>rclada_common</build_depend>
 
   <!-- for several C headers that are imported -->
   <build_depend>builtin_interfaces</build_depend>
+
   <build_depend>rosidl_generator_c</build_depend>
   <build_depend>std_msgs</build_depend>
 
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
-    <build_type>cmake</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>
