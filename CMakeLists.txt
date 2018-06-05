@@ -79,9 +79,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         DEPENDENCIES std_msgs
         )
 
-# Export package
-# ada_export_package()
-
 ament_package()
 
 #get_cmake_property(_variableNames VARIABLES)

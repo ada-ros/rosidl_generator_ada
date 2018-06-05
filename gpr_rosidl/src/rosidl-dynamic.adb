@@ -416,6 +416,10 @@ package body ROSIDL.Dynamic is
    begin
       if Ref.Member.Type_Id_U /= Rti_String_Id then
          raise Constraint_Error with "Field is not of type string but " & Types.Name (Ref.Member.Type_Id_U);
+      elsif Ref.Member.String_Upper_Bound_U /= 0 and Then
+        Str'Length > Natural (Ref.Member.String_Upper_Bound_U)
+      then
+         raise Constraint_Error with "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
       else
          if not Support.To_Boolean
            (Rosidl_Generator_C_U_String_U_Assign
