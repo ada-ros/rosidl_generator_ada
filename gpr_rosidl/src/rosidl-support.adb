@@ -1,3 +1,4 @@
+--  with Ada.Characters.Handling;
 with Ada.Text_IO; use Ada.Text_IO;
 
 with DL;
@@ -7,6 +8,17 @@ with System.Address_Image;
 package body ROSIDL.Support is
 
    use all type System.Address;
+
+   -----------------
+   -- First_Upper --
+   -----------------
+
+--     function First_Upper (S : String) return String is
+--     begin
+--        return R : String := S do
+--           R (R'First) := Ada.Characters.Handling.To_Upper (R (R'First));
+--        end return;
+--     end First_Upper;
 
    ----------------
    -- Get_Symbol --

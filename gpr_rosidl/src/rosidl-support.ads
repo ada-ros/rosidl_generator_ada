@@ -4,6 +4,8 @@ with Interfaces.C.Extensions;
 
 with Rosidl_Typesupport_Introspection_C_Message_Introspection_H; use Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
 
+with ROSIDL.Types;
+
 with System;
 
 package ROSIDL.Support is
@@ -17,7 +19,7 @@ package ROSIDL.Support is
    subtype Message_Members_Meta is Rosidl_Typesupport_Introspection_C_U_MessageMembers;
    subtype Message_Member_Meta  is Rosidl_Typesupport_Introspection_C_U_MessageMember;
    
-   function To_Boolean (B : CX.Bool) return Boolean is (B /= C.Plain_Char'Val (0));
+   function To_Boolean (B : Types.Bool) return Boolean is (Integer (B) /= 0);
 
    type Func_Ret_Addr is access function return System.Address with Convention => C;
    function To_Func is new Ada.Unchecked_Conversion (System.Address, Func_Ret_Addr);
@@ -27,6 +29,8 @@ package ROSIDL.Support is
    
    type Proc_Addr is access procedure (Addr : System.Address) with Convention => C;
    function To_Proc is new Ada.Unchecked_Conversion (System.Address, Proc_Addr);
+   
+--     function First_Upper (S : String) Return String;
    
    function Get_Symbol (Name : String) return System.Address;
    

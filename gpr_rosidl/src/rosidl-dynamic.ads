@@ -2,7 +2,6 @@ with Ada.Finalization;
 with Ada.Strings.Fixed;
 
 with ROSIDL.Field_References;
-with ROSIDL.Impl.Matrices;
 with ROSIDL.Introspection;
 with ROSIDL.Support;
 with ROSIDL.Typesupport;
@@ -171,16 +170,21 @@ package ROSIDL.Dynamic is
    type Matrix_View (<>) is tagged limited private
      with Constant_Indexing => Matrix_Element;
    
-   subtype Matrix_Indices is Impl.Matrices.Indices;
+   type Matrix_Indices is array (Positive range <>) of Positive;
    
    type Dimension_Naming_Function is access function (Dim : Positive) return String;
    
    function Default_Names (Dim : Positive) return String is
       ("dim" & Ada.Strings.Fixed.Trim (Dim'Img, Ada.Strings.Both)); 
    
+   function As_Array (Mat : Matrix_View) return Array_View'Class;
+   --  Return the linear array view of this matrix data
+   
    function As_Matrix (Ref : Ref_Type'Class) return Matrix_View;
    
    function Capacity (Mat : Matrix_View; Dimension : Positive) return Natural;
+   
+   function Dimensions (Mat : Matrix_View) return Natural;
    
    function Element (Mat : Matrix_View;
                      Pos : Matrix_Indices) 
@@ -194,13 +198,17 @@ package ROSIDL.Dynamic is
    
    function Length (Mat : Matrix_View; Dimension : Positive) return Natural;   
    
-   function Size (Mat : Matrix_View) return Natural;
-   --  Total number of elements
-   
    procedure Resize (Mat     : Matrix_View;
                      Lengths : Matrix_Indices;
                      Names   : Dimension_Naming_Function := Default_Names'Access) with
      Pre => Lengths'First = 1;
+         
+   function Size (Mat : Matrix_View) return Natural;
+   --  Total number of elements
+   
+   function Stride (Mat : Matrix_View; Dimension : Positive) return Natural;   
+   --  Says the amount of elements that are "below" this dimension, per row
+   --  See std_msgs/msg/MultiArrayLayout.mgs for explanations
    
 private  
    
@@ -262,11 +270,14 @@ private
    --  A matrix view points to the base field which contains a XxxxMultyArray.msg
    --  that is, containing both "layout" and "data" fields
    
+      
+   function As_Message (Mat : Matrix_View) return Message'Class;
+   --  Rebind the contents as the message which encapsulates the layout and data
+   
    function Get_Dimension (Mat : Matrix_View; Dim : Positive) return access Std_Msgs_U_Msg_U_MultiArrayDimension;
    
    function Get_Layout (Mat : Matrix_View) return access constant Std_Msgs_U_Msg_U_MultiArrayLayout;
    
-   function As_Message (Mat : Matrix_View) return Message'Class;
-   --  Rebind the contents as the message which encapsulates the layout and data
+   function Linear_Index (Mat : Matrix_View; Pos : Matrix_Indices) return Positive;
 
 end ROSIDL.Dynamic;
