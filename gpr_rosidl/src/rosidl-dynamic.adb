@@ -24,6 +24,14 @@ package body ROSIDL.Dynamic is
    use all type System.Address;
    use all type Types.Ids;
 
+   -------------------
+   -- Array_Element --
+   -------------------
+
+   function Array_Element (Arr   : Array_View;
+                           Index : Cursor) return Ref_Type'Class is
+     (Arr.Array_Element (Index.Pos));
+
    --------------
    -- As_Array --
    --------------
@@ -599,6 +607,26 @@ package body ROSIDL.Dynamic is
    ------------
 
    function Stride (Mat : Matrix_View; Dimension : Positive) return Natural is
-      (Natural (Mat.Get_Dimension (Dimension).Stride));
+     (Natural (Mat.Get_Dimension (Dimension).Stride));
+
+   ---------------
+   -- ITERATORS --
+   ---------------
+
+   type Arr_Iterator is limited new Array_Iterators.Forward_Iterator with record
+      Last : Natural;
+   end record;
+
+   overriding function First (I : Arr_Iterator) return Cursor is
+     (Pos   => 1,
+      Valid => 1 <= I.Last);
+
+   overriding function Next  (I        : Arr_Iterator;
+                              Position : Cursor) return Cursor is
+     (Pos   => Position.Pos + 1,
+      Valid => Position.Pos < I.Last);
+
+   function Iterate (Arr : Array_View) return Array_Iterators.Forward_Iterator'Class is
+     (Arr_Iterator'(Last => Arr.Length));
 
 end ROSIDL.Dynamic;

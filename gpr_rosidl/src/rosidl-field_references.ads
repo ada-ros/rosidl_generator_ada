@@ -10,10 +10,13 @@ generic
    
    Type_Id : Types.Ids; -- The ROS id from field_types.h
    type Value is private;
+   with function Image (V : Value) return String is <>;
 package ROSIDL.Field_References is
 
-   type Reference (Element : not null access Value) is limited private with
+   type Reference (Element : not null access Value) is tagged limited private with
      Implicit_Dereference => Element;
+   
+   function Image (Ref : Reference) return String is (Image (Ref.Element.all));
    
    function Ref (C : Field.Container) return Reference;
    
@@ -24,6 +27,6 @@ private
    function To_Value_Ptr is new Ada.Unchecked_Conversion (System.Address,
                                                           Value_Ptr);
    
-   type Reference (Element : not null access Value) is limited null record;
+   type Reference (Element : not null access Value) is tagged limited null record;
 
 end ROSIDL.Field_References;

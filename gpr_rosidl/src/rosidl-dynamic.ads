@@ -1,4 +1,5 @@
 with Ada.Finalization;
+with Ada.Iterator_Interfaces;
 with Ada.Strings.Fixed;
 
 with ROSIDL.Field_References;
@@ -80,23 +81,24 @@ package ROSIDL.Dynamic is
                                              Get_Member,
                                              Get_Ptr);
    
-   package Bool_Ref is new Field_References (FA, Types.Bool_Id, Types.Bool);
-   package Byte_Ref is new Field_References (FA, Types.Byte_Id, Types.Byte);
+   package Bool_Ref is new Field_References (FA, Types.Bool_Id, Types.Bool, Types.Bool'Image);
+   package Byte_Ref is new Field_References (FA, Types.Byte_Id, Types.Byte, Types.Byte'Image);
+   package Char_Ref is new Field_References (FA, Types.Char_Id, Types.Char, Types.Char'Image);
    
-   package Float32_Ref is new Field_References (FA, Types.Float32_Id, Types.Float32);
-   package Float64_Ref is new Field_References (FA, Types.Float64_Id, Types.Float64);
+   package Float32_Ref is new Field_References (FA, Types.Float32_Id, Types.Float32, Types.Float32'Image);
+   package Float64_Ref is new Field_References (FA, Types.Float64_Id, Types.Float64, Types.Float64'Image);
    
-   package Int8_Ref  is new Field_References (FA, Types.Int8_Id,  Types.Int8);
-   package Uint8_Ref is new Field_References (FA, Types.Uint8_Id, Types.Uint8);
+   package Int8_Ref  is new Field_References (FA, Types.Int8_Id,  Types.Int8,  Types.Int8'Image);
+   package Uint8_Ref is new Field_References (FA, Types.Uint8_Id, Types.Uint8, Types.Uint8'Image);
    
-   package Int16_Ref  is new Field_References (FA, Types.Int16_Id,  Types.Int16);
-   package Uint16_Ref is new Field_References (FA, Types.Uint16_Id, Types.Uint16);
+   package Int16_Ref  is new Field_References (FA, Types.Int16_Id,  Types.Int16,  Types.Int16'Image);
+   package Uint16_Ref is new Field_References (FA, Types.Uint16_Id, Types.Uint16, Types.Uint16'Image);
    
-   package Int32_Ref  is new Field_References (FA, Types.Int32_Id,  Types.Int32);
-   package Uint32_Ref is new Field_References (FA, Types.Uint32_Id, Types.Uint32);
+   package Int32_Ref  is new Field_References (FA, Types.Int32_Id,  Types.Int32,  Types.Int32'Image);
+   package Uint32_Ref is new Field_References (FA, Types.Uint32_Id, Types.Uint32, Types.Uint32'Image);
    
-   package Int64_Ref  is new Field_References (FA, Types.Int64_Id,  Types.Int64);
-   package Uint64_Ref is new Field_References (FA, Types.Uint64_Id, Types.Uint64);
+   package Int64_Ref  is new Field_References (FA, Types.Int64_Id,  Types.Int64,  Types.Int64'Image);
+   package Uint64_Ref is new Field_References (FA, Types.Uint64_Id, Types.Uint64, Types.Uint64'Image);
    
    --  ACCESSORS
    --  As_* serve as both read/write for compatible C types
@@ -136,7 +138,16 @@ package ROSIDL.Dynamic is
    ------------
    
    type Array_View (<>) is tagged limited private with
-     Constant_Indexing => Array_Element;
+     Constant_Indexing => Array_Element,
+     Default_Iterator  => Iterate,
+     Iterator_Element  => Ref_Type'Class;
+   
+   type Cursor is private;
+   
+   function Has_Element (C : Cursor) return Boolean;
+   
+   package Array_Iterators is new Ada.Iterator_Interfaces (Cursor,
+                                                           Has_Element);
    
    function As_Array (Ref : Ref_Type) return Array_View'Class;
    
@@ -146,9 +157,15 @@ package ROSIDL.Dynamic is
                      Index : Positive) return Ref_Type'Class;
    
    function Array_Element (Arr   : Array_View; 
+                           Index : Cursor) return Ref_Type'Class;
+   
+   function Array_Element (Arr   : Array_View; 
                            Index : Positive) return Ref_Type'Class renames Element;
    
    type Array_Kinds is (Static, Bounded, Dynamic);
+   
+   function Iterate (Arr : Array_View) return 
+     Array_Iterators.Forward_Iterator'Class;
    
    function Kind (Arr : Array_View) return Array_Kinds;
    --  Static arrays are declared with size in the .msg and cannot be resized
@@ -280,4 +297,12 @@ private
    
    function Linear_Index (Mat : Matrix_View; Pos : Matrix_Indices) return Positive;
 
+   
+   type Cursor is record
+      Pos   : Positive;
+      Valid : Boolean;
+   end record;   
+   
+   function Has_Element (C : Cursor) return Boolean is (C.Valid);
+   
 end ROSIDL.Dynamic;
