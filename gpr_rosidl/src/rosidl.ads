@@ -19,6 +19,7 @@ private
 
    function Rti_Bool_Id    return Uint8_T with Import, Convention => C;
    function Rti_Byte_Id    return Uint8_T with Import, Convention => C;
+   function Rti_Char_Id    return Uint8_T with Import, Convention => C;
    function Rti_Float32_Id return Uint8_T with Import, Convention => C;
    function Rti_Float64_Id return Uint8_T with Import, Convention => C;
    function Rti_Int8_Id    return Uint8_T with Import, Convention => C;

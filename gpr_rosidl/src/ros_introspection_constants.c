@@ -4,6 +4,7 @@
 
 int rti_bool_id   (void) { return rosidl_typesupport_introspection_c__ROS_TYPE_BOOL; }
 int rti_byte_id   (void) { return rosidl_typesupport_introspection_c__ROS_TYPE_BYTE; }
+int rti_char_id   (void) { return rosidl_typesupport_introspection_c__ROS_TYPE_CHAR; }
 int rti_float32_id(void) { return rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT32; }
 int rti_float64_id(void) { return rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT64; }
 int rti_int8_id   (void) { return rosidl_typesupport_introspection_c__ROS_TYPE_INT8; }

@@ -64,13 +64,9 @@ package body ROSIDL.Dynamic is
    ------------
 
    function Capacity (Arr : Array_View) return Natural is
-   begin
-      if Arr.Member.Array_Size_U /= 0 then
-         return Natural (Arr.Member.Array_Size_U);
-      else
-         return Natural (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Capacity);
-      end if;
-   end Capacity;
+     (if Arr.Kind = Static
+      then Natural (Arr.Member.Array_Size_U)
+      else Natural (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Capacity));
 
    --------------
    -- Finalize --
@@ -105,14 +101,14 @@ package body ROSIDL.Dynamic is
            "Out of bounds, index:" & Index'Img & "; last:" & Arr.Length'Img;
       end if;
 
-      if Arr.Is_Static then
+      if Arr.Kind = Static then
          return Ref_Type'(Global_Void'Access,
                           Arr.Member,
                           Get_Item_Addr (Arr.Ptr));
       else
          return Ref_Type'(Global_Void'Access,
                           Arr.Member,
-                          Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Data);
+                          Get_Item_Addr (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Data));
       end if;
    end Element;
 
@@ -209,25 +205,25 @@ package body ROSIDL.Dynamic is
    function Introspect (This : Message) return Introspection.Message_Class is
      (This.Support.Message_Class);
 
-   ---------------
-   -- Is_Static --
-   ---------------
+   ----------
+   -- Kind --
+   ----------
 
-   function Is_Static (Arr : Array_View) return Boolean is
-      (Arr.Member.Array_Size_U /= 0);
+   function Kind (Arr : Array_View) return Array_Kinds is
+     (if Arr.Member.Array_Size_U = 0
+      then Dynamic
+      elsif Support.To_Boolean (Arr.Member.Is_Upper_Bound_U)
+      then Bounded
+      else Static);
 
    ------------
    -- Length --
    ------------
 
    function Length (Arr : Array_View) return Natural is
-   begin
-      if Arr.Member.Array_Size_U /= 0 then
-         return Natural (Arr.Member.Array_Size_U);
-      else
-         return Natural (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Size);
-      end if;
-   end Length;
+     (case Arr.Kind is
+         when Static => Arr.Capacity,
+         when others => Natural (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Size));
 
    -----------
    -- Print --
@@ -268,16 +264,14 @@ package body ROSIDL.Dynamic is
                Arr : constant Array_View'Class := This.Reference (Name).As_Array;
                --  Indexing instead of calling reference causes a bug here
             begin
-               Put_Line (Prefix & "      Is static array: " & Arr.Is_Static'Img);
+               Put_Line (Prefix & "           Array kind: " & Arr.Kind'Img);
                Put_Line (Prefix & "Array size (declared):"  & M.Array_Size_U'Img);
-               if not Arr.Is_Static then
-                  Put_Line (Prefix & "  Array size (actual):"  & Arr.Length'Img);
-                  Put_Line (Prefix & "       Array capacity:"  & Arr.Capacity'Img);
-               end if;
+               Put_Line (Prefix & "  Array size (actual):"  & Arr.Length'Img);
+               Put_Line (Prefix & "       Array capacity:"  & Arr.Capacity'Img);
             end;
          end if;
 
-         Put_Line (Prefix & "       Is upper bound:" & M.Is_Upper_Bound_U'Img);
+         Put_Line (Prefix & "     Has bounded size:" & M.Is_Upper_Bound_U'Img);
          Put_Line (Prefix & "               Offset:" & M.Offset_U'Img);
          Put_Line (Prefix & "        Default value: (void*)");
          Put_Line (Prefix & "             Data ptr: (void*) " & System.Address_Image (Data_Ptr));
@@ -385,8 +379,10 @@ package body ROSIDL.Dynamic is
       end Resize;
 
    begin
-      if Natural (Arr.Member.Array_Size_U) /= 0 then
+      if Arr.Kind = Static then
          raise Constraint_Error with "Cannot resize static arrays";
+      elsif Arr.Kind = Bounded and then Length >= Natural (Arr.Member.Array_Size_U) then
+         raise Constraint_Error with "Cannot resize beyond max bounded length:" & Arr.Member.Array_Size_U'Img;
       end if;
 
       if Arr.Member.Type_Id_U = Types.Message_Id then

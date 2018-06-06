@@ -149,8 +149,13 @@ package ROSIDL.Dynamic is
    function Array_Element (Arr   : Array_View; 
                            Index : Positive) return Ref_Type'Class renames Element;
    
-   function Is_Static (Arr : Array_View) return Boolean;
+   type Array_Kinds is (Static, Bounded, Dynamic);
+   
+   function Kind (Arr : Array_View) return Array_Kinds;
    --  Static arrays are declared with size in the .msg and cannot be resized
+   --  Bounded arrays are generated as dynamic arrays.
+   --  Dynamic arrays have same size and capacity, and have to be allocated
+   --    with Resize prior to being used
    
    function Length (Arr : Array_View) return Natural;
    

@@ -13,6 +13,8 @@ package Rosidl.Types is
    
    subtype Byte is Natural range 0 .. 2 ** 8 - 1;
    
+   subtype Char is C.Char;
+   
    subtype Float32 is Float;
    subtype Float64 is Long_Float;
    
@@ -41,6 +43,7 @@ package Rosidl.Types is
    
    Bool_Id    : constant Uint8_t;
    Byte_Id    : constant Uint8_t;
+   Char_Id    : constant Uint8_T;
    Float32_Id : constant Uint8_t;
    Float64_Id : constant Uint8_t;
    Int8_Id    : constant Uint8_t;
@@ -58,6 +61,7 @@ private
    
    Bool_Id    : constant Uint8_T := Rti_Bool_Id;
    Byte_Id    : constant Uint8_T := Rti_Byte_Id;
+   Char_Id    : constant Uint8_T := Rti_Char_Id;
    Float32_Id : constant Uint8_T := Rti_Float32_Id;
    Float64_Id : constant Uint8_T := Rti_Float64_Id;
    Int8_Id    : constant Uint8_T := Rti_Int8_Id;
@@ -78,6 +82,7 @@ private
    function Name (Id : Uint8_T) return String is 
      (if    Id = Rti_Bool_Id then    "bool"
       elsif Id = Rti_Byte_Id then    "byte"
+      elsif Id = Rti_Char_Id then    "char"        
       elsif Id = Rti_Float32_Id then "float32"
       elsif Id = Rti_Float64_Id then "float64"
       elsif Id = Rti_Int8_Id then    "int8"
@@ -93,20 +98,21 @@ private
       else                           "unknown (id:" & Id'Img & ")");
    
    function Size_Of (Id : Uint8_T) return Positive is 
-     ((if    Id = Rti_Bool_Id then     Bool'Size
-      elsif Id = Rti_Byte_Id then     Byte'Size
-      elsif Id = Rti_Float32_Id then  Float32'Size
-      elsif Id = Rti_Float64_Id then  Float64'Size
-      elsif Id = Rti_Int8_Id then      Int8'Size 
-      elsif Id = Rti_Uint8_Id then    Uint8'Size 
-      elsif Id = Rti_Int16_Id then     Int16'Size 
-      elsif Id = Rti_Uint16_Id then   Uint16'Size 
-      elsif Id = Rti_Int32_Id then     Int32'Size 
-      elsif Id = Rti_Uint32_Id then   Uint32'Size 
-      elsif Id = Rti_Int64_Id then     Int64'Size   
-      elsif Id = Rti_Uint64_Id then   Uint64'Size
-      elsif Id = Rti_String_Id then   Rosidl_Generator_C_U_String'Size
-      else raise Constraint_Error with "Message field has unknown size") / 8
+     ((if   Id = Rti_Bool_Id then     Bool'Size
+       elsif Id = Rti_Byte_Id then     Byte'Size
+       elsif Id = Rti_Char_Id then     Char'Size         
+       elsif Id = Rti_Float32_Id then  Float32'Size
+       elsif Id = Rti_Float64_Id then  Float64'Size
+       elsif Id = Rti_Int8_Id then      Int8'Size 
+       elsif Id = Rti_Uint8_Id then    Uint8'Size 
+       elsif Id = Rti_Int16_Id then     Int16'Size 
+       elsif Id = Rti_Uint16_Id then   Uint16'Size 
+       elsif Id = Rti_Int32_Id then     Int32'Size 
+       elsif Id = Rti_Uint32_Id then   Uint32'Size 
+       elsif Id = Rti_Int64_Id then     Int64'Size   
+       elsif Id = Rti_Uint64_Id then   Uint64'Size
+       elsif Id = Rti_String_Id then   Rosidl_Generator_C_U_String'Size
+       else raise Constraint_Error with "Message field has unknown size") / 8
      );
 
 end Rosidl.Types;
