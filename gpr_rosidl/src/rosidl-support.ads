@@ -30,21 +30,18 @@ package ROSIDL.Support is
    type Proc_Addr is access procedure (Addr : System.Address) with Convention => C;
    function To_Proc is new Ada.Unchecked_Conversion (System.Address, Proc_Addr);
    
---     function First_Upper (S : String) Return String;
+   type Kinds is (Message, Service);
    
    function Get_Symbol (Name : String) return System.Address;
    
-   function Get_Message_Function (Pkg    : String;
+   function Get_Message_Function (Kind   : Kinds;
+                                  Pkg    : String;
                                   Msg    : String;
                                   Suffix : String) 
                                   return System.Address is
-     (Get_Symbol (Pkg & "__msg__" & Msg & "__" & Suffix));      
-
-   function Get_Msg_Typesupport (Pkg, Msg : String) return System.Address is
-     (Get_Symbol ("rosidl_typesupport_c__get_message_type_support_handle__" &
-                    Pkg & "__msg__" & Msg));
-   -- rosidl_typesupport_c__get_message_type_support_handle__std_msgs__msg__Bool
-   
+     (Get_Symbol (Pkg & (case Kind is
+                            when Message => "__msg__", 
+                            when Service => "__srv__") & Msg &  "__" & Suffix));            
    
    generic
       type Container (<>) is limited private;

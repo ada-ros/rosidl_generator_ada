@@ -1,30 +1,55 @@
 with Ada.Unchecked_Conversion;
 
-with ROSIDL.Support;
 with ROSIDL.Typesupport;
 
 with System;
 
 package body ROSIDL.Introspection is
 
-   type TSI_Access is access constant Rosidl_Typesupport_Introspection_C_U_MessageMembers;
+   type MTSI_Access is access constant Message_Members_Meta;
+   type STSI_Access is access constant Service_Members_Meta;
+
+   function To_MTSI_Ptr is new Ada.Unchecked_Conversion (System.Address, MTSI_Access);
+   function To_STSI_Ptr is new Ada.Unchecked_Conversion (System.Address, STSI_Access);
 
    ------------------------
    -- Get_Msg_Introspect --
    ------------------------
 
-   function Get_Msg_Introspect (Pkg, Msg : String)
-                                return access constant Rosidl_Typesupport_Introspection_C_U_MessageMembers is
+   function Get_Msg_Introspect (Pkg, Msg : String; Kind : Support.Kinds)
+                                return access constant Message_Members_Meta is
       -- rosidl_typesupport_introspection_c__get_message_type_support_handle__std_msgs__msg__String
       type Get_Introspect is access function return Typesupport.Msg_Support_Handle with Convention => C;
       function To_Get_Introspect is new Ada.Unchecked_Conversion (System.Address, Get_Introspect);
 
       TS : constant Typesupport.Msg_Support_Handle :=
-             To_Get_Introspect (Support.Get_Symbol ("rosidl_typesupport_introspection_c__get_message_type_support_handle__" & Pkg & "__msg__" & Msg)).all;
-
-      function To_TSI_Ptr is new Ada.Unchecked_Conversion (System.Address, TSI_Access);
+             To_Get_Introspect (Support.Get_Symbol
+                                ("rosidl_typesupport_introspection_c__get_message_type_support_handle__" &
+                                     Pkg &
+                                   (Case Kind Is
+                                         when Message => "__msg__",
+                                         when Service => "__srv__") &
+                                     Msg)).all;
    begin
-      return To_TSI_Ptr (TS.Data);
+      return To_MTSI_Ptr (TS.Data);
    end Get_Msg_Introspect;
+
+   ------------------------
+   -- Get_Srv_Introspect --
+   ------------------------
+
+   function Get_Srv_Introspect (Pkg, Srv : String)
+                                return access constant Service_Members_Meta is
+      type Get_Introspect is access function return Typesupport.Srv_Support_Handle with Convention => C;
+      function To_Get_Introspect is new Ada.Unchecked_Conversion (System.Address, Get_Introspect);
+
+      TS : constant Typesupport.Srv_Support_Handle :=
+             To_Get_Introspect (Support.Get_Symbol
+                                ("rosidl_typesupport_introspection_c__get_service_type_support_handle__" &
+                                     Pkg & "__srv__" &
+                                     Srv)).all;
+   begin
+      return To_STSI_Ptr (TS.Data);
+   end Get_Srv_Introspect;
 
 end ROSIDL.Introspection;

@@ -1,3 +1,4 @@
+with Ada.Exceptions;
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
@@ -39,8 +40,9 @@ package body ROSIDL.Dynamic is
    function As_Array (Ref : Ref_Type) return Array_View'Class is
    begin
       if Ref.Member.Is_Array_U /= 0 Then
-         return Array_View'(Member => Ref.Member,
-                            Ptr    => Ref.Ptr);
+         return Array_View'(Msg_Kind => Ref.Kind,
+                            Member   => Ref.Member,
+                            Ptr      => Ref.Ptr);
       else
          raise Constraint_Error with "Field is not an array";
       end if;
@@ -112,10 +114,12 @@ package body ROSIDL.Dynamic is
 
       if Arr.Kind = Static then
          return Ref_Type'(Global_Void'Access,
+                          Arr.Msg_Kind,
                           Arr.Member,
                           Get_Item_Addr (Arr.Ptr));
       else
          return Ref_Type'(Global_Void'Access,
+                          Arr.Msg_Kind,
                           Arr.Member,
                           Get_Item_Addr (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Data));
       end if;
@@ -180,30 +184,27 @@ package body ROSIDL.Dynamic is
    -- Init --
    ----------
 
-   function Init (Pkg : String;  -- ROS2 package declaring the msg; e.g. std_msgs
-                  Msg : String)  -- Type of the message / name of *.msg e.g. string
-                  return Message is
-      (Init (ROSIDL.Typesupport.Get_Message_Support (Pkg, Msg)));
-
-   ----------
-   -- Init --
-   ----------
-
    function Init (Msg_Support : ROSIDL.Typesupport.Message_Support) return Message
    is
       Pkg : constant String := Msg_Support.Message_Class.Package_Name;
       Msg : constant String := Msg_Support.Message_Class.Message_Name;
 
       Create : constant Support.Func_Ret_Addr :=
-                 Support.To_Func (Support.Get_Message_Function (Pkg, Msg, "create"));
+                 Support.To_Func (Support.Get_Message_Function (Msg_Support.Kind, Pkg, Msg, "create"));
    begin
       return M : Message (Is_Field => False) do
-         M.Msg := Create.all;
+         begin
+            M.Msg := Create.all;
 
-         M.Support := ROSIDL.Typesupport.Get_Message_Support (Pkg, Msg);
+            M.Support := Msg_Support;
 
-         --  Functions we'll need at destroy time:
-         M.Destroy := Support.To_Proc (Support.Get_Message_Function (Pkg, Msg, "destroy"));
+            --  Functions we'll need at destroy time:
+            M.Destroy := Support.To_Proc (Support.Get_Message_Function (Msg_Support.Kind, Pkg, Msg, "destroy"));
+         exception
+            when E : others =>
+               Put_Line ("Dynamic.Msg.Init: " & Ada.Exceptions.Exception_Information (E));
+               raise;
+         end;
       end return;
    end Init;
 
@@ -343,6 +344,7 @@ package body ROSIDL.Dynamic is
             if CS.Value (Member.Name_U) = Field then
                --  Put_Line ("Field offset is" & Member.Offset_U'Img);
                return Ref_Type'(Reserved => Global_Void'Access,
+                                Kind     => This.Support.Kind,
                                 Member   => Member'Unchecked_Access,
                                 Ptr      => This.Msg + Storage_Offset (Member.Offset_U));
             end if;
@@ -369,9 +371,9 @@ package body ROSIDL.Dynamic is
          --  rosidl_generator_c__String__Array__init(
          --    rosidl_generator_c__String__Array * array, size_t size);
       begin
-         Fini_Proc (Support.Get_Message_Function (Pkgname, Typename & "__Array", "fini")).all (Arr.Ptr);
+         Fini_Proc (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "fini")).all (Arr.Ptr);
 
-         if Init_Func (Support.Get_Message_Function (Pkgname, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length)) = 0 then
+         if Init_Func (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length)) = 0 then
             raise Program_Error with "Array initialization failed";
          end if;
 

@@ -45,10 +45,6 @@ package ROSIDL.Dynamic is
    -- Message subprograms --
    -------------------------         
    
-   function Init (Pkg : String;  -- ROS2 package declaring the msg; e.g. std_msgs
-                  Msg : String)  -- Type of the message / name of *.msg e.g. string
-                  return Message;
-   
    function Init (Msg_Support : Typesupport.Message_Support) return Message;
    
    function Reference (This  : Message;
@@ -249,6 +245,7 @@ private
    
    type Ref_Type (Reserved : access constant Void) is tagged limited 
       record
+         Kind   : Support.Kinds; 
          Member : access constant Introspection.Message_Member_Meta; -- Metadata about the field
          Ptr    : System.Address; -- The raw C data
       end record;
@@ -266,8 +263,9 @@ private
    
    type Array_View is 
      tagged limited record
-      Member : access constant Introspection.Message_Member_Meta;
-      Ptr    : System.Address;
+      Msg_Kind : Support.Kinds;
+      Member   : access constant Introspection.Message_Member_Meta;
+      Ptr      : System.Address;
    end record;
    
    function Get_Introspection (Member : access constant Introspection.Message_Member_Meta)
