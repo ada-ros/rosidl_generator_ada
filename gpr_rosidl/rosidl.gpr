@@ -31,8 +31,8 @@ project Rosidl is
    end Builder;
 
    package Compiler is
-      for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2",
-                                "-gnata", "-gnat12", "-gnato", "-fstack-check");
+      for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnatf",
+                                "-gnata", "-gnat2012", "-gnato", "-fstack-check");
 
       for Switches ("C") use ("-O2", "-Wall", "-Wextra", "-pedantic");
    end Compiler;

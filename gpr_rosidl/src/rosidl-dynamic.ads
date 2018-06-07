@@ -8,6 +8,8 @@ with ROSIDL.Support;
 with ROSIDL.Typesupport;
 with ROSIDL.Types;
 
+with Shared_Pointers;
+
 with Std_Msgs_Msg_Multi_Array_Dimension_Ustruct_H; use Std_Msgs_Msg_Multi_Array_Dimension_Ustruct_H;
 with Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;    use Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;
 
@@ -29,6 +31,12 @@ package ROSIDL.Dynamic is
    type Message (<>) is tagged limited private with 
      Constant_Indexing => Reference;
    
+   type Shared_Message (Msg : access Message) is private
+     with Implicit_Dereference => Msg;
+   --  Refcounted messages. 
+   --  IMPORTANT: at this time this is not thread safe not intended for
+   --  any other use than to get the return message in Nodes.Client_Call.
+   
    type Void is null record;
    type Ref_Type (Reserved : access constant Void) is tagged limited private
      with Implicit_Dereference => Reserved;
@@ -46,6 +54,8 @@ package ROSIDL.Dynamic is
    -------------------------         
    
    function Init (Msg_Support : Typesupport.Message_Support) return Message;
+   
+   function Init_Shared (Msg_Support : Typesupport.Message_Support) return Shared_Message;
    
    function Reference (This  : Message;
                        Field : String) return Ref_Type'Class;
@@ -302,5 +312,12 @@ private
    end record;   
    
    function Has_Element (C : Cursor) return Boolean is (C.Valid);
+   
+   
+   package Shared_Messages is new Shared_Pointers (Message);
+   
+   type Shared_Message (Msg : access Message) is record 
+      Ptr : Shared_Messages.Shared (Element => Msg);
+   end record;   
    
 end ROSIDL.Dynamic;

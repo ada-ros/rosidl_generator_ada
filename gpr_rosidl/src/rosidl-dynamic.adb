@@ -208,6 +208,19 @@ package body ROSIDL.Dynamic is
       end return;
    end Init;
 
+   ----------
+   -- Init --
+   ----------
+
+   function Init_Shared (Msg_Support : ROSIDL.Typesupport.Message_Support)
+                  return Shared_Message
+   is
+      Msg : constant access Message := new Message'(Init (Msg_Support));
+   begin
+      return (Msg => Msg,
+              Ptr => Shared_Messages.Make_Shared (Msg));
+   end Init_Shared;
+
    ----------------
    -- Introspect --
    ----------------
