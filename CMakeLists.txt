@@ -76,6 +76,7 @@ add_dependencies(ada_rosidl ada_dl ada_binding_rosidl_typesupport_c)
 # Generations of test messages
 rosidl_generate_interfaces(${PROJECT_NAME}
         msg/Test.msg
+        srv/Test.srv
         DEPENDENCIES std_msgs
         )
 
