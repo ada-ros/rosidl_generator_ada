@@ -16,6 +16,7 @@ with "dl";
 project Rosidl is
 
    for Library_Name use "adarosidl";
+   for Library_Kind use "static";
 
    for Languages use ("Ada", "C");
 
@@ -40,6 +41,10 @@ project Rosidl is
    package Binder is
       for Switches ("ada") use ("-Es");
    end Binder;
+
+   package Linker is
+      for Linker_Options use ("-Wl,--no-as-needed");
+   end Linker;
 
 end Rosidl;
 
