@@ -39,7 +39,7 @@ package body ROSIDL.Dynamic is
 
    function As_Array (Ref : Ref_Type) return Array_View'Class is
    begin
-      if Ref.Member.Is_Array_U /= 0 Then
+      if Ref.Member.Is_Array_U /= Bool_False Then
          return Array_View'(Msg_Kind => Ref.Kind,
                             Member   => Ref.Member,
                             Ptr      => Ref.Ptr);
@@ -215,7 +215,9 @@ package body ROSIDL.Dynamic is
    function Init_Shared (Msg_Support : ROSIDL.Typesupport.Message_Support)
                   return Shared_Message
    is
+      pragma Warnings (Off);
       Msg : constant access Message := new Message'(Init (Msg_Support));
+      pragma Warnings (On);
    begin
       return (Msg => Msg,
               Ptr => Shared_Messages.Make_Shared (Msg));
@@ -233,9 +235,9 @@ package body ROSIDL.Dynamic is
    ----------
 
    function Kind (Arr : Array_View) return Array_Kinds is
-     (if    Arr.Member.Array_Size_U      = 0 then Dynamic
-      elsif Arr.Member.Is_Upper_Bound_U /= 0 then Bounded
-      else                                        Static);
+     (if    Arr.Member.Array_Size_U      = 0   then Dynamic
+      elsif Bool (Arr.Member.Is_Upper_Bound_U) then Bounded
+      else                                          Static);
 
    ------------
    -- Length --
@@ -280,7 +282,7 @@ package body ROSIDL.Dynamic is
          Put_Line (Prefix & "              members: (rosidl_message_type_support_t *) " & System.Address_Image (To_Addr (M.Members_U)));
 
          Put_Line (Prefix & "             Is array:" & M.Is_Array_U'Img);
-         if M.Is_Array_U /= 0 then
+         if Bool (M.Is_Array_U) then
             declare
                Arr : constant Array_View'Class := This.Reference (Name).As_Array;
                --  Indexing instead of calling reference causes a bug here
@@ -386,7 +388,7 @@ package body ROSIDL.Dynamic is
       begin
          Fini_Proc (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "fini")).all (Arr.Ptr);
 
-         if Init_Func (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length)) = 0 then
+         if not Bool (Init_Func (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length))) then
             raise Program_Error with "Array initialization failed";
          end if;
 
@@ -434,9 +436,9 @@ package body ROSIDL.Dynamic is
       then
          raise Constraint_Error with "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
       else
-         if Rosidl_Generator_C_U_String_U_Assign
-           (To_Str_Ptr (Ref.Ptr).Data'Access,
-            C_Strings.To_C (Str).To_Ptr) = 0
+         if not Bool (Rosidl_Generator_C_U_String_U_Assign
+                        (To_Str_Ptr (Ref.Ptr).Data'Access,
+                         C_Strings.To_C (Str).To_Ptr))
          then
             raise Constraint_Error with "Setting string value failed";
          end if;

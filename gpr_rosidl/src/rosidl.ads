@@ -1,4 +1,5 @@
 with Interfaces.C; pragma Unreferenced (Interfaces.C);
+with Interfaces.C.Extensions;
 
 with X86_64_Linux_Gnu_Bits_Stdint_Uintn_H;
 
@@ -37,5 +38,16 @@ private
    --  Whole string if no separator found
    function Tail (S : String; Separator : Character := '.') return String;
    --  Empty if no separator found
+
+   package CX renames Interfaces.C.Extensions;
+
+   pragma Warnings (Off);
+   use all type CX.Bool;
+   pragma Warnings (On);
+
+   Bool_False : constant CX.Bool := CX.Bool'First;
+   --  Saves future problems with CX.bool being made a new Boolean instead of char
+
+   function Bool (Ret : CX.Bool) return Boolean is (Ret /= Bool_False);
 
 end ROSIDL;

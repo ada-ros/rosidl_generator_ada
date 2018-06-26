@@ -43,7 +43,7 @@ project Rosidl is
    end Binder;
 
    package Linker is
-      for Linker_Options use ("-Wl,--no-as-needed");
+      for Linker_Options use ("-rdynamic");
    end Linker;
 
 end Rosidl;
