@@ -11,4 +11,11 @@ package ROSIDL.Impl is
 
    subtype Message_Holder is Message_Holders.Holder;
 
+   function To_Holder (Msg : Dynamic.Shared_Message) return Message_Holder;
+
+private
+
+   function To_Holder (Msg : Dynamic.Shared_Message) return Message_Holder is
+     (Message_Holders.To_Holder (Msg));
+
 end ROSIDL.Impl;

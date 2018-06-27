@@ -15,6 +15,8 @@ with Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;    use Std_Msgs_Msg_Multi_Array_
 
 with System;
 
+limited with ROSIDL.Impl;
+
 package ROSIDL.Dynamic is
 
    --  Facilities that use dynamic introspection.
