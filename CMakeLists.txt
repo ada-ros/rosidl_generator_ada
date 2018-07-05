@@ -72,10 +72,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         DEPENDENCIES std_msgs
         )
 
-#ament_package()
-
-# Ours must be last to override ament
+# This goes first because install won't overwrite our file
 ada_end_package()
+
+ament_package()
 
 #get_cmake_property(_variableNames VARIABLES)
 #list (SORT _variableNames)
