@@ -75,6 +75,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 # This goes first because install won't overwrite our file
 ada_end_package()
 
+#ament_package(CONFIG_EXTRAS "foo-extras.cmake")
 ament_package()
 
 #get_cmake_property(_variableNames VARIABLES)
