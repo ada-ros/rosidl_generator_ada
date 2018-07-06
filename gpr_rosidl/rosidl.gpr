@@ -4,6 +4,7 @@ with "clib_builtin_interfaces_rosidl_typesupport_introspection_c";
 
 with "clib_rosidl_generator_c";
 with "clib_rosidl_typesupport_c";
+-- with "clib_rosidl_typesupport_interface";
 with "clib_rosidl_typesupport_introspection_c";
 
 with "clib_std_msgs_rosidl_generator_c";

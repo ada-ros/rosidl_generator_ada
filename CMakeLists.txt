@@ -21,6 +21,11 @@ ament_register_extension(
         "rosidl_generator_ada"
         "${PROJECT_SOURCE_DIR}/cmake/rosidl_generator_ada_generate_interfaces.cmake")
 
+# message("XXXXXXXXXXXXXX ${rosidl_typesupport_interface_INCLUDE_DIRS}")
+
+# Generate import project for rosidl_typesupport_interface/macros.h
+ada_import_c_headers(typesupport_interface ${rosidl_typesupport_interface_INCLUDE_DIRS})
+
 # Generate autobinding for std types and rosidl_typesupport_c
 ada_import_c_libraries(${std_msgs_LIBRARIES})
 
