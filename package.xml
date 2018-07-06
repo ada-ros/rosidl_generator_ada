@@ -3,9 +3,9 @@
 <package format="3">
   <name>rosidl_generator_ada</name>
   <version>0.1.0</version>
-  <description>Generate the ROS2 interfaces in Ada</description>
+  <description>Generates the ROS2 interfaces for Ada</description>
   <maintainer email="amosteo@unizar.es">Alejandro R. Mosteo</maintainer>
-  <license>Apache License 2.0</license>
+  <license>LGPLv3</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -20,10 +20,8 @@
 
   <depend>rosidl_default_runtime</depend>
 
-  <member_of_group>rosidl_interface_packages</member_of_group>
-  <!--
   <member_of_group>rosidl_generator_packages</member_of_group>
-  -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
     <build_type>ament_cmake</build_type>
