@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rosidl_generator_ada VERSION 0.1.0)
 
-if(BUILD_TESTING)
-    # Silence a warning (?)
-endif()
-
 find_package(rclada_common REQUIRED)
 
 ada_begin_package()
@@ -72,15 +68,4 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         DEPENDENCIES std_msgs
         )
 
-# This goes first because install won't overwrite our file
 ada_end_package()
-
-#ament_package(CONFIG_EXTRAS "foo-extras.cmake")
-ament_package()
-
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
-
