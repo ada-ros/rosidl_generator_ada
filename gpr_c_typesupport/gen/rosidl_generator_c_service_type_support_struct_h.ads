@@ -20,19 +20,19 @@ package rosidl_generator_c_service_type_support_struct_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rosidl_service_typesupport_handle_function is access function (arg1 : System.Address; arg2 : Interfaces.C.Strings.chars_ptr) return access constant rosidl_service_type_support_t;
-   pragma Convention (C, rosidl_service_typesupport_handle_function);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:29
+   pragma Convention (C, rosidl_service_typesupport_handle_function);  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:29
 
    type rosidl_service_type_support_t is record
-      typesupport_identifier : Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:34
-      data : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:35
-      func : rosidl_service_typesupport_handle_function;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:36
+      typesupport_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:34
+      data : System.Address;  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:35
+      func : rosidl_service_typesupport_handle_function;  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:36
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_service_type_support_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:32
+   pragma Convention (C_Pass_By_Copy, rosidl_service_type_support_t);  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:32
 
-   function get_service_typesupport_handle (handle : access constant rosidl_service_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_service_type_support_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:40
+   function get_service_typesupport_handle (handle : access constant rosidl_service_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_service_type_support_t;  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:40
    pragma Import (C, get_service_typesupport_handle, "get_service_typesupport_handle");
 
-   function get_service_typesupport_handle_function (handle : access constant rosidl_service_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_service_type_support_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/service_type_support_struct.h:44
+   function get_service_typesupport_handle_function (handle : access constant rosidl_service_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_service_type_support_t;  -- /opt/ros/bouncy/include/rosidl_generator_c/service_type_support_struct.h:44
    pragma Import (C, get_service_typesupport_handle_function, "get_service_typesupport_handle_function");
 
 end rosidl_generator_c_service_type_support_struct_h;

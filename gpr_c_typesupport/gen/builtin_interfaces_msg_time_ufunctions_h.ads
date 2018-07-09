@@ -21,7 +21,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * \return true if initialization was successful, otherwise false
   --  
 
-   function builtin_interfaces_u_msg_u_Time_u_init (msg : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:32
+   function builtin_interfaces_u_msg_u_Time_u_init (msg : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time) return Extensions.bool;  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:32
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_init, "builtin_interfaces__msg__Time__init");
 
   --/ Finalize builtin_interfaces/Time message.
@@ -29,7 +29,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * \param[in,out] msg The allocated message pointer.
   --  
 
-   procedure builtin_interfaces_u_msg_u_Time_u_fini (msg : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time);  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:40
+   procedure builtin_interfaces_u_msg_u_Time_u_fini (msg : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time);  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:40
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_fini, "builtin_interfaces__msg__Time__fini");
 
   --/ Create builtin_interfaces/Time message.
@@ -40,7 +40,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * otherwise NULL
   --  
 
-   function builtin_interfaces_u_msg_u_Time_u_create return access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time;  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:51
+   function builtin_interfaces_u_msg_u_Time_u_create return access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time;  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:51
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_create, "builtin_interfaces__msg__Time__create");
 
   --/ Destroy builtin_interfaces/Time message.
@@ -49,7 +49,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * \param[in,out] msg The allocated message pointer.
   --  
 
-   procedure builtin_interfaces_u_msg_u_Time_u_destroy (msg : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time);  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:60
+   procedure builtin_interfaces_u_msg_u_Time_u_destroy (msg : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time);  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:60
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_destroy, "builtin_interfaces__msg__Time__destroy");
 
   --/ Initialize array of builtin_interfaces/Time messages.
@@ -63,7 +63,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- # to return true.
   --  
 
-   function builtin_interfaces_u_msg_u_Time_u_Array_u_init (c_array : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:75
+   function builtin_interfaces_u_msg_u_Time_u_Array_u_init (c_array : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:75
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_Array_u_init, "builtin_interfaces__msg__Time__Array__init");
 
   --/ Finalize array of builtin_interfaces/Time messages.
@@ -73,7 +73,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * \param[in,out] array The initialized array pointer.
   --  
 
-   procedure builtin_interfaces_u_msg_u_Time_u_Array_u_fini (c_array : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:85
+   procedure builtin_interfaces_u_msg_u_Time_u_Array_u_fini (c_array : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array);  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:85
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_Array_u_fini, "builtin_interfaces__msg__Time__Array__fini");
 
   --/ Create array of builtin_interfaces/Time messages.
@@ -84,7 +84,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * \return The pointer to the initialized array if successful, otherwise NULL
   --  
 
-   function builtin_interfaces_u_msg_u_Time_u_Array_u_create (size : stddef_h.size_t) return access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array;  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:96
+   function builtin_interfaces_u_msg_u_Time_u_Array_u_create (size : stddef_h.size_t) return access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array;  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:96
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_Array_u_create, "builtin_interfaces__msg__Time__Array__create");
 
   --/ Destroy array of builtin_interfaces/Time messages.
@@ -94,7 +94,7 @@ package builtin_interfaces_msg_time_ufunctions_h is
   -- * \param[in,out] array The initialized array pointer.
   --  
 
-   procedure builtin_interfaces_u_msg_u_Time_u_Array_u_destroy (c_array : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/builtin_interfaces/include/builtin_interfaces/msg/time__functions.h:106
+   procedure builtin_interfaces_u_msg_u_Time_u_Array_u_destroy (c_array : access builtin_interfaces_msg_time_ustruct_h.builtin_interfaces_u_msg_u_Time_u_Array);  -- /opt/ros/bouncy/include/builtin_interfaces/msg/time__functions.h:106
    pragma Import (C, builtin_interfaces_u_msg_u_Time_u_Array_u_destroy, "builtin_interfaces__msg__Time__Array__destroy");
 
 end builtin_interfaces_msg_time_ufunctions_h;

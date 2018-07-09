@@ -21,7 +21,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * \return true if initialization was successful, otherwise false
   --  
 
-   function std_msgs_u_msg_u_MultiArrayLayout_u_init (msg : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:32
+   function std_msgs_u_msg_u_MultiArrayLayout_u_init (msg : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout) return Extensions.bool;  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:32
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_init, "std_msgs__msg__MultiArrayLayout__init");
 
   --/ Finalize std_msgs/MultiArrayLayout message.
@@ -29,7 +29,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * \param[in,out] msg The allocated message pointer.
   --  
 
-   procedure std_msgs_u_msg_u_MultiArrayLayout_u_fini (msg : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout);  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:40
+   procedure std_msgs_u_msg_u_MultiArrayLayout_u_fini (msg : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout);  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:40
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_fini, "std_msgs__msg__MultiArrayLayout__fini");
 
   --/ Create std_msgs/MultiArrayLayout message.
@@ -40,7 +40,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * otherwise NULL
   --  
 
-   function std_msgs_u_msg_u_MultiArrayLayout_u_create return access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout;  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:51
+   function std_msgs_u_msg_u_MultiArrayLayout_u_create return access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout;  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:51
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_create, "std_msgs__msg__MultiArrayLayout__create");
 
   --/ Destroy std_msgs/MultiArrayLayout message.
@@ -49,7 +49,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * \param[in,out] msg The allocated message pointer.
   --  
 
-   procedure std_msgs_u_msg_u_MultiArrayLayout_u_destroy (msg : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout);  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:60
+   procedure std_msgs_u_msg_u_MultiArrayLayout_u_destroy (msg : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout);  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:60
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_destroy, "std_msgs__msg__MultiArrayLayout__destroy");
 
   --/ Initialize array of std_msgs/MultiArrayLayout messages.
@@ -63,7 +63,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- # to return true.
   --  
 
-   function std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_init (c_array : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:75
+   function std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_init (c_array : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:75
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_init, "std_msgs__msg__MultiArrayLayout__Array__init");
 
   --/ Finalize array of std_msgs/MultiArrayLayout messages.
@@ -73,7 +73,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * \param[in,out] array The initialized array pointer.
   --  
 
-   procedure std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_fini (c_array : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:85
+   procedure std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_fini (c_array : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array);  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:85
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_fini, "std_msgs__msg__MultiArrayLayout__Array__fini");
 
   --/ Create array of std_msgs/MultiArrayLayout messages.
@@ -84,7 +84,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * \return The pointer to the initialized array if successful, otherwise NULL
   --  
 
-   function std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_create (size : stddef_h.size_t) return access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array;  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:96
+   function std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_create (size : stddef_h.size_t) return access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array;  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:96
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_create, "std_msgs__msg__MultiArrayLayout__Array__create");
 
   --/ Destroy array of std_msgs/MultiArrayLayout messages.
@@ -94,7 +94,7 @@ package std_msgs_msg_multi_array_layout_ufunctions_h is
   -- * \param[in,out] array The initialized array pointer.
   --  
 
-   procedure std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_destroy (c_array : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/std_msgs/include/std_msgs/msg/multi_array_layout__functions.h:106
+   procedure std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_destroy (c_array : access std_msgs_msg_multi_array_layout_ustruct_h.std_msgs_u_msg_u_MultiArrayLayout_u_Array);  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__functions.h:106
    pragma Import (C, std_msgs_u_msg_u_MultiArrayLayout_u_Array_u_destroy, "std_msgs__msg__MultiArrayLayout__Array__destroy");
 
 end std_msgs_msg_multi_array_layout_ufunctions_h;

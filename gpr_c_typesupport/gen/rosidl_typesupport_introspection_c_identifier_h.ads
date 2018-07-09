@@ -16,7 +16,7 @@ package rosidl_typesupport_introspection_c_identifier_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   rosidl_typesupport_introspection_c_u_identifier : Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_typesupport_introspection_c/include/rosidl_typesupport_introspection_c/identifier.h:26
+   rosidl_typesupport_introspection_c_u_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rosidl_typesupport_introspection_c/identifier.h:26
    pragma Import (C, rosidl_typesupport_introspection_c_u_identifier, "rosidl_typesupport_introspection_c__identifier");
 
 end rosidl_typesupport_introspection_c_identifier_h;

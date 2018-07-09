@@ -18,11 +18,11 @@ package rosidl_typesupport_introspection_c_service_introspection_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rosidl_typesupport_introspection_c_u_ServiceMembers is record
-      package_name_u : Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_typesupport_introspection_c/include/rosidl_typesupport_introspection_c/service_introspection.h:28
-      service_name_u : Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_typesupport_introspection_c/include/rosidl_typesupport_introspection_c/service_introspection.h:29
-      request_members_u : access constant rosidl_typesupport_introspection_c_message_introspection_h.rosidl_typesupport_introspection_c_u_MessageMembers;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_typesupport_introspection_c/include/rosidl_typesupport_introspection_c/service_introspection.h:30
-      response_members_u : access constant rosidl_typesupport_introspection_c_message_introspection_h.rosidl_typesupport_introspection_c_u_MessageMembers;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_typesupport_introspection_c/include/rosidl_typesupport_introspection_c/service_introspection.h:31
+      package_name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rosidl_typesupport_introspection_c/service_introspection.h:28
+      service_name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rosidl_typesupport_introspection_c/service_introspection.h:29
+      request_members_u : access constant rosidl_typesupport_introspection_c_message_introspection_h.rosidl_typesupport_introspection_c_u_MessageMembers;  -- /opt/ros/bouncy/include/rosidl_typesupport_introspection_c/service_introspection.h:30
+      response_members_u : access constant rosidl_typesupport_introspection_c_message_introspection_h.rosidl_typesupport_introspection_c_u_MessageMembers;  -- /opt/ros/bouncy/include/rosidl_typesupport_introspection_c/service_introspection.h:31
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_typesupport_introspection_c_u_ServiceMembers);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_typesupport_introspection_c/include/rosidl_typesupport_introspection_c/service_introspection.h:26
+   pragma Convention (C_Pass_By_Copy, rosidl_typesupport_introspection_c_u_ServiceMembers);  -- /opt/ros/bouncy/include/rosidl_typesupport_introspection_c/service_introspection.h:26
 
 end rosidl_typesupport_introspection_c_service_introspection_h;

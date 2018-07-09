@@ -20,82 +20,82 @@ package rosidl_generator_c_primitives_array_functions_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   -- array functions for all primitive types
-   procedure rosidl_generator_c_u_bool_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_bool_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:39
+   procedure rosidl_generator_c_u_bool_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_bool_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:39
    pragma Import (C, rosidl_generator_c_u_bool_u_Array_u_fini, "rosidl_generator_c__bool__Array__fini");
 
-   function rosidl_generator_c_u_bool_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_bool_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:39
+   function rosidl_generator_c_u_bool_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_bool_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:39
    pragma Import (C, rosidl_generator_c_u_bool_u_Array_u_init, "rosidl_generator_c__bool__Array__init");
 
-   procedure rosidl_generator_c_u_byte_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_byte_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:40
+   procedure rosidl_generator_c_u_byte_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_byte_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:40
    pragma Import (C, rosidl_generator_c_u_byte_u_Array_u_fini, "rosidl_generator_c__byte__Array__fini");
 
-   function rosidl_generator_c_u_byte_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_byte_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:40
+   function rosidl_generator_c_u_byte_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_byte_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:40
    pragma Import (C, rosidl_generator_c_u_byte_u_Array_u_init, "rosidl_generator_c__byte__Array__init");
 
-   procedure rosidl_generator_c_u_char_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_char_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:41
+   procedure rosidl_generator_c_u_char_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_char_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:41
    pragma Import (C, rosidl_generator_c_u_char_u_Array_u_fini, "rosidl_generator_c__char__Array__fini");
 
-   function rosidl_generator_c_u_char_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_char_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:41
+   function rosidl_generator_c_u_char_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_char_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:41
    pragma Import (C, rosidl_generator_c_u_char_u_Array_u_init, "rosidl_generator_c__char__Array__init");
 
-   procedure rosidl_generator_c_u_float32_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float32_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:42
+   procedure rosidl_generator_c_u_float32_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float32_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:42
    pragma Import (C, rosidl_generator_c_u_float32_u_Array_u_fini, "rosidl_generator_c__float32__Array__fini");
 
-   function rosidl_generator_c_u_float32_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float32_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:42
+   function rosidl_generator_c_u_float32_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float32_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:42
    pragma Import (C, rosidl_generator_c_u_float32_u_Array_u_init, "rosidl_generator_c__float32__Array__init");
 
-   procedure rosidl_generator_c_u_float64_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float64_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:43
+   procedure rosidl_generator_c_u_float64_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float64_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:43
    pragma Import (C, rosidl_generator_c_u_float64_u_Array_u_fini, "rosidl_generator_c__float64__Array__fini");
 
-   function rosidl_generator_c_u_float64_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float64_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:43
+   function rosidl_generator_c_u_float64_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_float64_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:43
    pragma Import (C, rosidl_generator_c_u_float64_u_Array_u_init, "rosidl_generator_c__float64__Array__init");
 
-   procedure rosidl_generator_c_u_int8_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int8_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:44
+   procedure rosidl_generator_c_u_int8_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int8_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:44
    pragma Import (C, rosidl_generator_c_u_int8_u_Array_u_fini, "rosidl_generator_c__int8__Array__fini");
 
-   function rosidl_generator_c_u_int8_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int8_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:44
+   function rosidl_generator_c_u_int8_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int8_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:44
    pragma Import (C, rosidl_generator_c_u_int8_u_Array_u_init, "rosidl_generator_c__int8__Array__init");
 
-   procedure rosidl_generator_c_u_uint8_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint8_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:45
+   procedure rosidl_generator_c_u_uint8_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint8_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:45
    pragma Import (C, rosidl_generator_c_u_uint8_u_Array_u_fini, "rosidl_generator_c__uint8__Array__fini");
 
-   function rosidl_generator_c_u_uint8_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint8_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:45
+   function rosidl_generator_c_u_uint8_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint8_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:45
    pragma Import (C, rosidl_generator_c_u_uint8_u_Array_u_init, "rosidl_generator_c__uint8__Array__init");
 
-   procedure rosidl_generator_c_u_int16_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int16_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:46
+   procedure rosidl_generator_c_u_int16_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int16_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:46
    pragma Import (C, rosidl_generator_c_u_int16_u_Array_u_fini, "rosidl_generator_c__int16__Array__fini");
 
-   function rosidl_generator_c_u_int16_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int16_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:46
+   function rosidl_generator_c_u_int16_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int16_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:46
    pragma Import (C, rosidl_generator_c_u_int16_u_Array_u_init, "rosidl_generator_c__int16__Array__init");
 
-   procedure rosidl_generator_c_u_uint16_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint16_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:47
+   procedure rosidl_generator_c_u_uint16_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint16_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:47
    pragma Import (C, rosidl_generator_c_u_uint16_u_Array_u_fini, "rosidl_generator_c__uint16__Array__fini");
 
-   function rosidl_generator_c_u_uint16_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint16_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:47
+   function rosidl_generator_c_u_uint16_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint16_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:47
    pragma Import (C, rosidl_generator_c_u_uint16_u_Array_u_init, "rosidl_generator_c__uint16__Array__init");
 
-   procedure rosidl_generator_c_u_int32_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int32_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:48
+   procedure rosidl_generator_c_u_int32_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int32_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:48
    pragma Import (C, rosidl_generator_c_u_int32_u_Array_u_fini, "rosidl_generator_c__int32__Array__fini");
 
-   function rosidl_generator_c_u_int32_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int32_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:48
+   function rosidl_generator_c_u_int32_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int32_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:48
    pragma Import (C, rosidl_generator_c_u_int32_u_Array_u_init, "rosidl_generator_c__int32__Array__init");
 
-   procedure rosidl_generator_c_u_uint32_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint32_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:49
+   procedure rosidl_generator_c_u_uint32_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint32_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:49
    pragma Import (C, rosidl_generator_c_u_uint32_u_Array_u_fini, "rosidl_generator_c__uint32__Array__fini");
 
-   function rosidl_generator_c_u_uint32_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint32_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:49
+   function rosidl_generator_c_u_uint32_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint32_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:49
    pragma Import (C, rosidl_generator_c_u_uint32_u_Array_u_init, "rosidl_generator_c__uint32__Array__init");
 
-   procedure rosidl_generator_c_u_int64_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int64_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:50
+   procedure rosidl_generator_c_u_int64_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int64_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:50
    pragma Import (C, rosidl_generator_c_u_int64_u_Array_u_fini, "rosidl_generator_c__int64__Array__fini");
 
-   function rosidl_generator_c_u_int64_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int64_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:50
+   function rosidl_generator_c_u_int64_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_int64_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:50
    pragma Import (C, rosidl_generator_c_u_int64_u_Array_u_init, "rosidl_generator_c__int64__Array__init");
 
-   procedure rosidl_generator_c_u_uint64_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint64_u_Array);  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:51
+   procedure rosidl_generator_c_u_uint64_u_Array_u_fini (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint64_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:51
    pragma Import (C, rosidl_generator_c_u_uint64_u_Array_u_fini, "rosidl_generator_c__uint64__Array__fini");
 
-   function rosidl_generator_c_u_uint64_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint64_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rosidl_generator_c/include/rosidl_generator_c/primitives_array_functions.h:51
+   function rosidl_generator_c_u_uint64_u_Array_u_init (c_array : access rosidl_generator_c_primitives_array_h.rosidl_generator_c_u_uint64_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/primitives_array_functions.h:51
    pragma Import (C, rosidl_generator_c_u_uint64_u_Array_u_init, "rosidl_generator_c__uint64__Array__init");
 
 end rosidl_generator_c_primitives_array_functions_h;
