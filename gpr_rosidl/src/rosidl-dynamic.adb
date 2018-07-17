@@ -22,6 +22,9 @@ package body ROSIDL.Dynamic is
    package CX renames Support.CX;
 
    use all type Interfaces.C.Size_T;
+   pragma Warnings (Off);
+   use all type Uint8_T;
+   pragma Warnings (On);
    use all type System.Address;
    use all type Types.Ids;
 

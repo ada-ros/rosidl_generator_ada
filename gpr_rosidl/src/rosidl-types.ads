@@ -83,6 +83,10 @@ package ROSIDL.Types is
    
 private
    
+   pragma Warnings (Off);
+   use all type Uint8_T;
+   pragma Warnings (On);
+   
    pragma Assert (Ids'Pos (Bool_Id)    = Rti_Bool_Id);  
    pragma Assert (Ids'Pos (Message_Id) = Rti_Message_Id);
    --  TODO: We should assert them all

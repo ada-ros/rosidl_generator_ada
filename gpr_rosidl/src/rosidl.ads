@@ -16,7 +16,6 @@ package ROSIDL is
 private
 
    subtype Uint8_T is X86_64_Linux_Gnu_Bits_Stdint_Uintn_H.Uint8_T;
-   use all type Uint8_T;
 
    function Rti_Bool_Id    return Uint8_T with Import, Convention => C;
    function Rti_Byte_Id    return Uint8_T with Import, Convention => C;
