@@ -88,8 +88,20 @@ private
    pragma Warnings (On);
    
    pragma Assert (Ids'Pos (Bool_Id)    = Rti_Bool_Id);  
+   pragma Assert (Ids'Pos (Byte_Id)    = Rti_Byte_Id);
+   pragma Assert (Ids'Pos (Char_Id)    = Rti_Char_Id);
+   pragma Assert (Ids'Pos (Float32_Id) = Rti_Float32_Id);
+   pragma Assert (Ids'Pos (Float64_Id) = Rti_Float64_Id);
+   pragma Assert (Ids'Pos ( Int8_Id)   = Rti_Int8_Id);
+   pragma Assert (Ids'Pos (Uint8_Id)   = Rti_Uint8_Id);
+   pragma Assert (Ids'Pos ( Int16_Id)  = Rti_Int16_Id);
+   pragma Assert (Ids'Pos (Uint16_Id)  = Rti_Uint16_Id);
+   pragma Assert (Ids'Pos ( Int32_Id)  = Rti_Int32_Id);
+   pragma Assert (Ids'Pos (Uint32_Id)  = Rti_Uint32_Id);
+   pragma Assert (Ids'Pos ( Int64_Id)  = Rti_Int64_Id);
+   pragma Assert (Ids'Pos (Uint64_Id)  = Rti_Uint64_Id);
+   pragma Assert (Ids'Pos (String_Id)  = Rti_String_Id);   
    pragma Assert (Ids'Pos (Message_Id) = Rti_Message_Id);
-   --  TODO: We should assert them all
    
    ----------
    -- Name --

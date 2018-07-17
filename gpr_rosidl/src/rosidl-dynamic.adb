@@ -605,7 +605,6 @@ package body ROSIDL.Dynamic is
    begin
       --  Create layout thing:
       Mat.As_Message.Reference ("layout.data_offset").As_Uint32 := 0;
-      --  TODO: when should this be nonzero??
       Mat.As_Message.Reference ("layout.dim").As_Array.Resize (Lengths'Length);
 
        for I in reverse Lengths'Range loop
