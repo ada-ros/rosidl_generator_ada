@@ -27,31 +27,31 @@ package rosidl_generator_c_string_functions_h is
   -- * All strings must be null-terminated.
   --  
 
-   function rosidl_generator_c_u_String_u_init (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:37
+   function rosidl_generator_c_u_String_u_init (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String) return Extensions.bool;  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:37
    pragma Import (C, rosidl_generator_c_u_String_u_init, "rosidl_generator_c__String__init");
 
-   procedure rosidl_generator_c_u_String_u_fini (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String);  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:41
+   procedure rosidl_generator_c_u_String_u_fini (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String);  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:41
    pragma Import (C, rosidl_generator_c_u_String_u_fini, "rosidl_generator_c__String__fini");
 
    function rosidl_generator_c_u_String_u_assignn
      (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String;
       value : Interfaces.C.Strings.chars_ptr;
-      n : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:45
+      n : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:45
    pragma Import (C, rosidl_generator_c_u_String_u_assignn, "rosidl_generator_c__String__assignn");
 
-   function rosidl_generator_c_u_String_u_assign (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String; value : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:50
+   function rosidl_generator_c_u_String_u_assign (str : access rosidl_generator_c_string_h.rosidl_generator_c_u_String; value : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:50
    pragma Import (C, rosidl_generator_c_u_String_u_assign, "rosidl_generator_c__String__assign");
 
-   function rosidl_generator_c_u_String_u_Array_u_init (c_array : access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Array; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:55
-   pragma Import (C, rosidl_generator_c_u_String_u_Array_u_init, "rosidl_generator_c__String__Array__init");
+   function rosidl_generator_c_u_String_u_Sequence_u_init (sequence : access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Sequence; size : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:55
+   pragma Import (C, rosidl_generator_c_u_String_u_Sequence_u_init, "rosidl_generator_c__String__Sequence__init");
 
-   procedure rosidl_generator_c_u_String_u_Array_u_fini (c_array : access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:60
-   pragma Import (C, rosidl_generator_c_u_String_u_Array_u_fini, "rosidl_generator_c__String__Array__fini");
+   procedure rosidl_generator_c_u_String_u_Sequence_u_fini (sequence : access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Sequence);  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:60
+   pragma Import (C, rosidl_generator_c_u_String_u_Sequence_u_fini, "rosidl_generator_c__String__Sequence__fini");
 
-   function rosidl_generator_c_u_String_u_Array_u_create (size : stddef_h.size_t) return access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Array;  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:65
-   pragma Import (C, rosidl_generator_c_u_String_u_Array_u_create, "rosidl_generator_c__String__Array__create");
+   function rosidl_generator_c_u_String_u_Sequence_u_create (size : stddef_h.size_t) return access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Sequence;  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:65
+   pragma Import (C, rosidl_generator_c_u_String_u_Sequence_u_create, "rosidl_generator_c__String__Sequence__create");
 
-   procedure rosidl_generator_c_u_String_u_Array_u_destroy (c_array : access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/string_functions.h:69
-   pragma Import (C, rosidl_generator_c_u_String_u_Array_u_destroy, "rosidl_generator_c__String__Array__destroy");
+   procedure rosidl_generator_c_u_String_u_Sequence_u_destroy (sequence : access rosidl_generator_c_string_h.rosidl_generator_c_u_String_u_Sequence);  -- /opt/ros/crystal/include/rosidl_generator_c/string_functions.h:69
+   pragma Import (C, rosidl_generator_c_u_String_u_Sequence_u_destroy, "rosidl_generator_c__String__Sequence__destroy");
 
 end rosidl_generator_c_string_functions_h;

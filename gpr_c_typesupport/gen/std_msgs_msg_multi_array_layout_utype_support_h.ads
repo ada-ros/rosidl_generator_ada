@@ -9,7 +9,7 @@ package std_msgs_msg_multi_array_layout_utype_support_h is
   -- generated from rosidl_generator_c/resource/msg__type_support.h.em
   -- generated code does not contain a copyright notice
   -- Forward declare the get type support functions for this type.
-   function rosidl_typesupport_c_u_get_message_type_support_handle_u_std_msgs_u_msg_u_MultiArrayLayout return access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/bouncy/include/std_msgs/msg/multi_array_layout__type_support.h:20
+   function rosidl_typesupport_c_u_get_message_type_support_handle_u_std_msgs_u_msg_u_MultiArrayLayout return access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__type_support.h:20
    pragma Import (C, rosidl_typesupport_c_u_get_message_type_support_handle_u_std_msgs_u_msg_u_MultiArrayLayout, "rosidl_typesupport_c__get_message_type_support_handle__std_msgs__msg__MultiArrayLayout");
 
 end std_msgs_msg_multi_array_layout_utype_support_h;

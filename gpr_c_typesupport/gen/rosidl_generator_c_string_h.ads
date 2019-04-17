@@ -19,19 +19,19 @@ package rosidl_generator_c_string_h is
   -- limitations under the License.
   --/ String struct
    type rosidl_generator_c_u_String is record
-      data : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:25
-      size : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:27
-      capacity : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:29
+      data : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:25
+      size : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:27
+      capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:29
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_generator_c_u_String);  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:23
+   pragma Convention (C_Pass_By_Copy, rosidl_generator_c_u_String);  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:23
 
   --/ The length of the string (excluding the null byte).
   --/ The capacity represents the number of allocated bytes (including the null byte).
-   type rosidl_generator_c_u_String_u_Array is record
-      data : access rosidl_generator_c_u_String;  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:32
-      size : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:32
-      capacity : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:32
+   type rosidl_generator_c_u_String_u_Sequence is record
+      data : access rosidl_generator_c_u_String;  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:32
+      size : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:32
+      capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:32
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_generator_c_u_String_u_Array);  -- /opt/ros/bouncy/include/rosidl_generator_c/string.h:32
+   pragma Convention (C_Pass_By_Copy, rosidl_generator_c_u_String_u_Sequence);  -- /opt/ros/crystal/include/rosidl_generator_c/string.h:32
 
 end rosidl_generator_c_string_h;

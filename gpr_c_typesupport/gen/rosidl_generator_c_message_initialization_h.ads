@@ -21,7 +21,7 @@ package rosidl_generator_c_message_initialization_h is
       ROSIDL_RUNTIME_C_MSG_INIT_SKIP,
       ROSIDL_RUNTIME_C_MSG_INIT_ZERO,
       ROSIDL_RUNTIME_C_MSG_INIT_DEFAULTS_ONLY);
-   pragma Convention (C, rosidl_runtime_c_message_initialization);  -- /opt/ros/bouncy/include/rosidl_generator_c/message_initialization.h:20
+   pragma Convention (C, rosidl_runtime_c_message_initialization);  -- /opt/ros/crystal/include/rosidl_generator_c/message_initialization.h:20
 
   -- Initialize all fields of the message, either with the default value
   -- (if the field has one), or with an empty value (generally 0 or an

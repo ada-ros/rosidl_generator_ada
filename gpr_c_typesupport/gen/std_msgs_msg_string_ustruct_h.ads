@@ -13,17 +13,17 @@ package std_msgs_msg_string_ustruct_h is
   -- data
   --/ Struct of message std_msgs/String
    type std_msgs_u_msg_u_String is record
-      data : aliased rosidl_generator_c_string_h.rosidl_generator_c_u_String;  -- /opt/ros/bouncy/include/std_msgs/msg/string__struct.h:23
+      data : aliased rosidl_generator_c_string_h.rosidl_generator_c_u_String;  -- /opt/ros/crystal/include/std_msgs/msg/string__struct.h:23
    end record;
-   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_String);  -- /opt/ros/bouncy/include/std_msgs/msg/string__struct.h:21
+   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_String);  -- /opt/ros/crystal/include/std_msgs/msg/string__struct.h:21
 
   --/ Struct for an array of messages
-   type std_msgs_u_msg_u_String_u_Array is record
-      data : access std_msgs_u_msg_u_String;  -- /opt/ros/bouncy/include/std_msgs/msg/string__struct.h:29
-      size : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/std_msgs/msg/string__struct.h:31
-      capacity : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/std_msgs/msg/string__struct.h:33
+   type std_msgs_u_msg_u_String_u_Sequence is record
+      data : access std_msgs_u_msg_u_String;  -- /opt/ros/crystal/include/std_msgs/msg/string__struct.h:29
+      size : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/std_msgs/msg/string__struct.h:31
+      capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/std_msgs/msg/string__struct.h:33
    end record;
-   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_String_u_Array);  -- /opt/ros/bouncy/include/std_msgs/msg/string__struct.h:27
+   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_String_u_Sequence);  -- /opt/ros/crystal/include/std_msgs/msg/string__struct.h:27
 
   --/ The number of valid items in data
   --/ The number of allocated items in data
