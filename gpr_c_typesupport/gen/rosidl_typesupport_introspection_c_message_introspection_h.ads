@@ -22,29 +22,29 @@ package rosidl_typesupport_introspection_c_message_introspection_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rosidl_typesupport_introspection_c_u_MessageMember is record
-      name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:28
-      type_id_u : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint8_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:29
-      string_upper_bound_u : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:30
-      members_u : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:31
-      is_array_u : aliased Extensions.bool;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:32
-      array_size_u : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:33
-      is_upper_bound_u : aliased Extensions.bool;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:34
-      offset_u : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:35
-      default_value_u : System.Address;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:36
-      size_function : access function (arg1 : System.Address) return stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:37
-      get_const_function : access function (arg1 : System.Address; arg2 : stddef_h.size_t) return System.Address;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:38
-      get_function : access function (arg1 : System.Address; arg2 : stddef_h.size_t) return System.Address;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:39
-      resize_function : access function (arg1 : System.Address; arg2 : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:40
+      name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:28
+      type_id_u : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint8_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:29
+      string_upper_bound_u : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:30
+      members_u : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:31
+      is_array_u : aliased Extensions.bool;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:32
+      array_size_u : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:33
+      is_upper_bound_u : aliased Extensions.bool;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:34
+      offset_u : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:35
+      default_value_u : System.Address;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:36
+      size_function : access function (arg1 : System.Address) return stddef_h.size_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:37
+      get_const_function : access function (arg1 : System.Address; arg2 : stddef_h.size_t) return System.Address;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:38
+      get_function : access function (arg1 : System.Address; arg2 : stddef_h.size_t) return System.Address;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:39
+      resize_function : access function (arg1 : System.Address; arg2 : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:40
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_typesupport_introspection_c_u_MessageMember);  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:26
+   pragma Convention (C_Pass_By_Copy, rosidl_typesupport_introspection_c_u_MessageMember);  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:26
 
    type rosidl_typesupport_introspection_c_u_MessageMembers is record
-      package_name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:45
-      message_name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:46
-      member_count_u : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:47
-      size_of_u : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:48
-      members_u : access constant rosidl_typesupport_introspection_c_u_MessageMember;  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:49
+      message_namespace_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:45
+      message_name_u : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:46
+      member_count_u : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:47
+      size_of_u : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:48
+      members_u : access constant rosidl_typesupport_introspection_c_u_MessageMember;  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:49
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_typesupport_introspection_c_u_MessageMembers);  -- /opt/ros/crystal/include/rosidl_typesupport_introspection_c/message_introspection.h:43
+   pragma Convention (C_Pass_By_Copy, rosidl_typesupport_introspection_c_u_MessageMembers);  -- /opt/ros/dashing/include/rosidl_typesupport_introspection_c/message_introspection.h:43
 
 end rosidl_typesupport_introspection_c_message_introspection_h;

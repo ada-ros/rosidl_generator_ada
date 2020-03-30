@@ -7,7 +7,7 @@ project C_Typesupport is
    for Library_Name use "c_typesupport";
 
    for Source_Dirs use (
-                        "src/overrides",
+                        "src/overrides", -- must take priority
                         "gen",
                         "src"
                        );

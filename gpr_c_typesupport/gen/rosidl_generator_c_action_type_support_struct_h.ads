@@ -20,12 +20,12 @@ package rosidl_generator_c_action_type_support_struct_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rosidl_action_type_support_t is record
-      goal_service_type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/action_type_support_struct.h:32
-      result_service_type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/action_type_support_struct.h:33
-      cancel_service_type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/action_type_support_struct.h:34
-      feedback_message_type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/action_type_support_struct.h:35
-      status_message_type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/action_type_support_struct.h:36
+      goal_service_type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/action_type_support_struct.h:32
+      result_service_type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/action_type_support_struct.h:33
+      cancel_service_type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/action_type_support_struct.h:34
+      feedback_message_type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/action_type_support_struct.h:35
+      status_message_type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/action_type_support_struct.h:36
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_action_type_support_t);  -- /opt/ros/crystal/include/rosidl_generator_c/action_type_support_struct.h:30
+   pragma Convention (C_Pass_By_Copy, rosidl_action_type_support_t);  -- /opt/ros/dashing/include/rosidl_generator_c/action_type_support_struct.h:30
 
 end rosidl_generator_c_action_type_support_struct_h;

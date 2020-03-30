@@ -8,24 +8,26 @@ with stddef_h;
 
 package std_msgs_msg_multi_array_layout_ustruct_h is
 
-  -- generated from rosidl_generator_c/resource/msg__struct.h.em
+  -- generated from rosidl_generator_c/resource/idl__struct.h.em
+  -- with input from std_msgs:msg/MultiArrayLayout.idl
   -- generated code does not contain a copyright notice
-  -- include message dependencies
-  -- dim
-  --/ Struct of message std_msgs/MultiArrayLayout
+  -- Constants defined in the message
+  -- Include directives for member types
+  -- Member 'dim'
+  -- Struct defined in msg/MultiArrayLayout in the package std_msgs.
    type std_msgs_u_msg_u_MultiArrayLayout is record
-      dim : aliased std_msgs_msg_multi_array_dimension_ustruct_h.std_msgs_u_msg_u_MultiArrayDimension_u_Sequence;  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:23
-      data_offset : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:24
+      dim : aliased std_msgs_msg_multi_array_dimension_ustruct_h.std_msgs_u_msg_u_MultiArrayDimension_u_Sequence;  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:27
+      data_offset : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:28
    end record;
-   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_MultiArrayLayout);  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:21
+   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_MultiArrayLayout);  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:25
 
-  --/ Struct for an array of messages
+  -- Struct for a sequence of std_msgs__msg__MultiArrayLayout.
    type std_msgs_u_msg_u_MultiArrayLayout_u_Sequence is record
-      data : access std_msgs_u_msg_u_MultiArrayLayout;  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:30
-      size : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:32
-      capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:34
+      data : access std_msgs_u_msg_u_MultiArrayLayout;  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:34
+      size : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:36
+      capacity : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:38
    end record;
-   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_MultiArrayLayout_u_Sequence);  -- /opt/ros/crystal/include/std_msgs/msg/multi_array_layout__struct.h:28
+   pragma Convention (C_Pass_By_Copy, std_msgs_u_msg_u_MultiArrayLayout_u_Sequence);  -- /opt/ros/dashing/include/std_msgs/msg/multi_array_layout__struct.h:32
 
   --/ The number of valid items in data
   --/ The number of allocated items in data

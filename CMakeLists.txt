@@ -17,7 +17,7 @@ find_package(std_msgs REQUIRED)
 install(DIRECTORY cmake
         DESTINATION share/${PROJECT_NAME})
 ament_register_extension(
-        "rosidl_generate_interfaces"
+        "rosidl_generate_idl_interfaces"
         "rosidl_generator_ada"
         "${PROJECT_SOURCE_DIR}/cmake/rosidl_generator_ada_generate_interfaces.cmake")
 
@@ -41,7 +41,10 @@ file(GLOB _headers
         "${_stdmsgs_include}/std_msgs/msg/multi_array*.h" # This should suffice
         "${_stdmsgs_include}/std_msgs/msg/string*.h" # This should suffice
         "${_generator_include}/rosidl_generator_c/*.h"
-        "${_typesupport_introspection_include}/rosidl_typesupport_introspection_c/*.h")
+        "${_typesupport_introspection_include}/rosidl_typesupport_introspection_c/*.h"
+        # CUSTOM ADDITIONS
+        /usr/include/stdint.h
+        )
 
 list(APPEND _includes
         ${_builtin_include}

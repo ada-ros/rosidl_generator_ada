@@ -60,7 +60,7 @@ package body ROSIDL.Dynamic is
                   Introspect : access constant Introspection.Message_Members_Meta)
                   return       Message'Class
    is
-      Pkg : constant String := C_Strings.Value (Introspect.Package_Name_U);
+      Pkg : constant String := C_Strings.Value (Introspect.Message_Namespace_U);
       Msg : constant String := C_Strings.Value (Introspect.Message_Name_U);
 
       Support : constant ROSIDL.Typesupport.Message_Support :=
@@ -408,7 +408,7 @@ package body ROSIDL.Dynamic is
       end if;
 
       if Id (Natural (Arr.Member.Type_Id_U)) = Types.Message_Id then
-         Resize (C_Strings.Value (Get_Introspection (Arr.Member).Package_Name_U),
+         Resize (C_Strings.Value (Get_Introspection (Arr.Member).Message_Namespace_U),
                  C_Strings.Value (Get_Introspection (Arr.Member).Message_Name_U));
       else
          Resize ("std_msgs", Types.Name (Id (Natural (Arr.Member.Type_Id_U))));

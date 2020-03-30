@@ -20,19 +20,19 @@ package rosidl_generator_c_message_type_support_struct_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rosidl_message_typesupport_handle_function is access function (arg1 : access constant rosidl_message_type_support_t; arg2 : Interfaces.C.Strings.chars_ptr) return access constant rosidl_message_type_support_t;
-   pragma Convention (C, rosidl_message_typesupport_handle_function);  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:28
+   pragma Convention (C, rosidl_message_typesupport_handle_function);  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:28
 
    type rosidl_message_type_support_t is record
-      typesupport_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:33
-      data : System.Address;  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:34
-      func : rosidl_message_typesupport_handle_function;  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:35
+      typesupport_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:33
+      data : System.Address;  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:34
+      func : rosidl_message_typesupport_handle_function;  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:35
    end record;
-   pragma Convention (C_Pass_By_Copy, rosidl_message_type_support_t);  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:31
+   pragma Convention (C_Pass_By_Copy, rosidl_message_type_support_t);  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:31
 
-   function get_message_typesupport_handle (handle : access constant rosidl_message_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_message_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:39
+   function get_message_typesupport_handle (handle : access constant rosidl_message_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_message_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:39
    pragma Import (C, get_message_typesupport_handle, "get_message_typesupport_handle");
 
-   function get_message_typesupport_handle_function (handle : access constant rosidl_message_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_message_type_support_t;  -- /opt/ros/crystal/include/rosidl_generator_c/message_type_support_struct.h:43
+   function get_message_typesupport_handle_function (handle : access constant rosidl_message_type_support_t; identifier : Interfaces.C.Strings.chars_ptr) return access constant rosidl_message_type_support_t;  -- /opt/ros/dashing/include/rosidl_generator_c/message_type_support_struct.h:43
    pragma Import (C, get_message_typesupport_handle_function, "get_message_typesupport_handle_function");
 
 end rosidl_generator_c_message_type_support_struct_h;

@@ -8,22 +8,24 @@ with stddef_h;
 
 package builtin_interfaces_msg_duration_ustruct_h is
 
-  -- generated from rosidl_generator_c/resource/msg__struct.h.em
+  -- generated from rosidl_generator_c/resource/idl__struct.h.em
+  -- with input from builtin_interfaces:msg/Duration.idl
   -- generated code does not contain a copyright notice
-  --/ Struct of message builtin_interfaces/Duration
+  -- Constants defined in the message
+  -- Struct defined in msg/Duration in the package builtin_interfaces.
    type builtin_interfaces_u_msg_u_Duration is record
-      sec : aliased x86_64_linux_gnu_bits_stdint_intn_h.int32_t;  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:19
-      nanosec : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:20
+      sec : aliased x86_64_linux_gnu_bits_stdint_intn_h.int32_t;  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:23
+      nanosec : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint32_t;  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:24
    end record;
-   pragma Convention (C_Pass_By_Copy, builtin_interfaces_u_msg_u_Duration);  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:17
+   pragma Convention (C_Pass_By_Copy, builtin_interfaces_u_msg_u_Duration);  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:21
 
-  --/ Struct for an array of messages
+  -- Struct for a sequence of builtin_interfaces__msg__Duration.
    type builtin_interfaces_u_msg_u_Duration_u_Sequence is record
-      data : access builtin_interfaces_u_msg_u_Duration;  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:26
-      size : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:28
-      capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:30
+      data : access builtin_interfaces_u_msg_u_Duration;  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:30
+      size : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:32
+      capacity : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, builtin_interfaces_u_msg_u_Duration_u_Sequence);  -- /opt/ros/crystal/include/builtin_interfaces/msg/duration__struct.h:24
+   pragma Convention (C_Pass_By_Copy, builtin_interfaces_u_msg_u_Duration_u_Sequence);  -- /opt/ros/dashing/include/builtin_interfaces/msg/duration__struct.h:28
 
   --/ The number of valid items in data
   --/ The number of allocated items in data
