@@ -13,9 +13,9 @@ package ROSIDL is
 
    package C renames Interfaces.C;
 
-private
-
    subtype Uint8_T is X86_64_Linux_Gnu_Bits_Stdint_Uintn_H.Uint8_T;
+
+private
 
    function Rti_Bool_Id    return Uint8_T with Import, Convention => C;
    function Rti_Byte_Id    return Uint8_T with Import, Convention => C;
