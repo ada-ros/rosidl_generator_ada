@@ -193,7 +193,7 @@ package body ROSIDL.Dynamic is
       Msg : constant String := Msg_Support.Message_Class.Message_Name;
 
       Create : constant Support.Func_Ret_Addr :=
-                 Support.To_Func (Support.Get_Message_Function (Msg_Support.Kind, Pkg, Msg, "create"));
+                 Support.To_Func (Support.Get_Message_Function (Pkg, Msg, "create"));
    begin
       return M : Message (Is_Field => False) do
          begin
@@ -202,7 +202,7 @@ package body ROSIDL.Dynamic is
             M.Support := Msg_Support;
 
             --  Functions we'll need at destroy time:
-            M.Destroy := Support.To_Proc (Support.Get_Message_Function (Msg_Support.Kind, Pkg, Msg, "destroy"));
+            M.Destroy := Support.To_Proc (Support.Get_Message_Function (Pkg, Msg, "destroy"));
          exception
             when E : others =>
                Put_Line ("Dynamic.Msg.Init: " & Ada.Exceptions.Exception_Information (E));
@@ -384,14 +384,14 @@ package body ROSIDL.Dynamic is
       function Init_Func is new Ada.Unchecked_Conversion (System.Address, Init);
       function Fini_Proc is new Ada.Unchecked_Conversion (System.Address, Fini);
 
-      procedure Resize (Pkgname, Typename : String) is
+      procedure Resize (Namespace, Typename : String) is
          --  bool
          --  rosidl_generator_c__String__Array__init(
          --    rosidl_generator_c__String__Array * array, size_t size);
       begin
-         Fini_Proc (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "fini")).all (Arr.Ptr);
+         Fini_Proc (Support.Get_Message_Function (Namespace, Typename & "__Array", "fini")).all (Arr.Ptr);
 
-         if not Bool (Init_Func (Support.Get_Message_Function (Arr.Msg_Kind, Pkgname, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length))) then
+         if not Bool (Init_Func (Support.Get_Message_Function (Namespace, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length))) then
             raise Program_Error with "Array initialization failed";
          end if;
 
