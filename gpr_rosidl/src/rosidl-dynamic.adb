@@ -43,8 +43,7 @@ package body ROSIDL.Dynamic is
    function As_Array (Ref : Ref_Type) return Array_View'Class is
    begin
       if Ref.Member.Is_Array_U /= Bool_False Then
-         return Array_View'(Msg_Kind => Ref.Kind,
-                            Member   => Ref.Member,
+         return Array_View'(Member   => Ref.Member,
                             Ptr      => Ref.Ptr);
       else
          raise Constraint_Error with "Field is not an array";
@@ -64,7 +63,7 @@ package body ROSIDL.Dynamic is
       Msg : constant String := C_Strings.Value (Introspect.Message_Name_U);
 
       Support : constant ROSIDL.Typesupport.Message_Support :=
-                  ROSIDL.Typesupport.Get_Message_Support (Pkg, Msg);
+                  ROSIDL.Typesupport.Get_Support (Namespace (Pkg), Msg);
    begin
       return This : Message (Is_Field => Is_Field) do
          This.Msg     := Data;
@@ -108,7 +107,6 @@ package body ROSIDL.Dynamic is
                                 (if Id (Natural (Arr.Member.Type_Id_U)) = Types.Message_Id
                                  then Integer (Get_Introspection (Arr.Member).Size_Of_U)
                                  else Types.Size_Of (Id (Natural (Arr.Member.Type_Id_U))))));
-
    begin
       if Index > Arr.Length then
          raise Constraint_Error with
@@ -117,12 +115,10 @@ package body ROSIDL.Dynamic is
 
       if Arr.Kind = Static then
          return Ref_Type'(Global_Void'Access,
-                          Arr.Msg_Kind,
                           Arr.Member,
                           Get_Item_Addr (Arr.Ptr));
       else
          return Ref_Type'(Global_Void'Access,
-                          Arr.Msg_Kind,
                           Arr.Member,
                           Get_Item_Addr (Impl.Arrays.To_Unconstrained_Array (Arr.Ptr).Data));
       end if;
@@ -189,8 +185,8 @@ package body ROSIDL.Dynamic is
 
    function Init (Msg_Support : ROSIDL.Typesupport.Message_Support) return Message
    is
-      Pkg : constant String := Msg_Support.Message_Class.Package_Name;
-      Msg : constant String := Msg_Support.Message_Class.Message_Name;
+      Pkg : constant Namespace := Msg_Support.Message_Class.Package_Name;
+      Msg : constant String    := Msg_Support.Message_Class.Message_Name;
 
       Create : constant Support.Func_Ret_Addr :=
                  Support.To_Func (Support.Get_Message_Function (Pkg, Msg, "create"));
@@ -320,7 +316,8 @@ package body ROSIDL.Dynamic is
         Address => This.Introspect.To_C.Members_U.all'Address;
    begin
       Put_Line (Prefix & "************************************************************");
-      Put_Line (Prefix & "    Message: " & This.Introspect.Package_Name & "/" & This.Introspect.Message_Name);
+      Put_Line (Prefix & "  Namespace: " & String (This.Introspect.Package_Name));
+      Put_Line (Prefix & "    Message: " & This.Introspect.Message_Name);
       Put_Line (Prefix & "       Size:"  & This.Introspect.Size'Img & " bytes");
       Put_Line (Prefix & "Field count:" & Members'Length'Img);
       for Member of Members loop
@@ -362,7 +359,6 @@ package body ROSIDL.Dynamic is
             if CS.Value (Member.Name_U) = Field then
                --  Put_Line ("Field offset is" & Member.Offset_U'Img);
                return Ref_Type'(Reserved => Global_Void'Access,
-                                Kind     => This.Support.Kind,
                                 Member   => Member'Unchecked_Access,
                                 Ptr      => This.Msg + Storage_Offset (Member.Offset_U));
             end if;
@@ -384,19 +380,22 @@ package body ROSIDL.Dynamic is
       function Init_Func is new Ada.Unchecked_Conversion (System.Address, Init);
       function Fini_Proc is new Ada.Unchecked_Conversion (System.Address, Fini);
 
-      procedure Resize (Namespace, Typename : String) is
-         --  bool
-         --  rosidl_generator_c__String__Array__init(
-         --    rosidl_generator_c__String__Array * array, size_t size);
+      procedure Resize (Ns, Typename : String) is
+         --  https://github.com/ros2/rosidl/blob/dashing/rosidl_generator_c/src/primitives_sequence_functions.c
+         --  rosidl_generator_c__String__Sequence__init(
+         --    rosidl_generator_c__String__Sequence * array, size_t size);
       begin
-         Fini_Proc (Support.Get_Message_Function (Namespace, Typename & "__Array", "fini")).all (Arr.Ptr);
+         Fini_Proc (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "fini")).all (Arr.Ptr);
 
-         if not Bool (Init_Func (Support.Get_Message_Function (Namespace, Typename & "__Array", "init")).all (Arr.Ptr, C.Size_T (Length))) then
+         if not Bool (Init_Func (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "init")).all (Arr.Ptr, C.Size_T (Length))) then
             raise Program_Error with "Array initialization failed";
          end if;
 
          if Arr.Capacity /= Length then
-            raise Program_Error with "Array capacity is not the requested one";
+            raise Program_Error with
+              "Array capacity is not the requested one: "
+              & "Requested:" & Length'Img
+              & "; Reported:" & Arr.Capacity'Img;
          end if;
       end Resize;
 
@@ -411,7 +410,7 @@ package body ROSIDL.Dynamic is
          Resize (C_Strings.Value (Get_Introspection (Arr.Member).Message_Namespace_U),
                  C_Strings.Value (Get_Introspection (Arr.Member).Message_Name_U));
       else
-         Resize ("std_msgs", Types.Name (Id (Natural (Arr.Member.Type_Id_U))));
+         Resize ("std_msgs__msg", Types.Name (Id (Natural (Arr.Member.Type_Id_U))));
       end if;
    end Resize;
 

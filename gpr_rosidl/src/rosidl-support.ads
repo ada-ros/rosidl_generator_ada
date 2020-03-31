@@ -30,17 +30,17 @@ package ROSIDL.Support is
    type Proc_Addr is access procedure (Addr : System.Address) with Convention => C;
    function To_Proc is new Ada.Unchecked_Conversion (System.Address, Proc_Addr);
 
-   type Kinds is (Message, Service);
+--     type Kinds is (Message, Service);
 
    function Get_Symbol (Name : String) return System.Address;
 
    --  INFO: use readelf -Ws <lib.so> to list symbols even without debug info.
 
-   function Get_Message_Function (Namespace : String;
-                                  Msg       : String;
-                                  Suffix    : String)
+   function Get_Message_Function (Ns     : Namespace;
+                                  Msg    : String;
+                                  Suffix : String)
                                   return System.Address is
-     (Get_Symbol (Namespace & "__" & Msg &  "__" & Suffix));
+     (Get_Symbol (String (Ns) & "__" & Msg &  "__" & Suffix));
 
 --  OLD WAY pre-dashing:
 --                    (case Kind is

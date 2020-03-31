@@ -5,6 +5,8 @@ with X86_64_Linux_Gnu_Bits_Stdint_Uintn_H;
 
 package ROSIDL is
 
+   type Namespace is new String;
+
    type Message_Info is record
       Intra_Process : Boolean;
    end record;

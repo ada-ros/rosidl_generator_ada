@@ -7,18 +7,20 @@ package Shared_Pointers with Preelaborate is
 
    type Shared (Element : not null access Element_Type) is private
      with Implicit_Dereference => Element;
-   
-   function Make_Shared (Element : access Element_Type) return Shared;
-   
-private 
 
-   type Shared (Element : access Element_Type) is 
+   function Make_Shared (Element : access Element_Type) return Shared;
+
+private
+
+   type Natural_Access is access Natural;
+
+   type Shared (Element : access Element_Type) is
      new Ada.Finalization.Controlled with
       record
-         References : access Natural;
+         References : Natural_Access;
       end record;
-   
+
    overriding procedure Adjust     (This : in out Shared);
    overriding procedure Finalize   (This : in out Shared);
-   
+
 end Shared_Pointers;
