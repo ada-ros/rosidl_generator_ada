@@ -67,10 +67,10 @@ package ROSIDL.Typesupport is
 
 private
 
-   type Get_Message_Typesupport_Handle_Func_Access Is
+   type Get_Message_Typesupport_Handle_Func_Access is
      access function return ROSIDL.Typesupport.Msg_Support_Handle with Convention => C;
 
-   type Get_Service_Typesupport_Handle_Func_Access Is
+   type Get_Service_Typesupport_Handle_Func_Access is
      access function return ROSIDL.Typesupport.Srv_Support_Handle with Convention => C;
 
    function To_Func is new Ada.Unchecked_Conversion
@@ -142,7 +142,7 @@ private
                                  Srv : String) return System.Address is
      (Support.Get_Symbol
         ("rosidl_typesupport_c__get_service_type_support_handle__" & String (Ns) & "__srv__" & Srv));
-   -- E.g.: rosidl_typesupport_c__get_service_type_support_handle__example_interfaces__srv__AddTwoInts
+   --  E.g.: rosidl_typesupport_c__get_service_type_support_handle__example_interfaces__srv__AddTwoInts
 
    function Get_Service_Support (Ns  : Namespace;
                                  Srv : String) return Service_Support is

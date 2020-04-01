@@ -8,7 +8,7 @@ package body ROSIDL.Field_References is
 --        Put_Line ("Typeid:" & Type_Id'Img);
 --        Put_Line ("Requested:" & Field.Get_Member (C).Type_Id_U'Img);
 
-      if Id (Natural (Field.Get_Member (C).Type_Id_U)) /= Type_Id Then
+      if Id (Natural (Field.Get_Member (C).Type_Id_U)) /= Type_Id then
          raise Constraint_Error with
            "Type mismatch: asked for [" & Types.Name (Type_Id) &
            "] but field is [" & Types.Name (Id (Natural (Field.Get_Member (C).Type_Id_U))) & "]";

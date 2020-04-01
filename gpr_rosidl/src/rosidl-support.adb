@@ -32,7 +32,7 @@ package body ROSIDL.Support is
             raise Program_Error with "Symbol [" & Name & "] could not be found";
          else
             null;
-            -- Print_Address (Addr, "Address [Get_Symbol]: ");
+            --  Print_Address (Addr, "Address [Get_Symbol]: ");
          end if;
       end return;
    end Get_Symbol;

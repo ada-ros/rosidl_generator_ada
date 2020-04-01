@@ -42,7 +42,7 @@ package body ROSIDL.Dynamic is
 
    function As_Array (Ref : Ref_Type) return Array_View'Class is
    begin
-      if Ref.Member.Is_Array_U /= Bool_False Then
+      if Ref.Member.Is_Array_U /= Bool_False then
          return Array_View'(Member   => Ref.Member,
                             Ptr      => Ref.Ptr);
       else
@@ -138,7 +138,7 @@ package body ROSIDL.Dynamic is
    function Get_Introspection (Member : access constant Introspection.Message_Member_Meta)
                                return access constant Introspection.Message_Members_Meta
    is
-      function To_Members_Ptr Is
+      function To_Members_Ptr is
         new Ada.Unchecked_Conversion (System.Address,
                                       Introspection.Message_Members_Meta_Ptr);
    begin
@@ -173,7 +173,8 @@ package body ROSIDL.Dynamic is
       function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
    begin
       if Ref.Member.Type_Id_U /= Rti_String_Id then
-         raise Constraint_Error with "Field is not of type string but " & Types.Name (Id (Natural (Ref.Member.Type_Id_U)));
+         raise Constraint_Error with
+           "Field is not of type string but " & Types.Name (Id (Natural (Ref.Member.Type_Id_U)));
       else
          return CS.Value (To_Str_Ptr (Ref.Ptr).Data.Data);
       end if;
@@ -276,9 +277,11 @@ package body ROSIDL.Dynamic is
          Name : constant String := C_Strings.Value (M.Name_U);
       begin
          Put_Line (Prefix & "=== " & Name & " ===");
-         Put_Line (Prefix & "              Type id:" & M.Type_Id_U'Img & " (" & Types.Name (Id (Natural (M.Type_Id_U))) & ")");
+         Put_Line (Prefix & "              Type id:" & M.Type_Id_U'Img
+                   & " (" & Types.Name (Id (Natural (M.Type_Id_U))) & ")");
          Put_Line (Prefix & "   String upper bound:" & M.String_Upper_Bound_U'Img);
-         Put_Line (Prefix & "              members: (rosidl_message_type_support_t *) " & System.Address_Image (To_Addr (M.Members_U)));
+         Put_Line (Prefix & "              members: (rosidl_message_type_support_t *) "
+                   & System.Address_Image (To_Addr (M.Members_U)));
 
          Put_Line (Prefix & "             Is array:" & M.Is_Array_U'Img);
          if Bool (M.Is_Array_U) then
@@ -334,15 +337,6 @@ package body ROSIDL.Dynamic is
    is
       use System.Storage_Elements;
 
---        type Member_Array is array (1 .. This.Introspect.To_C.Member_Count_U) of aliased Introspection.Message_Member_Meta
---          with Convention => C;
---
---        type Array_Ptr is access Member_Array with Convention => C;
---
---        function To_Array_Ptr is new Ada.Unchecked_Conversion (Member_Metadata_Ptr, Array_Ptr);
---
---        Members : aliased constant Array_Ptr := To_Array_Ptr (This.Introspect.To_C.Members_U);
-
       Members : array (1 .. This.Introspect.To_C.Member_Count_U)
                    of aliased Introspection.Message_Member_Meta with
         Convention => C,
@@ -387,7 +381,9 @@ package body ROSIDL.Dynamic is
       begin
          Fini_Proc (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "fini")).all (Arr.Ptr);
 
-         if not Bool (Init_Func (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "init")).all (Arr.Ptr, C.Size_T (Length))) then
+         if not Bool (Init_Func (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "init")).all
+                        (Arr.Ptr, C.Size_T (Length)))
+         then
             raise Program_Error with "Array initialization failed";
          end if;
 
@@ -432,11 +428,13 @@ package body ROSIDL.Dynamic is
       function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
    begin
       if Ref.Member.Type_Id_U /= Rti_String_Id then
-         raise Constraint_Error with "Field is not of type string but " & Types.Name (Id (Natural (Ref.Member.Type_Id_U)));
-      elsif Ref.Member.String_Upper_Bound_U /= 0 and Then
+         raise Constraint_Error with
+           "Field is not of type string but " & Types.Name (Id (Natural (Ref.Member.Type_Id_U)));
+      elsif Ref.Member.String_Upper_Bound_U /= 0 and then
         Str'Length > Natural (Ref.Member.String_Upper_Bound_U)
       then
-         raise Constraint_Error with "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
+         raise Constraint_Error with
+           "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
       else
          if not Bool (Rosidl_Generator_C_U_String_U_Assign
                         (To_Str_Ptr (Ref.Ptr).Data'Access,
@@ -518,7 +516,8 @@ package body ROSIDL.Dynamic is
         Convention => C,
         Address    => Mat.Get_Layout.Dim.Data.all'Address; -- First element
    begin
-      return Dimensions (C.Size_T (Dim))'Unchecked_Access; -- Safe because although declare in stack, it is actually from the message heap
+      return Dimensions (C.Size_T (Dim))'Unchecked_Access;
+      --  Safe because although declare in stack, it is actually from the message heap
    end Get_Dimension;
 
    ----------------
@@ -563,8 +562,8 @@ package body ROSIDL.Dynamic is
            Mat.dimensions'Img & " in matrix";
       end if;
 
-      -- Note: dim_stride[0] is not used but exists, ROS2 arrays are 0-based
-      -- multiarray(i,j,k) = data[data_offset + dim_stride[1]*i + dim_stride[2]*j + k]
+      --  Note: dim_stride[0] is not used but exists, ROS2 arrays are 0-based
+      --  multiarray(i,j,k) = data[data_offset + dim_stride[1]*i + dim_stride[2]*j + k]
       return Result : Positive := Pos (Pos'Last) do
          for I in 1 .. Pos'Last - 1 loop
             Result := Result + (Mat.Stride (I + 1) * (Pos (I) - 1));
@@ -606,12 +605,12 @@ package body ROSIDL.Dynamic is
       Mat.As_Message.Reference ("layout.data_offset").As_Uint32 := 0;
       Mat.As_Message.Reference ("layout.dim").As_Array.Resize (Lengths'Length);
 
-       for I in reverse Lengths'Range loop
+      for I in reverse Lengths'Range loop
          Mat.Get_Dimension (I).Size   := C.Unsigned (Lengths (I));
          Mat.Get_Dimension (I).Stride := C.Unsigned (Lengths (I) *
-           (if I = Lengths'Last
-            then 1
-            else Natural (Mat.Get_Dimension (I + 1).Stride)));
+                                                     (if I = Lengths'Last
+                                                        then 1
+                                                        else Natural (Mat.Get_Dimension (I + 1).Stride)));
 
          Mat.As_Message.Field ("layout.dim").As_Array.Element (I).Get_Message.Field ("label").Set_String (Names (I));
       end loop;

@@ -26,7 +26,7 @@ package body Shared_Pointers is
                type Elem_Ptr is access all Element_Type;
                type Nat_Ptr  is access all Natural;
                procedure Free is new Ada.Unchecked_Deallocation (Element_Type, Elem_Ptr);
-               procedure Free Is new Ada.Unchecked_Deallocation (Natural,      Nat_Ptr);
+               procedure Free is new Ada.Unchecked_Deallocation (Natural,      Nat_Ptr);
 
                Ptr : Elem_Ptr := Elem_Ptr (This.Element);
                Nat : Nat_Ptr  := Nat_Ptr  (This.References);

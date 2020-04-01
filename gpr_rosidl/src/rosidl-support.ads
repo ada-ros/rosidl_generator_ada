@@ -2,7 +2,8 @@ with Ada.Unchecked_Conversion;
 
 with Interfaces.C.Extensions;
 
-with Rosidl_Typesupport_Introspection_C_Message_Introspection_H; use Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
+with Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
+use  Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
 
 with ROSIDL.Types;
 
@@ -10,8 +11,8 @@ with System;
 
 package ROSIDL.Support is
 
-   -- Unholy messes to deal with C pointers that are everywhere in ROS2
-   -- No need to dive here for users
+   --  Unholy messes to deal with C pointers that are everywhere in ROS2
+   --  No need to dive here for users
 
    package C  renames Interfaces.C;
    package CX renames Interfaces.C.Extensions;

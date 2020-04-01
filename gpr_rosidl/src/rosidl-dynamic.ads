@@ -188,7 +188,7 @@ package ROSIDL.Dynamic is
    --------------
    -- MATRICES --
    --------------
-   -- "MultyArrays"
+   --  "MultyArrays"
 
    type Matrix_View (<>) is tagged limited private
      with Constant_Indexing => Matrix_Element;

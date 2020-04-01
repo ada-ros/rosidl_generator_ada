@@ -28,13 +28,30 @@ project Rosidl is
    for Object_Dir  use "obj";
    for Library_Dir use "lib";
 
+   type Any_Style_Check_Mode is ("enabled", "disabled");
+   Style_Check_Mode : Any_Style_Check_Mode :=
+       external ("RCLADA_STYLE_CHECK", "enabled");
+
+   Style_Check_Switches := ();
+   case Style_Check_Mode is
+      when "enabled"  => Style_Check_Switches :=
+           ("-gnatyg",   -- Standard checks
+            "-gnatyI",   -- no IN mode
+            "-gnatyM120", -- longer lines
+            "-gnatyO",   -- all overrides
+            "-gnaty-rstu"); -- relax same casing, fwd decl, blank lines, some spacing
+      when "disabled" => Style_Check_Switches := ();
+   end case;
+
    package Builder is
       for Switches ("ada") use ("-j0", "-g");
    end Builder;
 
    package Compiler is
       for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnatf",
-                                "-gnata", "-gnat2012", "-gnato", "-fstack-check");
+                                "-gnata", "-gnat2012", "-gnato", "-fstack-check"
+                               )
+                               & Style_Check_Switches;
 
       for Switches ("C") use ("-O2", "-Wall", "-Wextra", "-pedantic");
    end Compiler;
@@ -48,4 +65,3 @@ project Rosidl is
    end Linker;
 
 end Rosidl;
-
