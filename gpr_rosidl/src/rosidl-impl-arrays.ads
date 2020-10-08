@@ -1,7 +1,7 @@
 with Ada.Unchecked_Conversion;
 
-with Rosidl_Generator_C_Primitives_Sequence_H;
-use  Rosidl_Generator_C_Primitives_Sequence_H;
+with Rosidl_Runtime_C_Primitives_Sequence_H;
+use  Rosidl_Runtime_C_Primitives_Sequence_H;
 
 with System;
 
@@ -25,7 +25,7 @@ package ROSIDL.Impl.Arrays is
 
    --  Safety net
    pragma Assert (Unconstrained_Array'Size =
-                    Rosidl_Generator_C_U_Byte_U_Sequence'Size);
+                    Rosidl_Runtime_C_U_Byte_U_Sequence'Size);
 
 
    type Unconstrained_Array_Ptr is access all Unconstrained_Array with

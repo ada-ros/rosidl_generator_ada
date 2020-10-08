@@ -8,8 +8,7 @@ ada_begin_package()
 
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
-find_package(rosidl_generator_c REQUIRED)
-# find_package(rosidl_runtime_c REQUIRED)
+find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_typesupport_interface REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -30,19 +29,26 @@ ada_import_c_headers(typesupport_interface ${rosidl_typesupport_interface_INCLUD
 # Generate autobinding for std types and rosidl_typesupport_c
 ada_import_c_libraries(${std_msgs_LIBRARIES})
 
+# GENERATOR packages have been moved into RUNTIME packages at the C RCL, to
+# allow applications not to depend on generators. It seems we can also get by
+# by using the runtime versions. This happened with FOXY.
+
+# See https://github.com/ros2/rosidl/issues/446
+# And also https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/#new-features-in-this-ros-2-release
+
 ada_find_package_include_dir(_builtin_include ${builtin_interfaces_DIR})
-ada_find_package_include_dir(_generator_include ${rosidl_generator_c_DIR})
-#ada_find_package_include_dir(_runtime_include ${rosidl_runtime_c_DIR})
+# ada_find_package_include_dir(_generator_include ${rosidl_generator_c_DIR})
+ada_find_package_include_dir(_runtime_include ${rosidl_runtime_c_DIR})
 ada_find_package_include_dir(_stdmsgs_include ${std_msgs_DIR})
 ada_find_package_include_dir(_typesupport_interface_include ${rosidl_typesupport_interface_DIR})
 ada_find_package_include_dir(_typesupport_introspection_include ${rosidl_typesupport_introspection_c_DIR})
 
 file(GLOB _headers
         "${_builtin_include}/builtin_interfaces/msg/*.h"
-        "${_generator_include}/rosidl_generator_c/*.h"
+        "${_runtime_include}/rosidl_runtime_c/*.h"
 #        "${_stdmsgs_include}/std_msgs/msg/*.h"
-        "${_stdmsgs_include}/std_msgs/msg/multi_array*.h" # This should suffice
-        "${_stdmsgs_include}/std_msgs/msg/string*.h" # This should suffice
+        "${_stdmsgs_include}/std_msgs/msg/detail/multi_array*.h" # This should suffice
+        "${_stdmsgs_include}/std_msgs/msg/detail/string*.h" # This should suffice
         "${_typesupport_introspection_include}/rosidl_typesupport_introspection_c/*.h"
         # CUSTOM ADDITIONS
         /usr/include/stdint.h
@@ -50,11 +56,13 @@ file(GLOB _headers
 
 list(APPEND _includes
         ${_builtin_include}
-        ${_generator_include}
-#        ${_runtime_include}
+        ${_runtime_include}
         ${_stdmsgs_include}
         ${_typesupport_interface_include}
         ${_typesupport_introspection_include})
+
+# message("XXXXXXXXXXXXXX ${_headers}")
+# message("XXXXXXXXXXXXXX ${_includes}")
 
 ada_generate_binding(
         ada_binding_rosidl_typesupport_c

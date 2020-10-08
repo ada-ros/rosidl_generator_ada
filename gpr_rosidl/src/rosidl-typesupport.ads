@@ -2,11 +2,11 @@ with Ada.Unchecked_Conversion;
 
 with C_Strings;
 
-with Rosidl_Generator_C_Message_Type_Support_Struct_H;
-use  Rosidl_Generator_C_Message_Type_Support_Struct_H;
+with Rosidl_Runtime_C_Message_Type_Support_Struct_H;
+use  Rosidl_Runtime_C_Message_Type_Support_Struct_H;
 
-with Rosidl_Generator_C_Service_Type_Support_Struct_H;
-use  Rosidl_Generator_C_Service_Type_Support_Struct_H;
+with Rosidl_Runtime_C_Service_Type_Support_Struct_H;
+use  Rosidl_Runtime_C_Service_Type_Support_Struct_H;
 
 with ROSIDL.Introspection;
 with ROSIDL.Support;

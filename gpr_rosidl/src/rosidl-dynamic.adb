@@ -8,10 +8,10 @@ with Interfaces.C.Strings;
 
 with ROSIDL.Impl.Arrays;
 
-with Rosidl_Generator_C_String_Functions_H; use Rosidl_Generator_C_String_Functions_H;
+with Rosidl_Runtime_C_String_Functions_H; use Rosidl_Runtime_C_String_Functions_H;
 
 --  with Std_Msgs_Msg_Multi_Array_Dimension_Ufunctions_H; use Std_Msgs_Msg_Multi_Array_Dimension_Ufunctions_H;
-with Std_Msgs_Msg_String_Ustruct_H;                   use Std_Msgs_Msg_String_Ustruct_H;
+with Std_Msgs_Msg_Detail_String_Ustruct_H; use Std_Msgs_Msg_Detail_String_Ustruct_H;
 
 with System.Address_Image;
 with System.Storage_Elements;
@@ -436,7 +436,7 @@ package body ROSIDL.Dynamic is
          raise Constraint_Error with
            "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
       else
-         if not Bool (Rosidl_Generator_C_U_String_U_Assign
+         if not Bool (Rosidl_Runtime_C_U_String_U_Assign
                         (To_Str_Ptr (Ref.Ptr).Data'Access,
                          C_Strings.To_C (Str).To_Ptr))
          then

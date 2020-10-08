@@ -1,6 +1,8 @@
 with Interfaces.C;
 
-with Rosidl_Generator_C_String_H; use Rosidl_Generator_C_String_H;
+with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
+--  Changed from Dashing to Foxy
+--  with Rosidl_Generator_C_String_H; use Rosidl_Generator_C_String_H;
 
 package ROSIDL.Types is
 
@@ -143,7 +145,7 @@ private
        elsif Id = Uint32_Id  then Uint32'Size
        elsif Id = Int64_Id   then Int64'Size
        elsif Id = Uint64_Id  then Uint64'Size
-       elsif Id = String_Id  then Rosidl_Generator_C_U_String'Size
+       elsif Id = String_Id  then Rosidl_Runtime_C_U_String'Size
        else raise Constraint_Error with "Message field has unknown size")
       / 8);
 

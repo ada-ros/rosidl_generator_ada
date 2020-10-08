@@ -10,8 +10,8 @@ with ROSIDL.Types;
 
 with Shared_Pointers;
 
-with Std_Msgs_Msg_Multi_Array_Dimension_Ustruct_H; use Std_Msgs_Msg_Multi_Array_Dimension_Ustruct_H;
-with Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;    use Std_Msgs_Msg_Multi_Array_Layout_Ustruct_H;
+with Std_Msgs_Msg_Detail_Multi_Array_Dimension_Ustruct_H; use Std_Msgs_Msg_Detail_Multi_Array_Dimension_Ustruct_H;
+with Std_Msgs_Msg_Detail_Multi_Array_Layout_Ustruct_H;    use Std_Msgs_Msg_Detail_Multi_Array_Layout_Ustruct_H;
 
 with System;
 
