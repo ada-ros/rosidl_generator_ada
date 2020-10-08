@@ -9,6 +9,7 @@ ada_begin_package()
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rosidl_generator_c REQUIRED)
+# find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_typesupport_interface REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -31,16 +32,17 @@ ada_import_c_libraries(${std_msgs_LIBRARIES})
 
 ada_find_package_include_dir(_builtin_include ${builtin_interfaces_DIR})
 ada_find_package_include_dir(_generator_include ${rosidl_generator_c_DIR})
+#ada_find_package_include_dir(_runtime_include ${rosidl_runtime_c_DIR})
 ada_find_package_include_dir(_stdmsgs_include ${std_msgs_DIR})
 ada_find_package_include_dir(_typesupport_interface_include ${rosidl_typesupport_interface_DIR})
 ada_find_package_include_dir(_typesupport_introspection_include ${rosidl_typesupport_introspection_c_DIR})
 
 file(GLOB _headers
         "${_builtin_include}/builtin_interfaces/msg/*.h"
+        "${_generator_include}/rosidl_generator_c/*.h"
 #        "${_stdmsgs_include}/std_msgs/msg/*.h"
         "${_stdmsgs_include}/std_msgs/msg/multi_array*.h" # This should suffice
         "${_stdmsgs_include}/std_msgs/msg/string*.h" # This should suffice
-        "${_generator_include}/rosidl_generator_c/*.h"
         "${_typesupport_introspection_include}/rosidl_typesupport_introspection_c/*.h"
         # CUSTOM ADDITIONS
         /usr/include/stdint.h
@@ -48,8 +50,9 @@ file(GLOB _headers
 
 list(APPEND _includes
         ${_builtin_include}
-        ${_stdmsgs_include}
         ${_generator_include}
+#        ${_runtime_include}
+        ${_stdmsgs_include}
         ${_typesupport_interface_include}
         ${_typesupport_introspection_include})
 
