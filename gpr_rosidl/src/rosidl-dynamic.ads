@@ -112,27 +112,39 @@ package ROSIDL.Dynamic is
    --  Some kind of trick with internal controlled could be attempted...
    --    but it would not work anyway for indefinite types (String)
 
-   function As_Bool (Ref : aliased Ref_Type) return Bool_Ref.Reference is (Bool_Ref.Ref (Ref'Access));
+   function As_Bool (Ref : aliased Ref_Type) return Bool_Ref.Reference
+   is (Bool_Ref.Ref (Ref'Unchecked_Access));
 
    function  Get_Boolean (Ref : aliased in out Ref_Type) return Boolean;
    procedure Set_Boolean (Ref : aliased in out Ref_Type; Bool : Boolean);
 
-   function As_Byte (Ref : aliased Ref_Type) return Byte_Ref.Reference is (Byte_Ref.Ref (Ref'Access));
+   function As_Byte (Ref : aliased Ref_Type) return Byte_Ref.Reference
+   is (Byte_Ref.Ref (Ref'Unchecked_Access));
 
-   function As_Float32 (Ref : aliased Ref_Type) return Float32_Ref.Reference is (Float32_Ref.Ref (Ref'Access));
-   function As_Float64 (Ref : aliased Ref_Type) return Float64_Ref.Reference is (Float64_Ref.Ref (Ref'Access));
+   function As_Float32 (Ref : aliased Ref_Type) return Float32_Ref.Reference
+   is (Float32_Ref.Ref (Ref'Unchecked_Access));
+   function As_Float64 (Ref : aliased Ref_Type) return Float64_Ref.Reference
+   is (Float64_Ref.Ref (Ref'Unchecked_Access));
 
-   function As_Int8  (Ref : aliased Ref_Type) return  Int8_Ref.Reference is ( Int8_Ref.Ref (Ref'Access));
-   function As_Uint8 (Ref : aliased Ref_Type) return Uint8_Ref.Reference is (Uint8_Ref.Ref (Ref'Access));
+   function As_Int8  (Ref : aliased Ref_Type) return  Int8_Ref.Reference
+   is ( Int8_Ref.Ref (Ref'Unchecked_Access));
+   function As_Uint8 (Ref : aliased Ref_Type) return Uint8_Ref.Reference
+   is (Uint8_Ref.Ref (Ref'Unchecked_Access));
 
-   function As_Int16  (Ref : aliased Ref_Type) return  Int16_Ref.Reference is ( Int16_Ref.Ref (Ref'Access));
-   function As_Uint16 (Ref : aliased Ref_Type) return Uint16_Ref.Reference is (Uint16_Ref.Ref (Ref'Access));
+   function As_Int16  (Ref : aliased Ref_Type) return  Int16_Ref.Reference
+   is ( Int16_Ref.Ref (Ref'Unchecked_Access));
+   function As_Uint16 (Ref : aliased Ref_Type) return Uint16_Ref.Reference
+   is (Uint16_Ref.Ref (Ref'Unchecked_Access));
 
-   function As_Int32  (Ref : aliased Ref_Type) return  Int32_Ref.Reference is ( Int32_Ref.Ref (Ref'Access));
-   function As_Uint32 (Ref : aliased Ref_Type) return Uint32_Ref.Reference is (Uint32_Ref.Ref (Ref'Access));
+   function As_Int32  (Ref : aliased Ref_Type) return  Int32_Ref.Reference
+   is ( Int32_Ref.Ref (Ref'Unchecked_Access));
+   function As_Uint32 (Ref : aliased Ref_Type) return Uint32_Ref.Reference
+   is (Uint32_Ref.Ref (Ref'Unchecked_Access));
 
-   function As_Int64  (Ref : aliased Ref_Type) return  Int64_Ref.Reference is ( Int64_Ref.Ref (Ref'Access));
-   function As_Uint64 (Ref : aliased Ref_Type) return Uint64_Ref.Reference is (Uint64_Ref.Ref (Ref'Access));
+   function As_Int64  (Ref : aliased Ref_Type) return  Int64_Ref.Reference
+   is ( Int64_Ref.Ref (Ref'Unchecked_Access));
+   function As_Uint64 (Ref : aliased Ref_Type) return Uint64_Ref.Reference
+   is (Uint64_Ref.Ref (Ref'Unchecked_Access));
 
    function Get_Message (Ref : Ref_Type) return Message'Class;
 
@@ -263,7 +275,7 @@ private
                                return access constant Introspection.Message_Members_Meta;
    --  Only valid for message members!
 
-   function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access is (Ref'Access);
+   function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access is (Ref'Unchecked_Access);
 
    function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta is (Ref.Member);
 

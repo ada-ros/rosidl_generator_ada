@@ -42,7 +42,7 @@ package body ROSIDL.Dynamic is
 
    function As_Array (Ref : Ref_Type) return Array_View'Class is
    begin
-      if Ref.Member.Is_Array_U /= Bool_False then
+      if Ref.Member.Is_Array_U then
          return Array_View'(Member   => Ref.Member,
                             Ptr      => Ref.Ptr);
       else
@@ -235,9 +235,9 @@ package body ROSIDL.Dynamic is
    ----------
 
    function Kind (Arr : Array_View) return Array_Kinds is
-     (if    Arr.Member.Array_Size_U      = 0   then Dynamic
-      elsif Bool (Arr.Member.Is_Upper_Bound_U) then Bounded
-      else                                          Static);
+     (if Arr.Member.Array_Size_U = 0    then Dynamic
+      elsif Arr.Member.Is_Upper_Bound_U then Bounded
+      else                                   Static);
 
    ------------
    -- Length --
@@ -284,7 +284,7 @@ package body ROSIDL.Dynamic is
                    & System.Address_Image (To_Addr (M.Members_U)));
 
          Put_Line (Prefix & "             Is array:" & M.Is_Array_U'Img);
-         if Bool (M.Is_Array_U) then
+         if M.Is_Array_U then
             declare
                Arr : constant Array_View'Class := This.Reference (Name).As_Array;
                --  Indexing instead of calling reference causes a bug here
@@ -381,8 +381,8 @@ package body ROSIDL.Dynamic is
       begin
          Fini_Proc (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "fini")).all (Arr.Ptr);
 
-         if not Bool (Init_Func (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "init")).all
-                        (Arr.Ptr, C.Size_T (Length)))
+         if not Init_Func (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "init"))
+                .all (Arr.Ptr, C.Size_T (Length))
          then
             raise Program_Error with "Array initialization failed";
          end if;
@@ -436,9 +436,9 @@ package body ROSIDL.Dynamic is
          raise Constraint_Error with
            "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
       else
-         if not Bool (Rosidl_Runtime_C_U_String_U_Assign
-                        (To_Str_Ptr (Ref.Ptr).Data'Access,
-                         C_Strings.To_C (Str).To_Ptr))
+         if not Rosidl_Runtime_C_U_String_U_Assign
+           (To_Str_Ptr (Ref.Ptr).Data'Access,
+            C_Strings.To_C (Str).To_Ptr)
          then
             raise Constraint_Error with "Setting string value failed";
          end if;
