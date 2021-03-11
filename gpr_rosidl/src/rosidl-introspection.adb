@@ -20,7 +20,6 @@ package body ROSIDL.Introspection is
    function Get_Msg_Introspect (Ns  : Namespace;
                                 Msg : String)
                                 return access constant Message_Members_Meta is
-      --  rosidl_typesupport_introspection_c__get_message_type_support_handle__std_msgs__msg__String
       type Get_Introspect is access function return Typesupport.Msg_Support_Handle with Convention => C;
       function To_Get_Introspect is new Ada.Unchecked_Conversion (System.Address, Get_Introspect);
 

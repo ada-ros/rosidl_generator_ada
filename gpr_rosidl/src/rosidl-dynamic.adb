@@ -8,10 +8,8 @@ with Interfaces.C.Strings;
 
 with ROSIDL.Impl.Arrays;
 
+with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
 with Rosidl_Runtime_C_String_Functions_H; use Rosidl_Runtime_C_String_Functions_H;
-
---  with Std_Msgs_Msg_Multi_Array_Dimension_Ufunctions_H; use Std_Msgs_Msg_Multi_Array_Dimension_Ufunctions_H;
-with Std_Msgs_Msg_Detail_String_Ustruct_H; use Std_Msgs_Msg_Detail_String_Ustruct_H;
 
 with System.Address_Image;
 with System.Storage_Elements;
@@ -169,14 +167,14 @@ package body ROSIDL.Dynamic is
    ----------------
 
    function Get_String (Ref : Ref_Type) return String is
-      type Str_Ptr is access constant Std_Msgs_U_Msg_U_String with Convention => C;
+      type Str_Ptr is access constant rosidl_runtime_c_u_String with Convention => C;
       function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
    begin
       if Ref.Member.Type_Id_U /= Rti_String_Id then
          raise Constraint_Error with
            "Field is not of type string but " & Types.Name (Id (Natural (Ref.Member.Type_Id_U)));
       else
-         return CS.Value (To_Str_Ptr (Ref.Ptr).Data.Data);
+         return CS.Value (To_Str_Ptr (Ref.Ptr).Data);
       end if;
    end Get_String;
 
@@ -424,7 +422,8 @@ package body ROSIDL.Dynamic is
    ----------------
 
    procedure Set_String (Ref : Ref_Type; Str : String) is
-      type Str_Ptr is access Std_Msgs_U_Msg_U_String with Convention => C;
+      type Str_Ptr is access Rosidl_Runtime_C_String_H.Rosidl_Runtime_C_U_String
+        with Convention => C;
       function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
    begin
       if Ref.Member.Type_Id_U /= Rti_String_Id then
@@ -437,7 +436,7 @@ package body ROSIDL.Dynamic is
            "String exceeds bounded string length:" & Ref.Member.String_Upper_Bound_U'Img;
       else
          if not Rosidl_Runtime_C_U_String_U_Assign
-           (To_Str_Ptr (Ref.Ptr).Data'Access,
+           (To_Str_Ptr (Ref.Ptr),
             C_Strings.To_C (Str).To_Ptr)
          then
             raise Constraint_Error with "Setting string value failed";

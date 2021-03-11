@@ -59,6 +59,20 @@ package ROSIDL.Types is
    type Int64  is new C.Long;
    type Uint64 is new C.Unsigned_Long;
 
+   --  The String type is a bit special in that we need our own functions to
+   --  access/modify it conveniently from Ada. being unable to wrap it into a
+   --  tagged type (as that would change its size), we must resort to regular
+   --  functions :'(
+
+   --  The base string type is declared in package rosidl_runtime_c, not to be
+   --  confused with std_msgs/String (which, as it only wraps the former, is
+   --  in practice the same currently, but only because nothing is added).
+
+   type ROS_String is new Rosidl_Runtime_C_U_String;
+
+   --  function Get_String (Str : ROS_String) return String;
+   --  Convenience to get an Ada string from the ROS C type
+
    ----------
    -- Name --
    ----------
