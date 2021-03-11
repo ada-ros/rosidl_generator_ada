@@ -32,3 +32,6 @@ add_custom_target(asdf_lib ALL
 
 # Make the library project depend on the generated gpr file
 # add_dependencies(asdf_lib /tmp/asdf.out)
+
+# VITAL INFORMATION ON HOW TRULY BORKED ALL OF THIS IS:
+# https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/
