@@ -1,3 +1,7 @@
+private with Ada.Unchecked_Conversion;
+
+with C_Strings;
+
 with Interfaces.C;
 
 with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
@@ -70,8 +74,29 @@ package ROSIDL.Types is
 
    type ROS_String is new Rosidl_Runtime_C_U_String;
 
-   --  function Get_String (Str : ROS_String) return String;
+   function Capacity (Str : ROS_String) return Natural;
+   --  Space already allocated for the string. Replacing with a shorter string
+   --  might not cause a reallocation. (Not implemented by ROS or here last
+   --  time checked, 2021-03-11).
+
+   function Get_String (Str : ROS_String) return String;
    --  Convenience to get an Ada string from the ROS C type
+   function "+" (Str : ROS_String) return String renames Get_String;
+   --  To be able to "use type"
+
+   procedure Set_String (Str  : aliased in out ROS_String;
+                         Text : String);
+   --  NOTE! This won't check or honor length of bounded strings! A longer
+   --  string will be assigned without issue. It is unclear if at a later time
+   --  the DDS transport will complain, or cut the string, or what. FIXME:
+   --  check here with the message metadata. Problem: not trivial to get the
+   --  precise field info in O(1). Since the field is directly accessible
+   --  (otherwise we are back to dynamic access), no elegant solution is in
+   --  sight. Perhaps non-elementary fields should be hidden and accessed only
+   --  via an enum type with the field names. Probably too convoluted. OTOH,
+   --  that might help with keeping a tagged wrapper on the message, and
+   --  dynamic references could be reused but with O(1) access? Food for
+   --  thought in a future version.
 
    ----------
    -- Name --
@@ -168,5 +193,19 @@ private
    -----------
 
    function Id (C_Id : Uint8) return Ids is (Ids'Val (Natural (C_Id)));
+
+   --------------
+   -- Capacity --
+   --------------
+
+   function Capacity (Str : ROS_String) return Natural
+   is (Natural (Str.Capacity));
+
+   ----------------
+   -- Get_String --
+   ----------------
+
+   function Get_String (Str : ROS_String) return String
+   is (C_Strings.Value (Str.Data));
 
 end Rosidl.Types;

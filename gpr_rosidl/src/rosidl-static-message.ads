@@ -3,9 +3,9 @@ with ROSIDL.Typesupport;
 with System.Address_To_Access_Conversions;
 
 generic
-   Pkg  : Namespace;    -- Package declaring the message
-   Name : String;       -- Message name
-   type Msg is private; -- The generated message struct
+   Pkg  : Namespace;            -- Package declaring the message
+   Name : String;               -- Message name
+   type Msg is limited private; -- The generated message struct
 package ROSIDL.Static.Message is
 
    --  This package is automatically instantiated by the static message

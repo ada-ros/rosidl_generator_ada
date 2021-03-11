@@ -56,6 +56,7 @@ ada_find_package_include_dir(_typesupport_introspection_include ${rosidl_typesup
 
 file(GLOB _headers
         "${_builtin_include}/builtin_interfaces/msg/*.h"
+        "${_builtin_include}/builtin_interfaces/msg/detail/*.h"
         "${_runtime_include}/rosidl_runtime_c/*.h"
 #        "${_stdmsgs_include}/std_msgs/msg/*.h"
         "${_stdmsgs_include}/std_msgs/msg/detail/multi_array*.h" # This should suffice
@@ -90,6 +91,15 @@ add_dependencies(ada_dl cstrings)
 
 ada_add_library(ada_rosidl gpr_rosidl rosidl.gpr)
 add_dependencies(ada_rosidl ada_dl ada_binding_rosidl_typesupport_c)
+
+# Add the generator project with its dependency
+ada_add_executables(
+        ada_generator # target
+        gpr_generator # folder
+        bin           # outdir
+        rosidl_ada_generator # exe name
+        )
+add_dependencies(ada_generator ada_rosidl)
 
 # Generations of test messages
 rosidl_generate_interfaces(${PROJECT_NAME}
