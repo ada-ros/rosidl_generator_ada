@@ -1,3 +1,4 @@
+with "clib_ament_index_cpp";
 with "rosidl";
 
 project Generator is
@@ -7,6 +8,8 @@ project Generator is
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
    for Main use ("rosidl-generator.adb");
+
+   for Languages use ("Ada", "C++");
 
    type Enabled_Kind is ("enabled", "disabled");
    Compile_Checks : Enabled_Kind := External ("GENERATOR_COMPILE_CHECKS", "enabled");

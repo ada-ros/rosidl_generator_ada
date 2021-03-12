@@ -6,6 +6,7 @@ find_package(rclada_common REQUIRED)
 
 ada_begin_package()
 
+find_package(ament_index_cpp REQUIRED) # Used by the generator
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
@@ -25,6 +26,9 @@ ament_register_extension(
 
 # Generate import project for rosidl_typesupport_interface/macros.h
 ada_import_c_headers(typesupport_interface ${rosidl_typesupport_interface_INCLUDE_DIRS})
+
+# Import ament_index_cpp lib
+ada_import_c_libraries(ament_index_cpp ${ament_index_cpp_LIBRARIES})
 
 # Generate autobinding for std types and rosidl_typesupport_c
 ada_import_c_libraries(${std_msgs_LIBRARIES})
