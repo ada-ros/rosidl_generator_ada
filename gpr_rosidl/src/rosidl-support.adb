@@ -9,23 +9,13 @@ package body ROSIDL.Support is
 
    use all type System.Address;
 
-   -----------------
-   -- First_Upper --
-   -----------------
-
---     function First_Upper (S : String) return String is
---     begin
---        return R : String := S do
---           R (R'First) := Ada.Characters.Handling.To_Upper (R (R'First));
---        end return;
---     end First_Upper;
-
    ----------------
    -- Get_Symbol --
    ----------------
 
    function Get_Symbol (Name : String) return System.Address is
-      Handle : constant DL.Handle := DL.Open ("lib" & Name & "__rosidl_typesupport_c.so");
+      Handle : constant DL.Handle :=
+                 DL.Open ("lib" & Name & "__rosidl_typesupport_c.so");
    begin
       return Addr : constant System.Address := DL.Sym (Handle, Name) do
          if Addr = System.Null_Address then

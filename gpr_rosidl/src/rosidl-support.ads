@@ -43,11 +43,6 @@ package ROSIDL.Support is
                                   return System.Address is
      (Get_Symbol (String (Ns) & "__" & Msg &  "__" & Suffix));
 
---  OLD WAY pre-dashing:
---                    (case Kind is
---                              when Message => "__msg__",
---                              when Service => "__srv__") & Msg &  "__" & Suffix));
-
    generic
       type Container (<>) is limited private;
       with function Get_Member (C : Container) return access constant Message_Member_Meta;

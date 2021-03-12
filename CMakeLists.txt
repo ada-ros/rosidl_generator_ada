@@ -39,11 +39,6 @@ ada_import_c_libraries(${std_msgs_LIBRARIES})
 # simultaneously with the rest of ros2.
 ada_import_msgs(std_msgs)
 
-# ISSUE: THESE ARE NOT PASSED TO BE GENERATED FOR UNKNOWN REASONS!?
-# ;/opt/ros/foxy/lib/libstd_msgs__rosidl_typesupport_introspection_c.so;/opt/ros/foxy/lib/libexample_interfaces__rosidl_typesupport_introspection_c.so)
-
-# message("XXXXXXXXXXXXXX ${std_msgs_LIBRARIES}")
-
 # GENERATOR packages have been moved into RUNTIME packages at the C RCL, to
 # allow applications not to depend on generators. It seems we can also get by
 # by using the runtime versions. This happened with FOXY.
@@ -104,12 +99,5 @@ ada_add_executables(
         rosidl_ada_generator # exe name
         )
 add_dependencies(ada_generator ada_rosidl)
-
-# Generations of test messages
-rosidl_generate_interfaces(${PROJECT_NAME}
-        msg/Test.msg
-        srv/Test.srv
-        DEPENDENCIES std_msgs
-        )
 
 ada_end_package()
