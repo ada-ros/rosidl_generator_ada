@@ -1,5 +1,5 @@
-# message("ADA GENERATOR files: ${rosidl_generate_interfaces_ABS_IDL_FILES}")
-# message("ADA GENERATOR tuples: ${rosidl_generate_interfaces_IDL_TUPLES}")
+message("ADA GENERATOR files: ${rosidl_generate_interfaces_ABS_IDL_FILES}")
+message(FATAL_ERROR "ADA GENERATOR tuples: ${rosidl_generate_interfaces_IDL_TUPLES}")
 
 set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_c/${PROJECT_NAME}")
 set(_generated_gpr "") # Files we intend to generate, to use them as dependencies

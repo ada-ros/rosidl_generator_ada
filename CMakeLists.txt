@@ -10,17 +10,22 @@ find_package(ament_index_cpp REQUIRED) # Used by the generator
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
+find_package(rosidl_typesupport_c REQUIRED) 
 find_package(rosidl_typesupport_interface REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(std_msgs REQUIRED)
 
+# COPIED FROM rosidl_generator_c NO FSKING IDEA WHAT NOTHING IN THIS CMake SOUP DOES!!!!"$·!·!$"$
+ament_index_register_resource("rosidl_generator_packages")
+
 # Register message generator
+
 install(DIRECTORY cmake
         DESTINATION share/${PROJECT_NAME})
 ament_register_extension(
-        "rosidl_generate_idl_interfaces"
-        "rosidl_generator_ada"
-        "${PROJECT_SOURCE_DIR}/cmake/rosidl_generator_ada_generate_interfaces.cmake")
+        "rosidl_generate_idl_interfaces"        # extension point
+        ${PROJECT_NAME}                         # package name
+        "cmake/rosidl_generator_ada_generate_interfaces.cmake")
 
 # message("XXXXXXXXXXXXXX ${rosidl_typesupport_interface_INCLUDE_DIRS}")
 

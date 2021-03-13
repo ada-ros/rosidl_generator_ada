@@ -1,0 +1,2 @@
+# Where to find the generator
+set(ADA_GENERATOR "@CMAKE_INSTALL_PREFIX@/lib/@PROJECT_NAME@/rosidl_ada_generator")
