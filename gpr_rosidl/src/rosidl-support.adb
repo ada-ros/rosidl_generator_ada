@@ -3,6 +3,8 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 with DL;
 
+with GNAT.OS_Lib; use GNAT.OS_Lib;
+
 with System.Address_Image;
 
 package body ROSIDL.Support is
@@ -17,6 +19,9 @@ package body ROSIDL.Support is
       Handle : constant DL.Handle :=
                  DL.Open ("lib" & Name & "__rosidl_typesupport_c.so");
    begin
+      Put_Line ("AMENT_PREFIX_PATH="
+                & Getenv ("AMENT_PREFIX_PATH").all);
+
       return Addr : constant System.Address := DL.Sym (Handle, Name) do
          if Addr = System.Null_Address then
             raise Program_Error with "Symbol [" & Name & "] could not be found";

@@ -1,4 +1,4 @@
-with "clib_ament_index_cpp";
+with "ament";
 with "rosidl";
 
 project Generator is
@@ -9,7 +9,7 @@ project Generator is
    for Exec_Dir use "bin";
    for Main use ("rosidl-generator.adb");
 
-   for Languages use ("Ada", "C++");
+   --  for Languages use ("Ada", "C++");
 
    type Enabled_Kind is ("enabled", "disabled");
    Compile_Checks : Enabled_Kind := External ("GENERATOR_COMPILE_CHECKS", "enabled");

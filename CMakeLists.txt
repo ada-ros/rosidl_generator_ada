@@ -6,16 +6,15 @@ find_package(rclada_common REQUIRED)
 
 ada_begin_package()
 
-find_package(ament_index_cpp REQUIRED) # Used by the generator
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
-find_package(rosidl_typesupport_c REQUIRED) 
+find_package(rosidl_typesupport_c REQUIRED)
 find_package(rosidl_typesupport_interface REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(std_msgs REQUIRED)
 
-# COPIED FROM rosidl_generator_c NO FSKING IDEA WHAT NOTHING IN THIS CMake SOUP DOES!!!!"$·!·!$"$
+# COPIED FROM rosidl_generator_c, not sure it does anything useful in our case
 ament_index_register_resource("rosidl_generator_packages")
 
 # Register message generator
@@ -32,9 +31,6 @@ ament_register_extension(
 # Generate import project for rosidl_typesupport_interface/macros.h
 ada_import_c_headers(typesupport_interface ${rosidl_typesupport_interface_INCLUDE_DIRS})
 
-# Import ament_index_cpp lib
-ada_import_c_libraries(ament_index_cpp ${ament_index_cpp_LIBRARIES})
-
 # Generate autobinding for std types and rosidl_typesupport_c
 ada_import_c_libraries(${std_msgs_LIBRARIES})
 
@@ -42,7 +38,7 @@ ada_import_c_libraries(${std_msgs_LIBRARIES})
 # This dependency should probably be eliminated, it also introduces a
 # circularity that will probably preclude building our rclada ros packages
 # simultaneously with the rest of ros2.
-ada_import_msgs(std_msgs)
+ada_import_interfaces(std_msgs)
 
 # GENERATOR packages have been moved into RUNTIME packages at the C RCL, to
 # allow applications not to depend on generators. It seems we can also get by
@@ -77,9 +73,6 @@ list(APPEND _includes
         ${_typesupport_interface_include}
         ${_typesupport_introspection_include})
 
-# message("XXXXXXXXXXXXXX ${_headers}")
-# message("XXXXXXXXXXXXXX ${_includes}")
-
 ada_generate_binding(
         ada_binding_rosidl_typesupport_c
         gpr_c_typesupport
@@ -87,11 +80,7 @@ ada_generate_binding(
         "${_includes}"
         ${_headers})
 
-# Compile & install the high-level rosidl binding and its deps
-ada_add_library(cstrings gpr_rosidl/dl-ada/cstrings c_strings.gpr)
-
 ada_add_library(ada_dl gpr_rosidl/dl-ada dl.gpr)
-add_dependencies(ada_dl cstrings)
 
 ada_add_library(ada_rosidl gpr_rosidl rosidl.gpr)
 add_dependencies(ada_rosidl ada_dl ada_binding_rosidl_typesupport_c)
