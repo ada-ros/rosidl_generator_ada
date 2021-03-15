@@ -11,6 +11,14 @@ package ROSIDL is
       Intra_Process : Boolean;
    end record;
 
+   type Interface_Kinds is (Message, Service, Action);
+   --  Interfaces offered by ROS2 to exchange information
+
+   type Interface_Parts is (Message,
+                            Service, Request, Response,
+                            Action, Goal, Result, Feedback);
+   --  This is used to access typesupports internally; hence the mix of concepts
+
    --  DO NOT CROSS --
 
    package C renames Interfaces.C;
@@ -45,5 +53,14 @@ private
    pragma Warnings (Off);
    use all type CX.Bool;
    pragma Warnings (On);
+
+   function "+" (Kind : Interface_Kinds) return String
+   --  Return the internal substring used to prefix symbols
+   is (case Kind is
+          when Message => "__msg__",
+          when Service => "__srv__",
+          when Action  => "__action__");
+
+   function S (Ns : Namespace) return String is (String (Ns));
 
 end ROSIDL;

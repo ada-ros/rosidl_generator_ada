@@ -9,7 +9,7 @@ with Rosidl_Runtime_C_Service_Type_Support_Struct_H;
 use  Rosidl_Runtime_C_Service_Type_Support_Struct_H;
 
 with ROSIDL.Introspection;
-with ROSIDL.Support;
+with ROSIDL.Symbols;
 
 with System;
 
@@ -28,6 +28,7 @@ package ROSIDL.Typesupport is
 
    --  C equivalent  --
    --  These aren't needed by clients
+   --  DO NOT CROSS (as a client of the library)
 
    type Msg_Support_Handle is access constant Rosidl_Message_Type_Support_T with
      Convention   => C,
@@ -41,9 +42,6 @@ package ROSIDL.Typesupport is
      Storage_Size => 0;
 
    --  ADA BINDING  --
-
-   function Get_Support (Ns  : Namespace;
-                         Msg : String) return Message_Support;
 
    function Data (This : Message_Support) return System.Address;
 
@@ -83,9 +81,11 @@ private
                                          Msg : String)
                                          return Get_Message_Typesupport_Handle_Func_Access is
      (To_Func
-        (Support.Get_Symbol
-             ("rosidl_typesupport_c__get_message_type_support_handle__"
-              & String (Ns) & "__" & Msg)));
+        (Symbols.Get_Typesupport_Function
+             (Pkg  => Ns,
+              Kind => Message,
+              Part => Message,
+              Name => Msg)));
 
    type Message_Support is tagged record
       C         : Msg_Support_Handle;
@@ -140,7 +140,7 @@ private
 
    function Get_Srv_Typesupport (Ns  : Namespace;
                                  Srv : String) return System.Address is
-     (Support.Get_Symbol
+     (Symbols.Get_Symbol
         ("rosidl_typesupport_c__get_service_type_support_handle__" & String (Ns) & "__srv__" & Srv));
    --  E.g.: rosidl_typesupport_c__get_service_type_support_handle__example_interfaces__srv__AddTwoInts
 

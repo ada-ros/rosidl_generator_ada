@@ -1,12 +1,12 @@
 with Ada.Unchecked_Conversion;
 
-with ROSIDL.Support;
+with ROSIDL.Symbols;
 with ROSIDL.Types;
 
 with System;
 
 generic
-   with package Field is new Support.Field_Accessor (<>);
+   with package Field is new Symbols.Field_Accessor (<>);
 
    Type_Id : Types.Ids; -- The ROS id from field_types.h
    type Value is private;

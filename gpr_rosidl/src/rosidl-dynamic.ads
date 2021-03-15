@@ -4,7 +4,7 @@ with Ada.Strings.Fixed;
 
 with ROSIDL.Field_References;
 with ROSIDL.Introspection;
-with ROSIDL.Support;
+with ROSIDL.Symbols;
 with ROSIDL.Typesupport;
 with ROSIDL.Types;
 
@@ -80,10 +80,10 @@ package ROSIDL.Dynamic is
    --  Preparations
 
    function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access;
-   function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta;
+   function Get_Member (Ref : Ref_Access) return access constant Symbols.Message_Member_Meta;
    function Get_Ptr    (Ref : Ref_Access) return System.Address;
 
-   package FA is new Support.Field_Accessor (Ref_Access,
+   package FA is new Symbols.Field_Accessor (Ref_Access,
                                              Get_Member,
                                              Get_Ptr);
 
@@ -253,7 +253,7 @@ private
       Msg      : System.Address;
       Support  : ROSIDL.Typesupport.Message_Support;
       case Is_Field is
-         when False => Destroy  : ROSIDL.Support.Proc_Addr;
+         when False => Destroy  : ROSIDL.Symbols.Proc_Addr;
          when True  => null; -- Field messages are not finalized; its done by their parent
       end case;
    end record;
@@ -277,7 +277,7 @@ private
 
    function Get_Access (Ref : aliased in out Ref_Type) return Ref_Access is (Ref'Unchecked_Access);
 
-   function Get_Member (Ref : Ref_Access) return access constant Support.Message_Member_Meta is (Ref.Member);
+   function Get_Member (Ref : Ref_Access) return access constant Symbols.Message_Member_Meta is (Ref.Member);
 
    function Get_Ptr    (Ref : Ref_Access) return System.Address is (Ref.Ptr);
 
