@@ -15,8 +15,7 @@ package ROSIDL.Static.Message is
    --  instance will be found at the corresponding generated package at
    --  ROSIDL.Static.Namespace.Message.Name.
 
-   package Conversions is
-     new System.Address_To_Access_Conversions (Msg);
+   package Conversions is new System.Address_To_Access_Conversions (Msg);
 
    subtype Msg_Access is Conversions.Object_Pointer;
 
@@ -24,14 +23,13 @@ package ROSIDL.Static.Message is
                                return Msg_Access
                                renames Conversions.To_Pointer;
 
-   function Support return Typesupport.Message_Support;
-   --  Returns the appropriate support for this kind of message (plain,
-   --  request, response, etc).
+   Support : constant Typesupport.Message_Support;
+   --  Support to create messages of this type
 
 private
 
-   function Support return Typesupport.Message_Support
-   is (case Part is
+   Support : constant Typesupport.Message_Support :=
+     (case Part is
           when ROSIDL.Message =>
              Typesupport.Get_Message_Support (Pkg, Name),
           when Request =>

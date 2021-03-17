@@ -34,6 +34,12 @@ package ROSIDL is
    type Interface_Kinds is (Message, Service, Action);
    --  Interfaces offered by ROS2 to exchange information
 
+   function Short_Tag (Kind : Interface_Kinds) return String;
+   --  __msg__, __srv__, __action__
+
+   function To_Kind (Short_Name : String) return Interface_Kinds;
+   --  Convert an extension .msg, .srv, .action to the appropriate kind
+
    type Interface_Parts is (Message,
                             Service, Request, Response,
                             Action, Goal, Result, Feedback);
@@ -120,5 +126,15 @@ private
           when Message => "_message_",
           when Service => "_service_",
           when Action  => raise Program_Error with "Unimplemented");
+
+   -------------
+   -- To_Kind --
+   -------------
+
+   function To_Kind (Short_Name : String) return Interface_Kinds
+   is (if Short_Name = "msg" then Message
+       elsif Short_Name = "srv" then Service
+       elsif Short_Name = "action" then Action
+       else raise Program_Error with "Unimplemented: " & Short_Name);
 
 end ROSIDL;
