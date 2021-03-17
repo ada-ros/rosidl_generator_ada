@@ -1,3 +1,5 @@
+with AAA.Strings;
+
 with Interfaces.C; pragma Unreferenced (Interfaces.C);
 with Interfaces.C.Extensions;
 
@@ -5,7 +7,25 @@ with X86_64_Linux_Gnu_Bits_Stdint_Uintn_H;
 
 package ROSIDL is
 
-   type Namespace is new String;
+   type Package_Name is new String
+     with Dynamic_Predicate =>
+       not AAA.Strings.Contains (String (Package_Name), "__");
+   --  A plain package name, e.g., rclada
+
+   type Namespace is new String
+     with Dynamic_Predicate => AAA.Strings.Contains (String (Namespace), "__");
+   --  A package name plus its interface scope (__msg, __srv)
+
+   subtype Message_Name is String;
+   --  Note that message names include their function in a service/action:
+   --  Test (plain topic)
+   --  and, for internal use (not needed by users):
+   --  Test__Sequence (array of plain topic msg)
+   --  Test_Request/Test_Response (service msgs)
+   --  Test_Request__Sequence
+
+   subtype Service_Name is String;
+   --  The plain name the user sees
 
    type Message_Info is record
       Intra_Process : Boolean;
@@ -26,6 +46,31 @@ package ROSIDL is
    subtype Uint8_T is X86_64_Linux_Gnu_Bits_Stdint_Uintn_H.Uint8_T;
 
 private
+
+   -------
+   -- S --
+   -------
+
+   function S (Ns : Namespace) return String is (String (Ns));
+
+   use AAA.Strings;
+
+   function Fix_Ns (Ns : Namespace) return Package_Name
+   is (Package_Name
+       (Replace
+        (Replace
+         (S (Ns), "__srv", ""),
+         "__msg", "")));
+
+   function To_Ns (Pkg : Package_Name; Kind : Interface_Kinds) return Namespace
+   is (case Kind is
+          when Message => Namespace (Pkg & "__msg"),
+          when Service => Namespace (Pkg & "__srv"),
+          when others  =>
+             raise Program_Error with "Unimplemented: " & Kind'Image);
+
+   function To_Ns (Srv : Service_Name; Kind : Interface_Kinds) return Namespace
+   is (To_Ns (Package_Name (Srv), Kind));
 
    function Rti_Bool_Id    return Uint8_T with Import, Convention => C;
    function Rti_Byte_Id    return Uint8_T with Import, Convention => C;
@@ -54,13 +99,26 @@ private
    use all type CX.Bool;
    pragma Warnings (On);
 
-   function "+" (Kind : Interface_Kinds) return String
+   ---------------
+   -- Short_Tag --
+   ---------------
+
+   function Short_Tag (Kind : Interface_Kinds) return String
    --  Return the internal substring used to prefix symbols
    is (case Kind is
           when Message => "__msg__",
           when Service => "__srv__",
-          when Action  => "__action__");
+          when Action  => raise Program_Error with "Unimplemented");
 
-   function S (Ns : Namespace) return String is (String (Ns));
+   --------------
+   -- Long_Tag --
+   --------------
+
+   function Long_Tag (Kind : Interface_Kinds) return String
+   --  Return the internal substring used to prefix symbols
+   is (case Kind is
+          when Message => "_message_",
+          when Service => "_service_",
+          when Action  => raise Program_Error with "Unimplemented");
 
 end ROSIDL;

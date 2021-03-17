@@ -17,7 +17,7 @@ with System.Storage_Elements;
 package body ROSIDL.Dynamic is
 
    package CS renames Interfaces.C.Strings;
-   package CX renames Support.CX;
+   package CX renames Symbols.CX;
 
    use all type Interfaces.C.Size_T;
    pragma Warnings (Off);
@@ -57,11 +57,12 @@ package body ROSIDL.Dynamic is
                   Introspect : access constant Introspection.Message_Members_Meta)
                   return       Message'Class
    is
-      Pkg : constant String := C_Strings.Value (Introspect.Message_Namespace_U);
-      Msg : constant String := C_Strings.Value (Introspect.Message_Name_U);
+      Ns  : constant Namespace := Namespace (C_Strings.Value (Introspect.Message_Namespace_U));
+      Msg : constant String    := C_Strings.Value (Introspect.Message_Name_U);
 
       Support : constant ROSIDL.Typesupport.Message_Support :=
-                  ROSIDL.Typesupport.Get_Support (Namespace (Pkg), Msg);
+                  ROSIDL.Typesupport.Get_Message_Support
+                    (Fix_Ns (Ns), Msg);
    begin
       return This : Message (Is_Field => Is_Field) do
          This.Msg     := Data;
@@ -127,7 +128,7 @@ package body ROSIDL.Dynamic is
    -----------------
 
    function Get_Boolean (Ref : aliased in out Ref_Type) return Boolean is
-     (Support.To_Boolean (Ref.As_Bool));
+     (Boolean (Ref.As_Bool.Element.all));
 
    -----------------------
    -- Get_Introspection --
@@ -184,11 +185,15 @@ package body ROSIDL.Dynamic is
 
    function Init (Msg_Support : ROSIDL.Typesupport.Message_Support) return Message
    is
-      Pkg : constant Namespace := Msg_Support.Message_Class.Package_Name;
-      Msg : constant String    := Msg_Support.Message_Class.Message_Name;
+      Pkg : constant Namespace    := Msg_Support.Message_Class.Name_Space;
+      Msg : constant Message_Name := Msg_Support.Message_Class.Msg_Name;
 
-      Create : constant Support.Func_Ret_Addr :=
-                 Support.To_Func (Support.Get_Message_Function (Pkg, Msg, "create"));
+      Create : constant Symbols.Func_Ret_Addr :=
+                 Symbols.To_Func
+                   (Symbols.Get_Message_Function
+                      (Pkg    => Pkg,
+                       Name   => Msg,
+                       Op     => "create"));
    begin
       return M : Message (Is_Field => False) do
          begin
@@ -197,7 +202,11 @@ package body ROSIDL.Dynamic is
             M.Support := Msg_Support;
 
             --  Functions we'll need at destroy time:
-            M.Destroy := Support.To_Proc (Support.Get_Message_Function (Pkg, Msg, "destroy"));
+            M.Destroy := Symbols.To_Proc
+              (Symbols.Get_Message_Function
+                 (Pkg  => Pkg,
+                  Name => Msg,
+                  Op   => "destroy"));
          exception
             when E : others =>
                Put_Line ("Dynamic.Msg.Init: " & Ada.Exceptions.Exception_Information (E));
@@ -266,7 +275,7 @@ package body ROSIDL.Dynamic is
       procedure Print_Member (M : Introspection.Message_Member_Meta; Data_Ptr : System.address) is
          type GFA is access function (arg1 : System.Address; arg2 : C.size_t) return System.Address;
          type GSA is access function (arg1 : System.Address) return C.size_t;
-         type RFA is access function (arg1 : System.Address; arg2 : C.size_t) return Support.CX.Bool;
+         type RFA is access function (arg1 : System.Address; arg2 : C.size_t) return Symbols.CX.Bool;
          function To_Addr is new Ada.Unchecked_Conversion (GFA, System.Address);
          function To_Addr is new Ada.Unchecked_Conversion (GSA, System.Address);
          function To_Addr is new Ada.Unchecked_Conversion (RFA, System.Address);
@@ -317,8 +326,8 @@ package body ROSIDL.Dynamic is
         Address => This.Introspect.To_C.Members_U.all'Address;
    begin
       Put_Line (Prefix & "************************************************************");
-      Put_Line (Prefix & "  Namespace: " & String (This.Introspect.Package_Name));
-      Put_Line (Prefix & "    Message: " & This.Introspect.Message_Name);
+      Put_Line (Prefix & "  Namespace: " & String (This.Introspect.Name_Space));
+      Put_Line (Prefix & "    Message: " & This.Introspect.Msg_Name);
       Put_Line (Prefix & "       Size:"  & This.Introspect.Size'Img & " bytes");
       Put_Line (Prefix & "Field count:" & Members'Length'Img);
       for Member of Members loop
@@ -377,10 +386,17 @@ package body ROSIDL.Dynamic is
          --  rosidl_generator_c__String__Sequence__init(
          --    rosidl_generator_c__String__Sequence * array, size_t size);
       begin
-         Fini_Proc (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "fini")).all (Arr.Ptr);
+         Fini_Proc
+           (Symbols.Get_Message_Function
+              (Pkg  => Namespace (Ns),
+               Name => Typename & "__Sequence",
+               Op   => "fini")).all (Arr.Ptr);
 
-         if not Init_Func (Support.Get_Message_Function (Namespace (Ns), Typename & "__Sequence", "init"))
-                .all (Arr.Ptr, C.Size_T (Length))
+         if not Init_Func
+           (Symbols.Get_Message_Function
+              (Pkg  => Namespace (Ns),
+               Name => Typename & "__Sequence",
+               Op   => "init")).all (Arr.Ptr, C.Size_T (Length))
          then
             raise Program_Error with "Array initialization failed";
          end if;
@@ -414,7 +430,7 @@ package body ROSIDL.Dynamic is
 
    procedure Set_Boolean (Ref : aliased in out Ref_Type; Bool : Boolean) is
    begin
-      Ref.As_Bool := (if Bool then 1 else 0);
+      Ref.As_Bool := Types.Bool (Bool);
    end Set_Boolean;
 
    ----------------

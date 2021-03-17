@@ -3,8 +3,9 @@ with ROSIDL.Typesupport;
 with System.Address_To_Access_Conversions;
 
 generic
-   Pkg  : Namespace;            -- Package declaring the message
-   Name : String;               -- Message name
+   Pkg   : Package_Name;    -- Package declaring the message
+   Name  : String;          -- Complete message name (includes _Request, etc for services/actions)
+   Part  : Interface_Parts;
    type Msg is limited private; -- The generated message struct
 package ROSIDL.Static.Message is
 
@@ -24,11 +25,20 @@ package ROSIDL.Static.Message is
                                renames Conversions.To_Pointer;
 
    function Support return Typesupport.Message_Support;
+   --  Returns the appropriate support for this kind of message (plain,
+   --  request, response, etc).
 
 private
 
    function Support return Typesupport.Message_Support
-   is (Typesupport.Get_Message_Support (Ns  => Pkg,
-                                        Msg => Name));
+   is (case Part is
+          when ROSIDL.Message =>
+             Typesupport.Get_Message_Support (Pkg, Name),
+          when Request =>
+             Typesupport.Get_Service_Support (Pkg, Name).Request_Support,
+          when Response =>
+             Typesupport.Get_Service_Support (Pkg, Name).Response_Support,
+          when others =>
+             raise Program_Error with "Unimplemented: " & Part'Image);
 
 end ROSIDL.Static.Message;

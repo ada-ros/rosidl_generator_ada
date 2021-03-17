@@ -1,6 +1,6 @@
 with Ada.Unchecked_Conversion;
 
-with ROSIDL.Support;
+with ROSIDL.Symbols;
 with ROSIDL.Typesupport;
 
 with System;
@@ -17,16 +17,18 @@ package body ROSIDL.Introspection is
    -- Get_Msg_Introspect --
    ------------------------
 
-   function Get_Msg_Introspect (Ns  : Namespace;
-                                Msg : String)
+   function Get_Msg_Introspect (Ns   : Namespace;
+                                Msg  : String)
                                 return access constant Message_Members_Meta is
       type Get_Introspect is access function return Typesupport.Msg_Support_Handle with Convention => C;
       function To_Get_Introspect is new Ada.Unchecked_Conversion (System.Address, Get_Introspect);
 
       TS : constant Typesupport.Msg_Support_Handle :=
-             To_Get_Introspect (Support.Get_Symbol
-                                ("rosidl_typesupport_introspection_c__get_message_type_support_handle__"
-                                   & String (Ns) & "__" & Msg)).all;
+             To_Get_Introspect
+               (Symbols.Get_Introspection_Function
+                  (Pkg  => Ns,
+                   Kind => Message,
+                   Name => Msg)).all;
    begin
       return To_MTSI_Ptr (TS.Data);
    end Get_Msg_Introspect;
@@ -42,11 +44,11 @@ package body ROSIDL.Introspection is
       function To_Get_Introspect is new Ada.Unchecked_Conversion (System.Address, Get_Introspect);
 
       TS : constant Typesupport.Srv_Support_Handle :=
-             To_Get_Introspect (Support.Get_Symbol
-                                ("rosidl_typesupport_introspection_c__get_service_type_support_handle__"
-                                   & String (Ns)
-                                   & "__srv__"
-                                   & Srv)).all;
+             To_Get_Introspect
+               (Symbols.Get_Introspection_Function
+                  (Pkg  => Ns,
+                   Kind => Service,
+                   Name => Srv)).all;
    begin
       return To_STSI_Ptr (TS.Data);
    end Get_Srv_Introspect;

@@ -17,18 +17,22 @@ package ROSIDL.Typesupport is
 
    type Message_Support is tagged private;
 
-   function Get_Message_Support (Ns  : Namespace;
-                                 Msg : String) return Message_Support;
+   function Get_Message_Support (Pkg : Package_Name;
+                                 Msg : Message_Name) return Message_Support;
 
-   function Get_Request_Support (Ns  : Namespace;
-                                 Msg : String) return Message_Support;
+   type Service_Support is tagged private;
 
-   function Get_Response_Support (Ns  : Namespace;
-                                  Msg : String) return Message_Support;
+   function Get_Service_Support (Pkg : Package_Name;
+                                 Srv : Service_Name) return Service_Support;
+
+   function Request_Support (This : Service_Support'Class) return Message_Support;
+
+   function Response_Support (This : Service_Support'Class) return Message_Support;
 
    --  C equivalent  --
-   --  These aren't needed by clients
-   --  DO NOT CROSS (as a client of the library)
+   --  These aren't needed by regular users
+   --  These can't be hidden without much boilerplate
+   --  DO NOT CROSS (as a user of the library) --------------------------------
 
    type Msg_Support_Handle is access constant Rosidl_Message_Type_Support_T with
      Convention   => C,
@@ -51,16 +55,6 @@ package ROSIDL.Typesupport is
 
    function To_C (This : Message_Support) return Msg_Support_Handle;
 
-
-   type Service_Support is tagged private;
-
-   function Get_Service_Support (Ns  : Namespace;
-                                 Srv : String) return Service_Support;
-
-   function Request_Support (This : Service_Support'Class) return Message_Support;
-
-   function Response_Support (This : Service_Support'Class) return Message_Support;
-
    function To_C (This : Service_Support) return Srv_Support_Handle;
 
 private
@@ -71,83 +65,102 @@ private
    type Get_Service_Typesupport_Handle_Func_Access is
      access function return ROSIDL.Typesupport.Srv_Support_Handle with Convention => C;
 
-   function To_Func is new Ada.Unchecked_Conversion
+   function To_Msg_Support_Func is new Ada.Unchecked_Conversion
      (System.Address, Get_Message_Typesupport_Handle_Func_Access);
 
-   function To_Func is new Ada.Unchecked_Conversion
+   function To_Srv_Support_Func is new Ada.Unchecked_Conversion
      (System.Address, Get_Service_Typesupport_Handle_Func_Access);
-
-   function Get_Typesupport_Handle_Func (Ns  : Namespace;
-                                         Msg : String)
-                                         return Get_Message_Typesupport_Handle_Func_Access is
-     (To_Func
-        (Symbols.Get_Typesupport_Function
-             (Pkg  => Ns,
-              Kind => Message,
-              Part => Message,
-              Name => Msg)));
 
    type Message_Support is tagged record
       C         : Msg_Support_Handle;
       Msg_Class : Introspection.Message_Class;
    end record;
 
-   function Get_Support (Ns  : Namespace;
-                         Msg : String) return Message_Support is
-     (C         => Get_Typesupport_Handle_Func     (Ns, Msg).all,
-      Msg_Class => Introspection.Get_Message_Class (Ns, Msg));
+   ----------
+   -- Data --
+   ----------
 
    function Data (This : Message_Support) return System.Address is
       (This.C.Data);
 
+   ----------------
+   -- Identifier --
+   ----------------
+
    function Identifier (This : Message_Support) return String is
      (C_Strings.Value (This.C.Typesupport_Identifier));
+
+   -------------------
+   -- Message_Class --
+   -------------------
 
    function Message_Class (This : Message_Support) return Introspection.Message_Class is
       (This.Msg_Class);
 
+   ----------
+   -- To_C --
+   ----------
+
    function To_C (This : Message_Support) return Msg_Support_Handle is (This.C);
 
+   -------------------------
+   -- Get_Message_Support --
+   -------------------------
 
-
-   function Get_Message_Support (Ns  : Namespace;
-                                 Msg : String) return Message_Support is
-      (Get_Support (Ns & "__msg", Msg));
-
-   function Get_Request_Support (Ns  : Namespace;
-                                 Msg : String) return Message_Support is
-      (Get_Support (Ns, Msg & "_Request"));
-
-   function Get_Response_Support (Ns  : Namespace;
-                                  Msg : String) return Message_Support is
-      (Get_Support (Ns, Msg & "_Response"));
-
-
-
+   function Get_Message_Support (Pkg : Package_Name;
+                                 Msg : Message_Name) return Message_Support is
+     (C         => To_Msg_Support_Func (Symbols.Get_Typesupport_Function
+                                        (Pkg  => To_Ns (Pkg, Message),
+                                         Kind => Message,
+                                         Name => Msg)).all,
+      Msg_Class => Introspection.Get_Message_Class (To_Ns (Pkg, Message), Msg));
 
    type Service_Support is tagged record
       C         : Srv_Support_Handle;
       Srv_Class : Introspection.Service_Class;
    end record;
 
+   ---------------------
+   -- Request_Support --
+   ---------------------
+
    function Request_Support (This : Service_Support'Class) return Message_Support is
-     (Get_Request_Support (This.Srv_Class.Package_Name,
-                           This.Srv_Class.Service_Name));
+     (Message_Support'
+        (C         => To_Msg_Support_Func (Symbols.Get_Typesupport_Function
+                                        (Pkg  => This.Srv_Class.Name_Space,
+                                         Kind => Message,
+                                         Name => This.Srv_Class.Service_Name & "_Request")).all,
+         Msg_Class => Introspection.Get_Message_Class (This.Srv_Class.Name_Space,
+                                                       This.Srv_Class.Service_Name & "_Request")));
+
+   ----------------------
+   -- Response_Support --
+   ----------------------
 
    function Response_Support (This : Service_Support'Class) return Message_Support is
-     (Get_Response_Support (This.Srv_Class.Package_Name,
-                            This.Srv_Class.Service_Name));
+     (Message_Support'
+        (C         => To_Msg_Support_Func (Symbols.Get_Typesupport_Function
+                                           (Pkg  => This.Srv_Class.Name_Space,
+                                            Kind => Message,
+                                            Name => This.Srv_Class.Service_Name & "_Response")).all,
+         Msg_Class => Introspection.Get_Message_Class (This.Srv_Class.Name_Space,
+                                                       This.Srv_Class.Service_Name & "_Response")));
 
-   function Get_Srv_Typesupport (Ns  : Namespace;
-                                 Srv : String) return System.Address is
-     (Symbols.Get_Symbol
-        ("rosidl_typesupport_c__get_service_type_support_handle__" & String (Ns) & "__srv__" & Srv));
-   --  E.g.: rosidl_typesupport_c__get_service_type_support_handle__example_interfaces__srv__AddTwoInts
+   -------------------------
+   -- Get_Service_Support --
+   -------------------------
 
-   function Get_Service_Support (Ns  : Namespace;
-                                 Srv : String) return Service_Support is
-     (C         => To_Func (Get_Srv_Typesupport (Ns, Srv)).all,
-      Srv_Class => Introspection.Get_Service_Class (Ns, Srv));
+   function Get_Service_Support (Pkg : Package_Name;
+                                 Srv : Service_Name) return Service_Support is
+     (C         => To_Srv_Support_Func (Symbols.Get_Typesupport_Function
+                                        (Pkg  => To_Ns (Pkg, Service),
+                                         Kind => Service,
+                                         Name => Srv)).all,
+      Srv_Class => Introspection.Get_Service_Class (To_Ns (Pkg, Service), Srv));
+
+   ----------
+   -- To_C --
+   ----------
 
    function To_C (This : Service_Support) return Srv_Support_Handle is (This.C);
 

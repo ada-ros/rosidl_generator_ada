@@ -1,3 +1,5 @@
+private with AAA.Strings;
+
 with C_Strings;
 
 with Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
@@ -26,11 +28,11 @@ package ROSIDL.Introspection is
    type Message_Class is tagged private;
 
    function Get_Message_Class (Ns    : Namespace;
-                               Msg   : String) return Message_Class;
+                               Msg   : Message_Name) return Message_Class;
    function Get_Message_Class (C     : access constant Message_Members_Meta) return Message_Class;
 
-   function Package_Name (This : Message_Class) return Namespace;
-   function Message_Name (This : Message_Class) return String;
+   function Name_Space (This : Message_Class) return Namespace;
+   function Msg_Name (This : Message_Class) return Message_Name;
 
    function Size (This : Message_Class) return Natural;
 
@@ -42,7 +44,7 @@ package ROSIDL.Introspection is
    function Get_Service_Class (Ns  : Namespace;
                                Srv : String) return Service_Class;
 
-   function Package_Name (This : Service_Class) return Namespace;
+   function Name_Space (This : Service_Class) return Namespace;
    function Service_Name (This : Service_Class) return String;
 
    function Get_Request_Class  (This : Service_Class) return Message_Class'Class;
@@ -52,8 +54,8 @@ package ROSIDL.Introspection is
 
 private
 
-   function Get_Msg_Introspect (Ns  : Namespace;
-                                Msg : String)
+   function Get_Msg_Introspect (Ns   : Namespace;
+                                Msg  : Message_Name)
                                 return access constant Message_Members_Meta;
 
    function Get_Srv_Introspect (Ns  : Namespace;
@@ -65,18 +67,18 @@ private
       C          : access constant Message_Members_Meta;
    end record;
 
-   function Get_Message_Class (Ns  : Namespace;
-                               Msg : String) return Message_Class is
+   function Get_Message_Class (Ns   : Namespace;
+                               Msg  : Message_Name) return Message_Class is
      (C => Get_Msg_Introspect (Ns, Msg));
 
    function Get_Message_Class (C          : access constant Message_Members_Meta)
                                return Message_Class is
      (C => C);
 
-   function Package_Name (This : Message_Class) return Namespace is
-      (Namespace (C_Strings.Value (This.C.Message_Namespace_U)));
+   function Name_Space (This : Message_Class) return Namespace is
+     (Namespace (C_Strings.Value (This.C.Message_Namespace_U)));
 
-   function Message_Name (This : Message_Class) return String is
+   function Msg_Name (This : Message_Class) return Message_Name is
       (C_Strings.Value (This.C.Message_Name_U));
 
    function Size (This : Message_Class) return Natural is
@@ -94,7 +96,7 @@ private
                                Srv : String) return Service_Class is
      (C => Get_Srv_Introspect (Ns, Srv));
 
-   function Package_Name (This : Service_Class) return Namespace is
+   function Name_Space (This : Service_Class) return Namespace is
      (Namespace (C_Strings.Value (This.C.Service_Namespace_U)));
 
    function Service_Name (This : Service_Class) return String is

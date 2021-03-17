@@ -1,11 +1,11 @@
 with Ada.Unchecked_Conversion;
 
+private with AAA.Strings;
+
 with Interfaces.C.Extensions;
 
 with Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
 use  Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
-
-with ROSIDL.Types;
 
 with System;
 
@@ -24,8 +24,6 @@ package ROSIDL.Symbols is
    subtype Message_Members_Meta is Rosidl_Typesupport_Introspection_C_U_MessageMembers;
    subtype Message_Member_Meta  is Rosidl_Typesupport_Introspection_C_U_MessageMember;
 
-   function To_Boolean (B : Types.Bool) return Boolean is (Integer (B) /= 0);
-
    type Func_Ret_Addr is access function return System.Address with Convention => C;
    function To_Func is new Ada.Unchecked_Conversion (System.Address, Func_Ret_Addr);
 
@@ -35,27 +33,24 @@ package ROSIDL.Symbols is
    type Proc_Addr is access procedure (Addr : System.Address) with Convention => C;
    function To_Proc is new Ada.Unchecked_Conversion (System.Address, Proc_Addr);
 
-   function Get_Interface_Function (Pkg    : Namespace;
-                                    Kind   : Interface_Kinds;
-                                    Iface  : String;
-                                    Suffix : String)
-                                    return System.Address;
+   function Get_Message_Function (Pkg    : Namespace;
+                                  Name   : Message_Name;
+                                  Op     : String)
+                                  return System.Address;
    --  Returns functions to create/destroy/etc messages
    --  E.g.: symbol std_msgs__msg__String__init is found in library
    --  libstd_msgs__rosidl_generator_c.so
 
    function Get_Typesupport_Function (Pkg  : Namespace;
                                       Kind : Interface_Kinds;
-                                      Part : Interface_Parts;
-                                      Name : String)
+                                      Name : Message_Name)
                                       return System.Address;
    --  Return the function that returns a typesupport for requested interface,
    --  to create subscriptions, topics, services, clients, etc
 
    function Get_Introspection_Function (Pkg  : Namespace;
                                         Kind : Interface_Kinds;
-                                        Part : Interface_Parts;
-                                        Name : String)
+                                        Name : Message_Name)
                                         return System.Address;
    --  Returns the function that returns an introspection struct for the interface,
    --  for our internal use to access fields, sizes, etc
@@ -74,6 +69,11 @@ package ROSIDL.Symbols is
 
 private
 
+   function Contains (Full, Sub : String) return Boolean
+   is (for some I in Full'Range =>
+          I + Sub'Length - 1 in Full'Range and then
+          Full (I .. I + Sub'Length - 1) = Sub);
+
    function Get_Symbol (Symname : String;
                         Libname : String := "")
                         return System.Address;
@@ -84,16 +84,37 @@ private
    -- Get_Interface_Function --
    ----------------------------
 
-   function Get_Interface_Function (Pkg    : Namespace;
-                                    Kind   : Interface_Kinds;
-                                    Iface  : String;
-                                    Suffix : String)
-                                    return System.Address is
-     (Get_Symbol (Symname => String (Pkg) & (+Kind) & Iface &  "__" & Suffix,
-                  Libname => "lib" & String (Pkg) & "__rosidl_generator_c.so"));
-   --  msg symbol: std_msgs__msg__String__init
-   --  srv symbol: rclada__srv__Test_Request__create
-   --  srv symbol: rclada__srv__Test_Response__create
+   function Get_Message_Function (Pkg    : Namespace;
+                                  Name   : Message_Name;
+                                  Op     : String)
+                                  return System.Address is
+     (Get_Symbol
+        (Symname => String (Pkg) & "__" & Name &  "__" & Op,
+         Libname => "lib" & String (Fix_Ns (Pkg)) & "__rosidl_generator_c.so"));
+   --  rclada__msg__Test__create
+   --  rclada__msg__Test__destroy
+   --  rclada__msg__Test__fini
+   --  rclada__msg__Test__init
+   --  rclada__msg__Test__Sequence__create
+   --  rclada__msg__Test__Sequence__destroy
+   --  rclada__msg__Test__Sequence__fini
+   --  rclada__msg__Test__Sequence__init
+   --  rclada__srv__Test_Request__create
+   --  rclada__srv__Test_Request__destroy
+   --  rclada__srv__Test_Request__fini
+   --  rclada__srv__Test_Request__init
+   --  rclada__srv__Test_Request__Sequence__create
+   --  rclada__srv__Test_Request__Sequence__destroy
+   --  rclada__srv__Test_Request__Sequence__fini
+   --  rclada__srv__Test_Request__Sequence__init
+   --  rclada__srv__Test_Response__create
+   --  rclada__srv__Test_Response__destroy
+   --  rclada__srv__Test_Response__fini
+   --  rclada__srv__Test_Response__init
+   --  rclada__srv__Test_Response__Sequence__create
+   --  rclada__srv__Test_Response__Sequence__destroy
+   --  rclada__srv__Test_Response__Sequence__fini
+   --  rclada__srv__Test_Response__Sequence__init
    --  act symbol: TODO
    --  LIB:        libstd_msgs__rosidl_generator_c.so
 
@@ -106,24 +127,14 @@ private
    function Get_Handle_Symbol (Support : Handle_Kinds;
                                Pkg     : Namespace;
                                Kind    : Interface_Kinds;
-                               Part    : Interface_Parts;
                                Name    : String)
                                return String
-   is (case Part is
-              when Message | Request | Response =>
-                 "rosidl_typesupport_"
-                 & (case Support is
-                       when Introspection => "_introspection",
-                       when Typesupport   => "")
-                 & "c__get_message_type_support_handle__"
-                 & S (Pkg) & (+Kind) & Name
-                 & (case Part is
-                       when Message |
-                            Service  => "",
-                       when Request  => "_Request",
-                       when Response => "_Response",
-                       when others   => raise Program_Error with "Unimplemented"),
-              when others => raise Program_Error with "Unimplemented");
+   is ("rosidl_typesupport_"
+       & (case Support is
+             when Introspection => "introspection_",
+             when Typesupport   => "")
+       & "c__get" & Long_Tag (Kind) & "type_support_handle__"
+       & S (Pkg) & "__" & Name);
 
    ------------------------------
    -- Get_Typesupport_Function --
@@ -131,12 +142,11 @@ private
 
    function Get_Typesupport_Function (Pkg  : Namespace;
                                       Kind : Interface_Kinds;
-                                      Part : Interface_Parts;
                                       Name : String)
                                       return System.Address
    is (Get_Symbol
-       (Symname => Get_Handle_Symbol (Typesupport, Pkg, Kind, Part, Name),
-        Libname => "lib" & String (Pkg) & "__rosidl_typesupport_c.so"));
+       (Symname => Get_Handle_Symbol (Typesupport, Pkg, Kind, Name),
+        Libname => "lib" & String (Fix_Ns (Pkg)) & "__rosidl_typesupport_c.so"));
    --  msg symbol: rosidl_typesupport_c__get_message_type_support_handle__rclada__msg__Test
    --  srv symbol: rosidl_typesupport_c__get_message_type_support_handle__rclada__srv__Test_Request
    --  srv symbol: rosidl_typesupport_c__get_message_type_support_handle__rclada__srv__Test_Response
@@ -149,12 +159,11 @@ private
 
    function Get_Introspection_Function (Pkg  : Namespace;
                                         Kind : Interface_Kinds;
-                                        Part : Interface_Parts;
                                         Name : String)
                                         return System.Address
    is (Get_Symbol
-       (Symname => Get_Handle_Symbol (Introspection, Pkg, Kind, Part, Name),
-        Libname => "lib" & String (Pkg) & "__rosidl_typesupport_introspection_c.so"));
+       (Symname => Get_Handle_Symbol (Introspection, Pkg, Kind, Name),
+        Libname => "lib" & String (Fix_Ns (Pkg)) & "__rosidl_typesupport_introspection_c.so"));
    --  msg: rosidl_typesupport_introspection_c__get_message_type_support_handle__rclada__msg__Test
    --  srv: rosidl_typesupport_introspection_c__get_service_type_support_handle__rclada__srv__Test
    --  req: rosidl_typesupport_introspection_c__get_message_type_support_handle__rclada__srv__Test_Response

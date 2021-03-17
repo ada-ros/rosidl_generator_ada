@@ -2,7 +2,7 @@ private with Ada.Unchecked_Conversion;
 
 with C_Strings;
 
-with Interfaces.C;
+with Interfaces.C.Extensions;
 
 with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
 --  Changed from Dashing to Foxy
@@ -40,7 +40,7 @@ package ROSIDL.Types is
 
    Message_Id : constant Ids;
 
-   type Bool is new C.Unsigned_Char;
+   type Bool is new C.Extensions.bool;
 
    type Byte is new Natural range 0 .. 2**8 - 1 with
      Convention => C,
