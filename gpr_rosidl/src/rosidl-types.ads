@@ -5,10 +5,16 @@ with C_Strings;
 with Interfaces.C.Extensions;
 
 with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
---  Changed from Dashing to Foxy
---  with Rosidl_Generator_C_String_H; use Rosidl_Generator_C_String_H;
+
+with ROSIDL.Type_Helpers;
+
+with System.Storage_Elements;
 
 package ROSIDL.Types is
+
+   package Helpers renames Type_Helpers;
+
+   subtype Bytes is Natural;
 
    package C renames Interfaces.C;
 
@@ -40,28 +46,53 @@ package ROSIDL.Types is
 
    Message_Id : constant Ids;
 
+   function Is_Scalar (Id : Ids) return Boolean
+   is (Id < String_Id);
+
    type Bool is new C.Extensions.bool;
+   type Bool_Array is array (Positive range <>) of Bool with Convention => C;
 
    type Byte is new Natural range 0 .. 2**8 - 1 with
      Convention => C,
      Size       => 8;
+   type Byte_Array is array (Positive range <>) of Byte with Convention => C;
 
    type Char is new C.Char;
+   type Char_Array is array (Positive range <>) of Char with Convention => C;
 
    type Float32 is new C.C_Float;
+   type Float32_Array is array (Positive range <>) of Float32 with Convention => C;
+   package Float32_Sequences is new Type_Helpers.Sequences (Float32);
+   subtype Float32_Sequence is Float32_Sequences.Sequence;
+
    type Float64 is new C.Double;
+   type Float64_Array is array (Positive range <>) of Float64 with Convention => C;
 
    type Int8  is new C.Signed_Char;
+   type Int8_Array is array (Positive range <>) of Int8 with Convention => C;
+   package Int8_Sequences is new Type_Helpers.Sequences (Int8);
+   subtype Int8_Sequence is Int8_Sequences.Sequence;
+
    type Uint8 is new C.Unsigned_Char;
+   type Uint8_Array is array (Positive range <>) of Uint8 with Convention => C;
 
    type Int16  is new C.Short;
+   type Int16_Array is array (Positive range <>) of Int16 with Convention => C;
+
    type Uint16 is new C.Unsigned_Short;
+   type Uint16_Array is array (Positive range <>) of Uint16 with Convention => C;
 
    type Int32  is new C.Int;
+   type Int32_Array is array (Positive range <>) of Int32 with Convention => C;
+
    type Uint32 is new C.Unsigned;
+   type Uint32_Array is array (Positive range <>) of Uint32 with Convention => C;
 
    type Int64  is new C.Long;
+   type Int64_Array is array (Positive range <>) of Int64 with Convention => C;
+
    type Uint64 is new C.Unsigned_Long;
+   type Uint64_Array is array (Positive range <>) of Uint64 with Convention => C;
 
    --  The String type is a bit special in that we need our own functions to
    --  access/modify it conveniently from Ada. being unable to wrap it into a
@@ -98,6 +129,11 @@ package ROSIDL.Types is
    --  dynamic references could be reused but with O(1) access? Food for
    --  thought in a future version.
 
+   type Reserved is array (Positive range <>)
+     of System.Storage_Elements.Storage_Element
+       with Pack;
+   --  Used for unsupported types in the static generator
+
    ----------
    -- Name --
    ----------
@@ -108,8 +144,7 @@ package ROSIDL.Types is
    -- Size_Of --
    -------------
 
-   function Size_Of (Id : Ids) return Positive;
-   --  bytes
+   function Size_Of (Id : Ids) return Bytes;
 
    -----------
    -- To_Id --
@@ -170,7 +205,7 @@ private
    -- Size_Of --
    -------------
 
-   function Size_Of (Id : Ids) return Positive is
+   function Size_Of (Id : Ids) return Bytes is
      ((if    Id = Bool_Id    then Bool'Size
        elsif Id = Byte_Id    then Byte'Size
        elsif Id = Char_Id    then Char'Size

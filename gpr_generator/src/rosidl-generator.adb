@@ -4,11 +4,21 @@ with Ada.Command_Line; use Ada.Command_Line;
 with Ada.Directories; use Ada.Directories;
 with Ada.Text_IO; use Ada.Text_IO;
 
---  with C_Strings;
+with C_Strings;
+
+with ROSIDL.Introspection;
+with ROSIDL.Types;
+with ROSIDL.Typesupport;
 
 procedure ROSIDL.Generator is
 
-   Project_Dir : constant String := "rosidl_generator_ada";
+   Tab            : constant String := "   ";
+   Project_Dir    : constant String := "rosidl_generator_ada";
+   Manual_Warning : constant String :=
+                      "   --  This is a generated file; do not edit manually.";
+
+   function Ada_Name (Name : String) return String;
+   --  Ensures Name is a valid record field name in Ada
 
    procedure Create_Interface (Name : String;
                                Kind : Interface_Kinds);
@@ -26,6 +36,23 @@ procedure ROSIDL.Generator is
    procedure Write_In_Place (V : AAA.Strings.Vector; File : String);
    --  Dump to file a vector in the expected location for the generator
 
+   --------------
+   -- Ada_Name --
+   --------------
+
+   function Ada_Name (Name : String) return String
+   is
+      --  TODO: blacklist Ada reserved words
+   begin
+      if Contains (Name, "__") then
+         return Ada_Name (Replace (Name, "__", "_"));
+      elsif Name (Name'First) = '_' then
+         return Ada_Name ("U_" & Name);
+      else
+         return To_Mixed_Case (Name);
+      end if;
+   end Ada_Name;
+
    ----------------------
    -- Create_Interface --
    ----------------------
@@ -34,18 +61,166 @@ procedure ROSIDL.Generator is
                                Kind : Interface_Kinds)
    is
 
+      function S (C : C_Strings.Chars_Ptr) return String
+      is (C_Strings.Value (C));
+
+      Ros_Package : constant String := Identify_Package;
+
       procedure Create_Message (Name : String; Part : Interface_Parts);
-      function Create_Struct return Vector;
+      procedure Create_Service (Name : String);
 
       --------------------
       -- Create_Message --
       --------------------
 
       procedure Create_Message (Name : String; Part : Interface_Parts) is
-         Ns  : constant String := Identify_Package;
          Pkg : constant String := To_Mixed_Case (Identify_Package);
-         --  Tab : constant String := "   ";
          O   : AAA.Strings.Vector;
+
+         Bounds : Vector;
+         --  Contains bounds definitions for sequences
+
+         function Create_Field (Msg_Class : Introspection.Message_Class;
+                                I         : Positive;
+                                Max_Len   : Positive)
+                                return String;
+         function Create_Struct (Part : Interface_Parts) return Vector;
+
+         ------------------
+         -- Create_Field --
+         ------------------
+
+         function Create_Field (Msg_Class : Introspection.Message_Class;
+                                I         : Positive;
+                                Max_Len   : Positive)
+                             return String
+         is
+            use Types;
+            V      : Vector;
+            Member : constant Introspection.Message_Member_Meta :=
+                       Msg_Class.Member (I);
+            Name   : constant String := Ada_Name (S (Member.name_u));
+
+            procedure Reserved;
+            procedure Reserved is
+            begin
+               V.Append_To_Last_Line
+                 ("Types.Reserved (1 .."
+                  & Msg_Class.Member_Size (I)'Image & ");");
+            end Reserved;
+
+            Padded_Name : constant String :=
+                            Ada_Name (S (Member.name_u))
+                            & String'(1 .. Max_Len - Name'Length + 1 => ' ');
+
+         begin
+            V.Append_Line (Padded_Name & ": ");
+
+            --  SCALAR
+            if Is_Scalar (Ids (Member.type_id_u)) then
+
+               --  SCALAR ARRAY
+               if Boolean (Member.is_array_u) then
+
+                  --  SCALAR ARRAY DYNAMIC
+                  if Member.array_size_u in 0 then
+                     V.Append_To_Last_Line
+                       ("Types." & Types.Name (Ids (Member.type_id_u))
+                        & "_Sequence;");
+
+                     --  SCALAR ARRAY BOUNDED
+                  elsif Member.is_upper_bound_u in True then
+                     V.Append_To_Last_Line
+                       ("Types." & Types.Name (Ids (Member.type_id_u))
+                        & "_Sequence;");
+
+                     Bounds.Append_Line
+                       (Padded_Name & ": constant :="
+                        & Member.array_size_u'Image & ";");
+                  else
+                     --  SCALAR ARRAY STATIC
+                     V.Append_To_Last_Line
+                       ("Types." & Types.Name (Ids (Member.type_id_u))
+                        & "_Array (1 .." & Member.array_size_u'Image & ");");
+                  end if;
+
+               else
+                  --  SCALAR ATOMIC
+                  V.Append_To_Last_Line
+                    ("Types." & Types.Name (Ids (Member.type_id_u)) & ";");
+               end if;
+
+               --  STRING (bounded or not, the same type is used...)
+            elsif Ids (Member.type_id_u) in Types.String_Id then
+               V.Append_To_Last_Line ("Types.ROS_String;");
+
+            else
+               Reserved;
+            end if;
+
+            return V.First_Element;
+         end Create_Field;
+
+         -------------------
+         -- Create_Struct --
+         -------------------
+
+         function Create_Struct (Part : Interface_Parts) return Vector is
+            V : Vector;
+
+            Support : constant ROSIDL.Typesupport.Message_Support :=
+                        (case Kind is
+                            when Message =>
+                              ROSIDL.Typesupport.Get_Message_Support
+                                (Pkg => Package_Name (Ros_Package),
+                                 Msg => Name),
+                            when Service =>
+                              (case Part is
+                                  when Request  =>
+                                     ROSIDL.Typesupport.Get_Request_Support
+                                       (Pkg => Package_Name (Ros_Package),
+                                        Srv => Create_Interface.Name),
+                                  when Response =>
+                                     ROSIDL.Typesupport.Get_Response_Support
+                                       (Pkg => Package_Name (Ros_Package),
+                                        Srv => Create_Interface.Name),
+                               when others   =>
+                                  raise Program_Error with "Unimplemented"),
+                            when others  =>
+                               raise Program_Error with "Unimplemented");
+
+            Max_Name_Len : Natural := 0;
+         begin
+            V.Append ("type Message is limited record");
+
+            for I in 1 .. Support.Message_Class.Member_Count loop
+               Max_Name_Len :=
+                 Natural'Max
+                   (Max_Name_Len,
+                    Ada_Name
+                      (S (Support.Message_Class.Member (I).name_u))'Length);
+            end loop;
+
+            for I in 1 .. Support.Message_Class.Member_Count loop
+               V.Append_Line
+                 (Tab & Tab &
+                    Create_Field (Support.Message_Class, I, Max_Name_Len));
+            end loop;
+
+            V.Append
+              (Empty_Vector
+               &         "end record"
+               &         "  with Convention => C;"
+               --  & String'("       Size => "
+               --    & Natural'(Support.Message_Class.Size * 8)'Image & ";")
+               & ""
+               & String'("pragma Assert (Message'Size ="
+                 & Natural'(Support.Message_Class.Size * 8)'Image
+                 & ", ""Got size: "" & Message'Size'Image"
+                 & ");"));
+
+            return V;
+         end Create_Struct;
 
          Pkg_Name : constant String :=
                       "ROSIDL.Static."
@@ -67,7 +242,7 @@ procedure ROSIDL.Generator is
          O.Append_Line ("package " & Pkg_Name & " is");
          O.New_Line;
 
-         O.Append ("   --  This is a generated file; do not edit manually.");
+         O.Append (Manual_Warning);
          O.New_Line;
 
          O.Append ("   use ROSIDL;");
@@ -75,14 +250,32 @@ procedure ROSIDL.Generator is
 
          --  The message proper
 
-         O.Append (Create_Struct.Indent);
+         O.Append (Create_Struct (Part).Indent);
+         O.New_Line;
+
+         --  Bounds
+
+         if not Bounds.Is_Empty then
+            Bounds := Bounds.Indent;
+            Bounds.Prepend ("package Bounds is");
+            Bounds.Append ("end Bounds;");
+            O.Append (Bounds.Indent);
+            O.New_Line;
+         end if;
+
+         --  Sequences
+
+         O.Append_Line
+           (Tab
+            & "package Sequences is new Types.Helpers.Sequences (Message);");
+         O.Append_Line (Tab & "subtype Sequence is Sequences.Sequence;");
          O.New_Line;
 
          --  The utils for the message
 
          O.Append_Line ("   package Handling is new");
          O.Append_Line ("     ROSIDL.Static.Message");
-         O.Append_Line ("       (Pkg  => """ & Ns & """,");
+         O.Append_Line ("       (Pkg  => """ & Ros_Package & """,");
          O.Append_Line ("        Name => """ & Name & """,");
          O.Append_Line ("        Part => ROSIDL."
                         & To_Mixed_Case (Part'Image) & ",");
@@ -96,20 +289,48 @@ procedure ROSIDL.Generator is
          Write_In_Place (O, Pkg_File);
       end Create_Message;
 
-      -------------------
-      -- Create_Struct --
-      -------------------
+      --------------------
+      -- Create_Service --
+      --------------------
 
-      function Create_Struct return Vector is
-         V : Vector;
+      procedure Create_Service (Name : String) is
+         Pkg_Lower : constant String := Identify_Package;
+         Pkg : constant String := To_Mixed_Case (Pkg_Lower);
+         Pkg_Name : constant String :=
+                      "ROSIDL.Static."
+                      & Pkg & ".Services."
+                      & To_Mixed_Case (Name);
+         Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
+         O   : AAA.Strings.Vector;
       begin
-         V.Append_Line ("type Message is limited record");
-         V.Append_Line ("   I : Integer;");
-         V.Append_Line ("end record");
-         V.Append_Line ("  with Convention => C;");
+         O.Append ("with ROSIDL.Typesupport;");
+         O.New_Line;
 
-         return V;
-      end Create_Struct;
+         O.Append_Line ("package " & Pkg_Name & " is");
+         O.New_Line;
+
+         O.Append (Manual_Warning);
+         O.New_Line;
+
+         O.Append ("   use ROSIDL;");
+         O.New_Line;
+
+         O.Append_Vector
+           (Empty_Vector
+            & "   package Handling is"
+            & ""
+            & "      Support : constant Typesupport.Service_Support :="
+            & "        Typesupport.Get_Service_Support"
+            & String'("          (Pkg => """ & Pkg_Lower & """,")
+            & String'("           Srv => """ & Name & """);")
+            & ""
+            & "   end Handling;"
+            & "");
+
+         O.Append_Line ("end " & Pkg_Name & ";");
+
+         Write_In_Place (O, Pkg_File);
+      end Create_Service;
 
    begin
       case Kind is
@@ -118,6 +339,7 @@ procedure ROSIDL.Generator is
             Create_Message (Name, Message);
          when Service =>
             Create_Parent_Package (Identify_Package & ".Services");
+            Create_Service (Name);
             Create_Message (Name & "_Request", Request);
             Create_Message (Name & "_Response", Response);
          when others =>
@@ -156,6 +378,9 @@ procedure ROSIDL.Generator is
       O.Append      ("   for Object_Dir use ""obj"";");
       O.Append      ("   for Library_Dir use ""lib"";");
       O.Append      ("   for Library_Kind use ""Static"";");
+      O.Append      ("   package Compiler is");
+      O.Append    ("      for Switches (""Ada"") use (""-gnatao"", ""-O2"");");
+      O.Append      ("   end Compiler;");
       O.Append_Line ("end " & To_Mixed_Case (Name) & ";");
 
       Write_In_Place (O, Name & ".gpr");

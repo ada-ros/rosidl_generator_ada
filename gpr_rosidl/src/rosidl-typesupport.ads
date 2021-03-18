@@ -15,10 +15,24 @@ with System;
 
 package ROSIDL.Typesupport is
 
+   ------------
+   -- Topics --
+   ------------
+
    type Message_Support is tagged private;
 
    function Get_Message_Support (Pkg : Package_Name;
                                  Msg : Message_Name) return Message_Support;
+
+   function Data (This : Message_Support) return System.Address;
+
+   function Identifier (This : Message_Support) return String;
+
+   function Message_Class (This : Message_Support) return Introspection.Message_Class;
+
+   --------------
+   -- Services --
+   --------------
 
    type Service_Support is tagged private;
 
@@ -28,6 +42,21 @@ package ROSIDL.Typesupport is
    function Request_Support (This : Service_Support'Class) return Message_Support;
 
    function Response_Support (This : Service_Support'Class) return Message_Support;
+
+   function Get_Request_Support (Pkg : Package_Name;
+                                 Srv : Service_Name)
+                                 return Message_Support
+   is (Get_Service_Support (Pkg, Srv).Request_Support);
+
+   function Get_Response_Support (Pkg : Package_Name;
+                                  Srv : Service_Name)
+                                  return Message_Support
+   is (Get_Service_Support (Pkg, Srv).Response_Support);
+
+   -------------
+   -- Actions --
+   -------------
+   --  TODO: add thick level binding on top of current thin binding
 
    --  C equivalent  --
    --  These aren't needed by regular users
@@ -44,14 +73,6 @@ package ROSIDL.Typesupport is
    type Srv_Support_Handle is access constant Rosidl_Service_Type_Support_T with
      Convention => C,
      Storage_Size => 0;
-
-   --  ADA BINDING  --
-
-   function Data (This : Message_Support) return System.Address;
-
-   function Identifier (This : Message_Support) return String;
-
-   function Message_Class (This : Message_Support) return Introspection.Message_Class;
 
    function To_C (This : Message_Support) return Msg_Support_Handle;
 

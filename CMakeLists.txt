@@ -6,11 +6,11 @@ find_package(rclada_common REQUIRED)
 
 ada_begin_package()
 
-find_package(builtin_interfaces REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-find_package(rosidl_runtime_c REQUIRED)
-find_package(rosidl_typesupport_c REQUIRED)
-find_package(rosidl_typesupport_interface REQUIRED)
+find_package(builtin_interfaces REQUIRED)        # Needed for actions
+find_package(rosidl_default_generators REQUIRED) # To register our generator
+find_package(rosidl_runtime_c REQUIRED)          # Base string type
+# find_package(rosidl_typesupport_c REQUIRED)
+# find_package(rosidl_typesupport_interface REQUIRED)
 find_package(rosidl_typesupport_introspection_c REQUIRED)
 find_package(std_msgs REQUIRED)
 
@@ -26,13 +26,11 @@ ament_register_extension(
         ${PROJECT_NAME}                         # package name
         "cmake/rosidl_generator_ada_generate_interfaces.cmake")
 
-# message("XXXXXXXXXXXXXX ${rosidl_typesupport_interface_INCLUDE_DIRS}")
-
 # Generate import project for rosidl_typesupport_interface/macros.h
-ada_import_c_headers(typesupport_interface ${rosidl_typesupport_interface_INCLUDE_DIRS})
+# ada_import_c_headers(typesupport_interface ${rosidl_typesupport_interface_INCLUDE_DIRS})
 
 # Generate autobinding for std types and rosidl_typesupport_c
-ada_import_c_libraries(${std_msgs_LIBRARIES})
+# ada_import_c_libraries(${std_msgs_LIBRARIES})
 
 # Import the std msgs that are used later by the rosidl high-level binding.
 # This dependency should probably be eliminated, it also introduces a
@@ -51,7 +49,7 @@ ada_find_package_include_dir(_builtin_include ${builtin_interfaces_DIR})
 # ada_find_package_include_dir(_generator_include ${rosidl_generator_c_DIR})
 ada_find_package_include_dir(_runtime_include ${rosidl_runtime_c_DIR})
 ada_find_package_include_dir(_stdmsgs_include ${std_msgs_DIR})
-ada_find_package_include_dir(_typesupport_interface_include ${rosidl_typesupport_interface_DIR})
+#ada_find_package_include_dir(_typesupport_interface_include ${rosidl_typesupport_interface_DIR})
 ada_find_package_include_dir(_typesupport_introspection_include ${rosidl_typesupport_introspection_c_DIR})
 
 file(GLOB _headers
@@ -60,7 +58,7 @@ file(GLOB _headers
         "${_runtime_include}/rosidl_runtime_c/*.h"
 #        "${_stdmsgs_include}/std_msgs/msg/*.h"
         "${_stdmsgs_include}/std_msgs/msg/detail/multi_array*.h" # This should suffice
-        "${_stdmsgs_include}/std_msgs/msg/detail/string*.h" # This should suffice
+#        "${_stdmsgs_include}/std_msgs/msg/detail/string*.h" # This should suffice
         "${_typesupport_introspection_include}/rosidl_typesupport_introspection_c/*.h"
         # CUSTOM ADDITIONS
         /usr/include/stdint.h
@@ -70,7 +68,7 @@ list(APPEND _includes
         ${_builtin_include}
         ${_runtime_include}
         ${_stdmsgs_include}
-        ${_typesupport_interface_include}
+#        ${_typesupport_interface_include}
         ${_typesupport_introspection_include})
 
 ada_generate_binding(

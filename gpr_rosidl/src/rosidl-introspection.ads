@@ -1,6 +1,10 @@
 private with AAA.Strings;
 
+private with Ada.Unchecked_Conversion;
+
 with C_Strings;
+
+with Rosidl.Types;
 
 with Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
 use  Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
@@ -38,6 +42,22 @@ package ROSIDL.Introspection is
 
    function To_C (This : Message_Class) return access constant Message_Members_Meta;
 
+   function Member (This : Message_Class;
+                    I    : Positive)
+                    return Message_Member_Meta
+     with Pre => I <= This.Member_Count;
+
+   function Member_Count (This : Message_Class) return Positive;
+
+   function Member_Offset (This : Message_Class;
+                           I    : Positive)
+                           return Types.Bytes
+     with Pre => I <= This.Member_Count;
+
+   function Member_Size (This : Message_Class;
+                         I    : Positive)
+                         return Types.Bytes
+     with Pre => I <= This.Member_Count;
 
    type Service_Class is tagged private;
 
@@ -110,5 +130,50 @@ private
 
    function To_C (This : Service_Class) return access constant Service_Members_Meta is
      (This.C);
+
+   ------------
+   -- Member --
+   ------------
+
+   type Members_Array is array (Positive range <>) of aliased Introspection.Message_Member_Meta
+     with Convention => C;
+
+   type Members_Array_Ptr is access constant Members_Array (Positive);
+   type Members_C_Ptr is access constant Rosidl_Typesupport_Introspection_C_U_MessageMember;
+
+   function To_Member_Array_Ptr is
+     new Ada.Unchecked_Conversion (Members_C_Ptr, Members_Array_Ptr);
+
+   function Member (This : Message_Class;
+                    I    : Positive)
+                    return Message_Member_Meta
+   is (To_Member_Array_Ptr (This.To_C.Members_U) (I));
+
+   ------------------
+   -- Member_Count --
+   ------------------
+
+   function Member_Count (This : Message_Class) return Positive
+   is (Positive (This.To_C.Member_Count_U));
+
+   -------------------
+   -- Member_Offset --
+   -------------------
+
+   function Member_Offset (This : Message_Class;
+                           I    : Positive)
+                           return Types.Bytes
+   is (Types.Bytes (This.Member (I).Offset_U));
+
+   -----------------
+   -- Member_Size --
+   -----------------
+
+   function Member_Size (This : Message_Class;
+                         I    : Positive)
+                         return Types.Bytes
+   is (if I = This.Member_Count
+       then Types.Bytes (This.To_C.Size_Of_U) - This.Member_Offset (I)
+       else This.Member_Offset (I + 1) - This.Member_Offset (I));
 
 end ROSIDL.Introspection;
