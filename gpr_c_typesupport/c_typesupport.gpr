@@ -1,6 +1,6 @@
 with "c_builtins";
-with "clib_std_msgs_rosidl_generator_c";
-with "clib_std_msgs_rosidl_typesupport_c";
+--  with "clib_std_msgs_rosidl_generator_c";
+--  with "clib_std_msgs_rosidl_typesupport_c";
 
 project C_Typesupport is
 
@@ -28,4 +28,3 @@ project C_Typesupport is
    end Binder;
 
 end C_Typesupport;
-
