@@ -51,4 +51,27 @@ package body ROSIDL.Introspection is
       return To_STSI_Ptr (TS.Data);
    end Get_Srv_Introspect;
 
+
+   ------------------
+   -- Member_Class --
+   ------------------
+
+   function Member_Class (This : Message_Class;
+                          I    : Positive)
+                          return Message_Class
+   is
+      function To_Class_Ptr is
+        new Ada.Unchecked_Conversion (System.Address,
+                                      Message_Members_Meta_Ptr);
+   begin
+      if Types.Ids (This.Member (I).Type_Id_U) in Types.Message_Id then
+         return Message_Class'
+           (C => To_Class_Ptr (This.Member (I).Members_U.Data));
+      else
+         raise Constraint_Error
+           with "Expected message field, but it is of type "
+           & Types.Name (Types.Ids (This.Member (I).Type_Id_U));
+      end if;
+   end Member_Class;
+
 end ROSIDL.Introspection;

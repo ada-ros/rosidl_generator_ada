@@ -93,6 +93,8 @@ package ROSIDL.Types is
 
    type Uint64 is new C.Unsigned_Long;
    type Uint64_Array is array (Positive range <>) of Uint64 with Convention => C;
+   package Uint64_Sequences is new Type_Helpers.Sequences (Uint64);
+   subtype Uint64_Sequence is Uint64_Sequences.Sequence;
 
    --  The String type is a bit special in that we need our own functions to
    --  access/modify it conveniently from Ada. being unable to wrap it into a
@@ -104,6 +106,7 @@ package ROSIDL.Types is
    --  in practice the same currently, but only because nothing is added).
 
    type ROS_String is new Rosidl_Runtime_C_U_String;
+   pragma Assert (ROS_String'Size = Rosidl_Runtime_C_U_String'Size);
 
    function Capacity (Str : ROS_String) return Natural;
    --  Space already allocated for the string. Replacing with a shorter string

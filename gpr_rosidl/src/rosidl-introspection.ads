@@ -15,8 +15,13 @@ use  Rosidl_Typesupport_Introspection_C_Service_Introspection_H;
 package ROSIDL.Introspection is
 
    subtype Service_Members_Meta is Rosidl_Typesupport_Introspection_C_U_ServiceMembers;
+   --  Class info for a service
+
    subtype Message_Members_Meta is Rosidl_Typesupport_Introspection_C_U_MessageMembers;
+   --  Class info for a message
+
    subtype Message_Member_Meta  is Rosidl_Typesupport_Introspection_C_U_MessageMember;
+   --  Field info within a message
 
    type Message_Members_Meta_Ptr is access constant Message_Members_Meta with
      Convention   => C,
@@ -46,6 +51,13 @@ package ROSIDL.Introspection is
                     I    : Positive)
                     return Message_Member_Meta
      with Pre => I <= This.Member_Count;
+
+   function Member_Class (This : Message_Class;
+                          I    : Positive)
+                          return Message_Class;
+   --  For a member which is of type message, return its class. Otherwise
+   --  raises Constraint_Error. Cannot use precondition because of bug box
+   --  in gnat 9.3.
 
    function Member_Count (This : Message_Class) return Positive;
 

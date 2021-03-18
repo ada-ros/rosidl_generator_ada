@@ -20,8 +20,14 @@ procedure ROSIDL.Generator is
    function Ada_Name (Name : String) return String;
    --  Ensures Name is a valid record field name in Ada
 
-   procedure Create_Interface (Name : String;
-                               Kind : Interface_Kinds);
+   procedure Create_Interface (Parent : String;
+                               Pkg    : String;
+                               Name   : String;
+                               Kind   : Interface_Kinds);
+   --  We nest dependencies under the package being generated, to avoid complex
+   --  management all around and avoid name conflicts. The price is extra build
+   --  time, but I don't see a way around this that also allows working in
+   --  "installed/not installed" mixed mode.
 
    procedure Create_Parent_Package (Portion : String);
    --  Create empty packages in the hierarchy: ROSIDL.Static.Pkg_Name.Messages
@@ -57,28 +63,35 @@ procedure ROSIDL.Generator is
    -- Create_Interface --
    ----------------------
 
-   procedure Create_Interface (Name : String;
-                               Kind : Interface_Kinds)
+   procedure Create_Interface (Parent : String;
+                               Pkg    : String;
+                               Name   : String;
+                               Kind   : Interface_Kinds)
    is
 
       function S (C : C_Strings.Chars_Ptr) return String
       is (C_Strings.Value (C));
 
-      Ros_Package : constant String := Identify_Package;
+      --  TODO: use the ament index to mark generated messages, and reuse
+      --  messages defined elsewhere. TODO: see how all this melds with our
+      --  packages being in the bloom farm on same ground with other packages.
 
       procedure Create_Message (Name : String; Part : Interface_Parts);
       procedure Create_Service (Name : String);
+      function Parent_Prefix (Parent, Pkg : String) return String;
 
       --------------------
       -- Create_Message --
       --------------------
 
       procedure Create_Message (Name : String; Part : Interface_Parts) is
-         Pkg : constant String := To_Mixed_Case (Identify_Package);
          O   : AAA.Strings.Vector;
 
          Bounds : Vector;
          --  Contains bounds definitions for sequences
+
+         Withs  : Set;
+         --  Withs that are necessary due to nested messages
 
          function Create_Field (Msg_Class : Introspection.Message_Class;
                                 I         : Positive;
@@ -112,6 +125,71 @@ procedure ROSIDL.Generator is
             Padded_Name : constant String :=
                             Ada_Name (S (Member.name_u))
                             & String'(1 .. Max_Len - Name'Length + 1 => ' ');
+
+            --------------------------
+            -- Create_Field_Message --
+            --------------------------
+            procedure Create_Field_Message;
+            procedure Create_Field_Message is
+               Dep_Pkg_Name : constant String :=
+                                To_Mixed_Case
+                                  (String
+                                     (Fix_Ns
+                                        (Msg_Class.Member_Class (I)
+                                         .Name_Space)));
+               Dep_Msg_Name : constant String :=
+                                To_Mixed_Case
+                                  (String
+                                     (Msg_Class.Member_Class (I).Msg_Name));
+            begin
+               --  MESSAGE ARRAY
+               if Boolean (Member.is_array_u) then
+
+                  --  MESSAGE ARRAY DYNAMIC
+                  if Member.array_size_u in 0 then
+                     V.Append_To_Last_Line
+                       (Dep_Pkg_Name & ".Messages."
+                        & Dep_Msg_Name & ".Sequence;");
+
+                     --  MESSAGE ARRAY BOUNDED
+                  elsif Member.is_upper_bound_u in True then
+                     V.Append_To_Last_Line
+                       (Dep_Pkg_Name & ".Messages."
+                        & Dep_Msg_Name & ".Sequence;");
+
+                     Bounds.Append_Line
+                       (Padded_Name & ": constant :="
+                        & Member.array_size_u'Image & ";");
+                  else
+                     --  MESSAGE ARRAY STATIC
+                     V.Append_To_Last_Line
+                       (Dep_Pkg_Name & ".Messages." & Dep_Msg_Name
+                        & ".Static_Array (1 .."
+                        & Member.array_size_u'Image & ");");
+                  end if;
+
+               else
+                  --  MESSAGE VALUE
+                  V.Append_To_Last_Line
+                    (Dep_Pkg_Name & ".Messages." & Dep_Msg_Name & ".Message;");
+               end if;
+
+               --  With and create dependencies
+
+               Withs.Include
+                 ("with ROSIDL.Static."
+                  & To_Mixed_Case
+                    (Parent_Prefix
+                         (To_Lower_Case (Parent),
+                          To_Lower_Case (Dep_Pkg_Name)))
+                  & Dep_Pkg_Name & ".Messages." & Dep_Msg_Name & ";");
+
+               Create_Interface
+                 (Parent => Parent,
+                  Pkg    => To_Lower_Case (Dep_Pkg_Name),
+                  Name   => Msg_Class.Member_Class (I).Msg_Name,
+                  Kind   => Message);
+            end Create_Field_Message;
 
          begin
             V.Append_Line (Padded_Name & ": ");
@@ -150,11 +228,16 @@ procedure ROSIDL.Generator is
                     ("Types." & Types.Name (Ids (Member.type_id_u)) & ";");
                end if;
 
-               --  STRING (bounded or not, the same type is used...)
             elsif Ids (Member.type_id_u) in Types.String_Id then
+               --  STRING (bounded or not, the same type is used...)
                V.Append_To_Last_Line ("Types.ROS_String;");
 
+            elsif Ids (Member.type_id_u) in Types.Message_Id then
+               --  MESSAGE
+               Create_Field_Message;
+
             else
+               --  Nothing is missing, but for future proofing...
                Reserved;
             end if;
 
@@ -172,17 +255,17 @@ procedure ROSIDL.Generator is
                         (case Kind is
                             when Message =>
                               ROSIDL.Typesupport.Get_Message_Support
-                                (Pkg => Package_Name (Ros_Package),
+                                (Pkg => Package_Name (Pkg),
                                  Msg => Name),
                             when Service =>
                               (case Part is
                                   when Request  =>
                                      ROSIDL.Typesupport.Get_Request_Support
-                                       (Pkg => Package_Name (Ros_Package),
+                                       (Pkg => Package_Name (Pkg),
                                         Srv => Create_Interface.Name),
                                   when Response =>
                                      ROSIDL.Typesupport.Get_Response_Support
-                                       (Pkg => Package_Name (Ros_Package),
+                                       (Pkg => Package_Name (Pkg),
                                         Srv => Create_Interface.Name),
                                when others   =>
                                   raise Program_Error with "Unimplemented"),
@@ -203,8 +286,7 @@ procedure ROSIDL.Generator is
 
             for I in 1 .. Support.Message_Class.Member_Count loop
                V.Append_Line
-                 (Tab & Tab &
-                    Create_Field (Support.Message_Class, I, Max_Name_Len));
+                 (Tab & Create_Field (Support.Message_Class, I, Max_Name_Len));
             end loop;
 
             V.Append
@@ -214,17 +296,29 @@ procedure ROSIDL.Generator is
                --  & String'("       Size => "
                --    & Natural'(Support.Message_Class.Size * 8)'Image & ";")
                & ""
-               & String'("pragma Assert (Message'Size ="
+               & String'("pragma Assert (Message'(others => <>)'Size ="
                  & Natural'(Support.Message_Class.Size * 8)'Image
-                 & ", ""Got size: "" & Message'Size'Image"
+                 & ", ")
+               & String'(Tab & Tab & Tab & Tab & Tab
+                 & """" & Name & " got size: "" & Message'Size'Image"
                  & ");"));
+            --  Note here that 'Size for the type returns the minimum possible
+            --  size (with Pack), not the actual objects' size. In this case,
+            --  the C convention is causing some messages to be larger than
+            --  the packed type. Lucky me I learned about this difference just
+            --  in time to avoid hours of head banging. Also luckily, the C
+            --  convention does all the work for us. Not happy that some ROS
+            --  structs have gaps (due to alignment?)... if the worse came to
+            --  pass and something was not matching between C and Ada, I should
+            --  use the offsets in the metadata to position the fields.
 
             return V;
          end Create_Struct;
 
          Pkg_Name : constant String :=
                       "ROSIDL.Static."
-                      & Pkg & "."
+                      & To_Mixed_Case (Parent_Prefix (Parent, Pkg))
+                      & To_Mixed_Case (Pkg) & "."
                       & (case Kind is
                             when Message => "Messages",
                             when Service => "Services",
@@ -233,12 +327,12 @@ procedure ROSIDL.Generator is
 
          Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
       begin
-         Put_Line ("Creating Ada types for "
+         Put_Line ("[Ada generator] Creating types for "
                    & Identify_Package & "/" & Name);
 
-         O.Append ("with ROSIDL.Static.Message;");
-         O.Append ("with ROSIDL.Types;");
-         O.New_Line;
+         Withs.Include ("with ROSIDL.Static.Message;");
+         Withs.Include ("with ROSIDL.Types;");
+
          O.Append_Line ("package " & Pkg_Name & " is");
          O.New_Line;
 
@@ -246,12 +340,18 @@ procedure ROSIDL.Generator is
          O.New_Line;
 
          O.Append ("   use ROSIDL;");
+         O.Append ("   use ROSIDL.Static;");
          O.New_Line;
 
          --  The message proper
 
          O.Append (Create_Struct (Part).Indent);
          O.New_Line;
+
+         --  Now we may have new withs to add
+
+         O.Prepend ("");
+         O.Prepend (Withs);
 
          --  Bounds
 
@@ -266,6 +366,10 @@ procedure ROSIDL.Generator is
          --  Sequences
 
          O.Append_Line
+           (Tab & "type Static_Array is array (Natural range <>) of Message;");
+         O.New_Line;
+
+         O.Append_Line
            (Tab
             & "package Sequences is new Types.Helpers.Sequences (Message);");
          O.Append_Line (Tab & "subtype Sequence is Sequences.Sequence;");
@@ -275,7 +379,7 @@ procedure ROSIDL.Generator is
 
          O.Append_Line ("   package Handling is new");
          O.Append_Line ("     ROSIDL.Static.Message");
-         O.Append_Line ("       (Pkg  => """ & Ros_Package & """,");
+         O.Append_Line ("       (Pkg  => """ & Pkg  & """,");
          O.Append_Line ("        Name => """ & Name & """,");
          O.Append_Line ("        Part => ROSIDL."
                         & To_Mixed_Case (Part'Image) & ",");
@@ -294,12 +398,11 @@ procedure ROSIDL.Generator is
       --------------------
 
       procedure Create_Service (Name : String) is
-         Pkg_Lower : constant String := Identify_Package;
-         Pkg : constant String := To_Mixed_Case (Pkg_Lower);
-         Pkg_Name : constant String :=
-                      "ROSIDL.Static."
-                      & Pkg & ".Services."
-                      & To_Mixed_Case (Name);
+         Pkg_Name  : constant String :=
+                       "ROSIDL.Static."
+                       & Parent_Prefix (Parent, Pkg)
+                       & Pkg & ".Services."
+                       & To_Mixed_Case (Name);
          Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
          O   : AAA.Strings.Vector;
       begin
@@ -321,7 +424,7 @@ procedure ROSIDL.Generator is
             & ""
             & "      Support : constant Typesupport.Service_Support :="
             & "        Typesupport.Get_Service_Support"
-            & String'("          (Pkg => """ & Pkg_Lower & """,")
+            & String'("          (Pkg => """ & Pkg & """,")
             & String'("           Srv => """ & Name & """);")
             & ""
             & "   end Handling;"
@@ -332,13 +435,23 @@ procedure ROSIDL.Generator is
          Write_In_Place (O, Pkg_File);
       end Create_Service;
 
+      -------------------
+      -- Parent_Prefix --
+      -------------------
+
+      function Parent_Prefix (Parent, Pkg : String) return String
+      is (if Parent = Pkg then "" else Parent & ".");
+
+      Prefix : constant String := Parent_Prefix (Parent, Pkg);
    begin
       case Kind is
          when Message =>
-            Create_Parent_Package (Identify_Package & ".Messages");
+            Create_Parent_Package (Prefix & Pkg);
+            Create_Parent_Package (Prefix & Pkg & ".Messages");
             Create_Message (Name, Message);
          when Service =>
-            Create_Parent_Package (Identify_Package & ".Services");
+            Create_Parent_Package (Prefix & Pkg);
+            Create_Parent_Package (Prefix & Pkg & ".Services");
             Create_Service (Name);
             Create_Message (Name & "_Request", Request);
             Create_Message (Name & "_Response", Response);
@@ -439,11 +552,12 @@ begin
    --  Create project and messages
 
    Create_Project;
-   Create_Parent_Package (Identify_Package);
 
    for I in 1 .. Argument_Count loop
-      Create_Interface (Name => Base_Name (Argument (I)),
-                        Kind => To_Kind (Extension (Argument (I))));
+      Create_Interface (Parent => Identify_Package,
+                        Pkg    => Identify_Package,
+                        Name   => Base_Name (Argument (I)),
+                        Kind   => To_Kind (Extension (Argument (I))));
    end loop;
 
 end ROSIDL.Generator;
