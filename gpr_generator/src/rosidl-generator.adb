@@ -535,6 +535,8 @@ procedure ROSIDL.Generator is
 
 begin
    Put_Line ("Ada generator invoked for package " & Identify_Package);
+   Put_Line ("Ada generator is running from cwd=" & Current_Directory);
+   delay 1.0;
    for I in 1 .. Argument_Count loop
       Put_Line ("#" & I'Image & ": " & Argument  (I));
    end loop;
