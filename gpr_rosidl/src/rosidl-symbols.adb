@@ -27,17 +27,17 @@ package body ROSIDL.Symbols is
                              else Libname);
       begin
          return DL.Sym (Handle, Symname);
-      exception
-         when DL.Symbol_Error =>
-
-            --  Try locating the library in the ament index
-
-            declare
-               Handle : constant DL.Handle := Dl.Open (Ament.Index.Find_Library (Libname));
-            begin
-               return DL.Sym (Handle, Symname);
-            end;
       end;
+
+   exception
+      --  Try locating the library in the ament index
+
+      when DL.Symbol_Error =>
+         declare
+            Handle : constant DL.Handle := Dl.Open (Ament.Index.Find_Library (Libname));
+         begin
+            return DL.Sym (Handle, Symname);
+         end;
    end Get_Symbol;
 
    -------------------
