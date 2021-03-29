@@ -1,8 +1,11 @@
+with AAA.Filesystem;
 with AAA.Strings;
 
-with Ada.Command_Line; use Ada.Command_Line;
+with Ada.Command_Line;
 with Ada.Directories; use Ada.Directories;
 with Ada.Text_IO; use Ada.Text_IO;
+
+with Ament.Index;
 
 with C_Strings;
 
@@ -11,6 +14,11 @@ with ROSIDL.Types;
 with ROSIDL.Typesupport;
 
 procedure ROSIDL.Generator is
+
+   --  Arguments:
+   --  --current-src=<path>       -- where the caller's sources are located
+   --  --import-pkg=<name>[,...]  -- whose interfaces will be generated
+   --  --from-pkg=<name>          -- package under which the types will go
 
    Tab            : constant String := "   ";
    Project_Dir    : constant String := "rosidl_generator_ada";
@@ -446,10 +454,12 @@ procedure ROSIDL.Generator is
    begin
       case Kind is
          when Message =>
+            Create_Parent_Package (Parent);
             Create_Parent_Package (Prefix & Pkg);
             Create_Parent_Package (Prefix & Pkg & ".Messages");
             Create_Message (Name, Message);
          when Service =>
+            Create_Parent_Package (Parent);
             Create_Parent_Package (Prefix & Pkg);
             Create_Parent_Package (Prefix & Pkg & ".Services");
             Create_Service (Name);
@@ -499,17 +509,73 @@ procedure ROSIDL.Generator is
       Write_In_Place (O, Name & ".gpr");
    end Create_Project;
 
+   -------------------
+   -- Find_Argument --
+   -------------------
+
+   function Find_Argument (Switch : String) return String is
+      use Ada.Command_Line;
+   begin
+      for I in 1 .. Argument_Count loop
+         if Has_Prefix (Argument (I), "--" & Switch) then
+            return Tail (Argument (I), '=');
+         end if;
+      end loop;
+
+      raise Program_Error with "Argument --" & Switch & " not found";
+   end Find_Argument;
+
+   ---------------------
+   -- Find_Interfaces --
+   ---------------------
+
+   function Find_Interfaces (Pkg : String) return AAA.Strings.Vector is
+      Import_Path : constant String :=
+                      Ament.Index.Find_Package (Name   => Pkg,
+                                                Silent => True);
+
+      --  Search in current pkg if none located
+      Path        : constant String := (if Import_Path = ""
+                                        then Find_Argument ("current-src")
+                                        else Import_Path & "/share/" & Pkg);
+
+      Result      : Vector;
+
+      -----------
+      -- Check --
+      -----------
+
+      procedure Check (Item : Ada.Directories.Directory_Entry_Type;
+                       Stop : in out Boolean)
+      is
+         pragma Unreferenced (Stop);
+         Name : constant String := Full_Name (Item);
+      begin
+         if (Contains (Name, "/msg/") and then Has_Suffix (Name, ".msg"))
+           or else Has_Suffix (Name, ".srv")
+         then
+            Put_Line ("Found interface: " & Name);
+            Result.Append (Name);
+         end if;
+      end Check;
+
+   begin
+      Put_Line ("Importing interfaces from " & Path);
+
+      AAA.Filesystem.Traverse_Tree
+        (Start   => Path,
+         Doing   => Check'Access,
+         Recurse => True);
+
+      return Result;
+   end Find_Interfaces;
+
    ----------------------
    -- Identify_Package --
    ----------------------
 
-   function Identify_Package return String is
-      --  Full        : constant String := Full_Name (Arguments (1));
-   begin
-      return Simple_Name
-        (Containing_Directory
-           (Containing_Directory (Full_Name (Argument (1)))));
-   end Identify_Package;
+   function Identify_Package return String
+   is (Find_Argument ("from-pkg"));
 
    ----------------------
    -- Pkg_Name_To_File --
@@ -533,6 +599,11 @@ procedure ROSIDL.Generator is
 -- ROSIDL.Generator --
 ----------------------
 
+   use Ada.Command_Line;
+
+   Switch_Imported : constant String := "import-pkg";
+   Switch_Current  : constant String := "from-pkg";
+
 begin
    Put_Line ("Ada generator invoked for package " & Identify_Package);
    Put_Line ("Ada generator is running from cwd=" & Current_Directory);
@@ -551,15 +622,19 @@ begin
       Create_Directory (Project_Dir);
    end if;
 
-   --  Create project and messages
+   --  Create project for this pkg
 
    Create_Project;
 
-   for I in 1 .. Argument_Count loop
-      Create_Interface (Parent => Identify_Package,
-                        Pkg    => Identify_Package,
-                        Name   => Base_Name (Argument (I)),
-                        Kind   => To_Kind (Extension (Argument (I))));
+   --  We may receive more than one import, comma-separated, so...
+   for Import of Split (Find_Argument (Switch_Imported), ',') loop
+      Put_Line ("Importing messages from pkg " & Import);
+      for Iface of Find_Interfaces (Import) loop
+         Create_Interface (Parent => Find_Argument (Switch_Current),
+                           Pkg    => Import,
+                           Name   => Base_Name (Iface),
+                           Kind   => To_Kind (Extension (Iface)));
+      end loop;
    end loop;
 
 end ROSIDL.Generator;

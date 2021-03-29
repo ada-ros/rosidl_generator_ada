@@ -51,14 +51,20 @@ package ROSIDL.Types is
 
    type Bool is new C.Extensions.bool;
    type Bool_Array is array (Positive range <>) of Bool with Convention => C;
+   package Bool_Sequences is new Type_Helpers.Sequences (Bool);
+   subtype Bool_Sequence is Bool_Sequences.Sequence;
 
    type Byte is new Natural range 0 .. 2**8 - 1 with
      Convention => C,
      Size       => 8;
    type Byte_Array is array (Positive range <>) of Byte with Convention => C;
+   package Byte_Sequences is new Type_Helpers.Sequences (Byte);
+   subtype Byte_Sequence is Byte_Sequences.Sequence;
 
    type Char is new C.Char;
    type Char_Array is array (Positive range <>) of Char with Convention => C;
+   package Char_Sequences is new Type_Helpers.Sequences (Char);
+   subtype Char_Sequence is Char_Sequences.Sequence;
 
    type Float32 is new C.C_Float;
    type Float32_Array is array (Positive range <>) of Float32 with Convention => C;
@@ -67,6 +73,8 @@ package ROSIDL.Types is
 
    type Float64 is new C.Double;
    type Float64_Array is array (Positive range <>) of Float64 with Convention => C;
+   package Float64_Sequences is new Type_Helpers.Sequences (Float64);
+   subtype Float64_Sequence is Float64_Sequences.Sequence;
 
    type Int8  is new C.Signed_Char;
    type Int8_Array is array (Positive range <>) of Int8 with Convention => C;
@@ -75,21 +83,33 @@ package ROSIDL.Types is
 
    type Uint8 is new C.Unsigned_Char;
    type Uint8_Array is array (Positive range <>) of Uint8 with Convention => C;
+   package Uint8_Sequences is new Type_Helpers.Sequences (Uint8);
+   subtype Uint8_Sequence is Uint8_Sequences.Sequence;
 
    type Int16  is new C.Short;
    type Int16_Array is array (Positive range <>) of Int16 with Convention => C;
+   package Int16_Sequences is new Type_Helpers.Sequences (Int16);
+   subtype Int16_Sequence is Int16_Sequences.Sequence;
 
    type Uint16 is new C.Unsigned_Short;
    type Uint16_Array is array (Positive range <>) of Uint16 with Convention => C;
+   package Uint16_Sequences is new Type_Helpers.Sequences (Uint16);
+   subtype Uint16_Sequence is Uint16_Sequences.Sequence;
 
    type Int32  is new C.Int;
    type Int32_Array is array (Positive range <>) of Int32 with Convention => C;
+   package Int32_Sequences is new Type_Helpers.Sequences (Int32);
+   subtype Int32_Sequence is Int32_Sequences.Sequence;
 
    type Uint32 is new C.Unsigned;
    type Uint32_Array is array (Positive range <>) of Uint32 with Convention => C;
+   package Uint32_Sequences is new Type_Helpers.Sequences (Uint32);
+   subtype Uint32_Sequence is Uint32_Sequences.Sequence;
 
    type Int64  is new C.Long;
    type Int64_Array is array (Positive range <>) of Int64 with Convention => C;
+   package Int64_Sequences is new Type_Helpers.Sequences (Int64);
+   subtype Int64_Sequence is Int64_Sequences.Sequence;
 
    type Uint64 is new C.Unsigned_Long;
    type Uint64_Array is array (Positive range <>) of Uint64 with Convention => C;
