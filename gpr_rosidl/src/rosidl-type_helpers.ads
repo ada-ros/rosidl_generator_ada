@@ -36,6 +36,10 @@ package ROSIDL.Type_Helpers is
          Capacity : Size_T; -- The reserved memory, >= Size
       end record with Convention => C_Pass_By_Copy;
 
+      procedure Resize (This : in out Sequence; Capacity : Natural);
+      --  Allocates Capacity elements. Sets Size to 0. Any previously stored
+      --  information is lost.
+
    end Sequences;
 
 end ROSIDL.Type_Helpers;

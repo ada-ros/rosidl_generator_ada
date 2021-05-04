@@ -238,7 +238,7 @@ procedure ROSIDL.Generator is
 
             elsif Ids (Member.type_id_u) in Types.String_Id then
                --  STRING (bounded or not, the same type is used...)
-               V.Append_To_Last_Line ("Types.ROS_String;");
+               V.Append_To_Last_Line ("aliased Types.ROS_String;");
 
             elsif Ids (Member.type_id_u) in Types.Message_Id then
                --  MESSAGE

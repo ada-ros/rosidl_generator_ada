@@ -45,6 +45,8 @@ package ROSIDL is
                             Action, Goal, Result, Feedback);
    --  This is used to access typesupports internally; hence the mix of concepts
 
+   function Kind (Part : Interface_Parts) return Interface_Kinds;
+
    --  DO NOT CROSS --
 
    package C renames Interfaces.C;
@@ -61,6 +63,10 @@ private
 
    use AAA.Strings;
 
+   ------------
+   -- Fix_Ns --
+   ------------
+
    function Fix_Ns (Ns : Namespace) return Package_Name
    is (Package_Name
        (Replace
@@ -68,12 +74,30 @@ private
          (S (Ns), "__srv", ""),
          "__msg", "")));
 
+   ----------
+   -- Kind --
+   ----------
+
+   function Kind (Part : Interface_Parts) return Interface_Kinds
+   is (case Part is
+          when Message => Message,
+          when Service | Request | Response => Service,
+          when Action | Goal | Result | Feedback => Action);
+
+   -----------
+   -- To_Ns --
+   -----------
+
    function To_Ns (Pkg : Package_Name; Kind : Interface_Kinds) return Namespace
    is (case Kind is
           when Message => Namespace (Pkg & "__msg"),
           when Service => Namespace (Pkg & "__srv"),
           when others  =>
              raise Program_Error with "Unimplemented: " & Kind'Image);
+
+   -----------
+   -- To_Ns --
+   -----------
 
    function To_Ns (Srv : Service_Name; Kind : Interface_Kinds) return Namespace
    is (To_Ns (Package_Name (Srv), Kind));
