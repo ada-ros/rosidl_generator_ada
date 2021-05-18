@@ -252,6 +252,11 @@ private
    type Message (Is_Field : Boolean) is new Ada.Finalization.Limited_Controlled with record
       Msg      : System.Address;
       Support  : ROSIDL.Typesupport.Message_Support;
+
+      Owned    : Boolean := True;
+      --  When we return a dynamic view of a static message, this dynamic view
+      --  must not be finalized. Owned is false for such a message.
+
       case Is_Field is
          when False => Destroy  : ROSIDL.Symbols.Proc_Addr;
          when True  => null; -- Field messages are not finalized; its done by their parent

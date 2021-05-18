@@ -86,7 +86,10 @@ package body ROSIDL.Dynamic is
 
    overriding procedure Finalize (This : in out Message) is
    begin
-      if (not This.Is_Field) and then This.Msg /= System.Null_Address then
+      if This.Owned and then
+        (not This.Is_Field) and then
+        This.Msg /= System.Null_Address
+      then
          This.Destroy (This.Msg);
          This.Msg   := System.Null_Address;
       end if;
@@ -195,11 +198,19 @@ package body ROSIDL.Dynamic is
                        Name   => Msg,
                        Op     => "create"));
    begin
-      return M : Message (Is_Field => False) do
+      return M : Message :=
+        --  We don't initialize everything here to be able to catch exceptions
+        --  below. We do specify every field though for future-proofing if
+        --  fields are added.
+        (Ada.Finalization.Limited_Controlled with
+         Msg      => <>,
+         Support  => Msg_Support,
+         Destroy  => <>,
+         Owned    => True,
+         Is_Field => False)
+      do
          begin
             M.Msg := Create.all;
-
-            M.Support := Msg_Support;
 
             --  Functions we'll need at destroy time:
             M.Destroy := Symbols.To_Proc
