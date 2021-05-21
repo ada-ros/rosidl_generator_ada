@@ -406,15 +406,18 @@ procedure ROSIDL.Generator is
       --------------------
 
       procedure Create_Service (Name : String) is
-         Pkg_Name  : constant String :=
-                       "ROSIDL.Static."
-                       & Parent_Prefix (Parent, Pkg)
-                       & Pkg & ".Services."
-                       & To_Mixed_Case (Name);
+         Mixed_Name : constant String := To_Mixed_Case (Name);
+         Pkg_Suffix : constant String :=
+                        Parent_Prefix (Parent, Pkg)
+                        & Pkg & ".Services."
+                        & To_Mixed_Case (Name);
+         Pkg_Name   : constant String := "ROSIDL.Static." & Pkg_Suffix;
          Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
          O   : AAA.Strings.Vector;
       begin
-         O.Append ("with ROSIDL.Typesupport;");
+         O.Append_Line ("with ROSIDL.Static." & Pkg_Suffix & "_Request;");
+         O.Append_Line ("with ROSIDL.Static." & Pkg_Suffix & "_Response;");
+         O.Append ("with ROSIDL.Static.Service;");
          O.New_Line;
 
          O.Append_Line ("package " & Pkg_Name & " is");
@@ -423,20 +426,16 @@ procedure ROSIDL.Generator is
          O.Append (Manual_Warning);
          O.New_Line;
 
-         O.Append ("   use ROSIDL;");
-         O.New_Line;
+         pragma Style_Checks ("M120"); -- Temporarily allow longer lines
 
          O.Append_Vector
            (Empty_Vector
-            & "   package Handling is"
-            & ""
-            & "      Support : constant Typesupport.Service_Support :="
-            & "        Typesupport.Get_Service_Support"
-            & String'("          (Pkg => """ & Pkg & """,")
-            & String'("           Srv => """ & Name & """);")
-            & ""
-            & "   end Handling;"
-            & "");
+            & "   package Handling is new Service"
+            & "     (Pkg  => ""std_srvs"","
+            & String'("      Name => """ & Mixed_Name & """,")
+            & String'("      Request_Handling  => " & Pkg_Suffix & "_Request.Handling,")
+            & String'("      Response_Handling => " & Pkg_Suffix & "_Response.Handling);"));
+         O.New_Line;
 
          O.Append_Line ("end " & Pkg_Name & ";");
 

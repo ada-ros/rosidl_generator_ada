@@ -16,6 +16,9 @@ package ROSIDL.Static.Message is
    --  instance will be found at the corresponding generated package at
    --  ROSIDL.Static.Namespace.Message.Name.
 
+   subtype Raw_Message is Msg;
+   --  Re-Export due to visibility problems
+
    Support : constant Typesupport.Message_Support;
    --  Support to create messages of this type
 
