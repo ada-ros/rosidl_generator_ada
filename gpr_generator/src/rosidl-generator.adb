@@ -331,7 +331,12 @@ procedure ROSIDL.Generator is
                             when Message => "Messages",
                             when Service => "Services",
                             when Action  => "Actions") & "."
-                      & To_Mixed_Case (Name);
+                      & To_Mixed_Case (Name)
+                      & (case Part is
+                            when Message | Service => "",
+                            when Request           => "_Request",
+                            when Response          => "_Response",
+                            when others => raise Program_Error with "TBD");
 
          Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
       begin
@@ -387,11 +392,11 @@ procedure ROSIDL.Generator is
 
          O.Append_Line ("   package Handling is new");
          O.Append_Line ("     ROSIDL.Static.Message");
-         O.Append_Line ("       (Pkg  => """ & Pkg  & """,");
-         O.Append_Line ("        Name => """ & Name & """,");
-         O.Append_Line ("        Part => ROSIDL."
+         O.Append_Line ("       (Pkg       => """ & Pkg  & """,");
+         O.Append_Line ("        Name      => """ & Name & """,");
+         O.Append_Line ("        Part      => ROSIDL."
                         & To_Mixed_Case (Part'Image) & ",");
-         O.Append_Line ("        Msg  => Message);");
+         O.Append_Line ("        C_Message => Message);");
 
          --  The end! :'(
 
@@ -462,8 +467,14 @@ procedure ROSIDL.Generator is
             Create_Parent_Package (Prefix & Pkg);
             Create_Parent_Package (Prefix & Pkg & ".Services");
             Create_Service (Name);
-            Create_Message (Name & "_Request", Request);
-            Create_Message (Name & "_Response", Response);
+            Create_Message (Name, Request);
+            Create_Message (Name, Response);
+            --  Note that although internally the messages are named
+            --  foo_Request, foo_Response, at this time we use the name of the
+            --  service itself, becuase that's what's used to retrieve the srv
+            --  support. The extra _XXX are added within ROSIDL when looking
+            --  for the message supports. This is likely to work the same way
+            --  with actions, when we come to them.
          when others =>
             Put_Line ("Skipping message creation for kind " & Kind'Image);
       end case;

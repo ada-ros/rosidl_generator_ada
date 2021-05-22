@@ -84,6 +84,17 @@ private
           when Service | Request | Response => Service,
           when Action | Goal | Result | Feedback => Action);
 
+   ------------------------
+   -- Part_Symbol_Suffix --
+   ------------------------
+
+   function Part_Symbol_Suffix (Part : Interface_Parts) return String
+   is (case Part is
+          when Message | Service | Action => "",
+          when Request                    => "_Request",
+          when Response                   => "_Response",
+          when others                     => raise Program_Error with "TODO");
+
    -----------
    -- To_Ns --
    -----------

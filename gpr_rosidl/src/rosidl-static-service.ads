@@ -17,21 +17,17 @@ package ROSIDL.Static.Service is
    --  at ROSIDL.Static.Namespace.Services.Name.
 
    --  Re-export names that somehow are not visible otherwise in clients
-   package Req_Handling renames Request_Handling;
+   package Req_Handling  renames Request_Handling;
    package Resp_Handling renames Response_Handling;
 
-   subtype Request_Raw_Message is Request_Handling.Msg;
-   subtype Response_Raw_Message is Response_Handling.Msg;
+   subtype Request_Raw_Message  is Req_Handling.C_Message;
+   subtype Response_Raw_Message is Resp_Handling.C_Message;
 
-   subtype Request_Message is Request_Handling.Message;
-   subtype Response_Message is Request_Handling.Message;
+   subtype Request_Message  is Req_Handling.Message;
+   subtype Response_Message is Req_Handling.Message;
 
    Support : constant Typesupport.Service_Support;
    --  Support to create services of this type
-
-   Request_Support  : Typesupport.Message_Support renames Request_Handling.Support;
-   Response_Support : Typesupport.Message_Support renames Response_Handling.Support;
-   --  Supports needed for the request/responses
 
 private
 
