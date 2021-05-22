@@ -2,6 +2,7 @@ with AAA.Filesystem;
 with AAA.Strings;
 
 with Ada.Command_Line;
+with Ada.Containers.Indefinite_Ordered_Sets;
 with Ada.Directories; use Ada.Directories;
 with Ada.Text_IO; use Ada.Text_IO;
 
@@ -47,6 +48,10 @@ procedure ROSIDL.Generator is
    function Pkg_Name_To_File (Name : String) return String;
    --  Convert a package name into the expected GNAT filename
 
+   function Safe_Identifier (Word : String) return String;
+   --  If a word is a reserved Ada keyword, mangle it a bit with _Data so it
+   --  doesn't break our compilation.
+
    procedure Write_In_Place (V : AAA.Strings.Vector; File : String);
    --  Dump to file a vector in the expected location for the generator
 
@@ -63,9 +68,49 @@ procedure ROSIDL.Generator is
       elsif Name (Name'First) = '_' then
          return Ada_Name ("U_" & Name);
       else
-         return To_Mixed_Case (Name);
+         return To_Mixed_Case (Safe_Identifier (Name));
       end if;
    end Ada_Name;
+
+   package String_Sets is new Ada.Containers.Indefinite_Ordered_Sets (String);
+   function "+" (Text : String)
+                 return String_Sets.Set renames String_Sets.To_Set;
+
+   --  Incomplete, to be updated if needed
+   Reserved_Words : constant String_Sets.Set :=
+                      String_Sets
+                        .To_Set ("array").Union (+"accept").Union (+"access")
+                        .Union (+"aliased").Union (+"all").Union (+"at")
+                        .Union (+"begin").Union (+"body")
+                        .Union (+"case").Union (+"constant")
+                        .Union (+"delay").Union (+"delta").Union (+"digits")
+                        .Union (+"else").Union (+"entry")
+                        .Union (+"if")
+                        .Union (+"interface")
+                        .Union (+"limited").Union (+"loop")
+                        .Union (+"mod")
+                        .Union (+"new")
+                        .Union (+"others").Union (+"overriding")
+                        .Union (+"package").Union (+"private")
+                        .Union (+"protected")
+                        .Union (+"raise").Union (+"range").Union (+"record")
+                        .Union (+"requeue").Union (+"reverse")
+                        .Union (+"select").Union (+"separate")
+                        .Union (+"synchronized")
+                        .Union (+"task").Union (+"terminate").Union (+"type")
+                        .Union (+"until").Union (+"use")
+   ;
+
+   ---------------------
+   -- Safe_Identifier --
+   ---------------------
+
+   function Safe_Identifier (Word : String) return String
+   is (if (for some C of Word => C in 'A' .. 'Z')
+       then Safe_Identifier (To_Lower_Case (Word))
+       elsif Reserved_Words.Contains (Word)
+       then To_Mixed_Case (Word & "_data")
+       else Word);
 
    ----------------------
    -- Create_Interface --
