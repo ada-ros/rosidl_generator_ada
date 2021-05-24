@@ -52,6 +52,8 @@ procedure ROSIDL.Generator is
    --  If a word is a reserved Ada keyword, mangle it a bit with _Data so it
    --  doesn't break our compilation.
 
+   function Safe (Word : String) return String renames Ada_Name;
+
    procedure Write_In_Place (V : AAA.Strings.Vector; File : String);
    --  Dump to file a vector in the expected location for the generator
 
@@ -186,14 +188,14 @@ procedure ROSIDL.Generator is
             procedure Create_Field_Message is
                Dep_Pkg_Name : constant String :=
                                 To_Mixed_Case
-                                  (String
+                                  (Safe (String
                                      (Fix_Ns
                                         (Msg_Class.Member_Class (I)
-                                         .Name_Space)));
+                                         .Name_Space))));
                Dep_Msg_Name : constant String :=
                                 To_Mixed_Case
-                                  (String
-                                     (Msg_Class.Member_Class (I).Msg_Name));
+                                  (Safe (String
+                                     (Msg_Class.Member_Class (I).Msg_Name)));
             begin
                --  MESSAGE ARRAY
                if Boolean (Member.is_array_u) then
@@ -245,6 +247,11 @@ procedure ROSIDL.Generator is
             end Create_Field_Message;
 
          begin
+            if Name'Length /= Ada_Name (S (Member.name_u))'Length then
+               Put_Line ("NOTE field renaming: "
+                         & S (Member.name_u) & " --> " & Name);
+            end if;
+
             V.Append_Line (Padded_Name & ": ");
 
             --  SCALAR
@@ -370,13 +377,14 @@ procedure ROSIDL.Generator is
 
          Pkg_Name : constant String :=
                       "ROSIDL.Static."
-                      & To_Mixed_Case (Parent_Prefix (Parent, Pkg))
-                      & To_Mixed_Case (Pkg) & "."
+                      & To_Mixed_Case
+                          (Parent_Prefix (Safe (Parent), Safe (Pkg)))
+                      & To_Mixed_Case (Safe (Pkg)) & "."
                       & (case Kind is
                             when Message => "Messages",
                             when Service => "Services",
                             when Action  => "Actions") & "."
-                      & To_Mixed_Case (Name)
+                      & To_Mixed_Case (Safe (Name))
                       & (case Part is
                             when Message | Service => "",
                             when Request           => "_Request",
@@ -385,8 +393,11 @@ procedure ROSIDL.Generator is
 
          Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
       begin
-         Put_Line ("[Ada generator] Creating types for "
+         Put_Line ("[Ada generator] Creating messages for "
                    & Identify_Package & "/" & Name);
+         if Name'Length /= Safe (Name)'Length then
+            Put_Line ("NOTE iface renaming: " & Name & " --> " & Safe (Name));
+         end if;
 
          Withs.Include ("with ROSIDL.Static.Message;");
          Withs.Include ("with ROSIDL.Types;");
@@ -456,11 +467,11 @@ procedure ROSIDL.Generator is
       --------------------
 
       procedure Create_Service (Name : String) is
-         Mixed_Name : constant String := To_Mixed_Case (Name);
+         Mixed_Name : constant String := To_Mixed_Case (Safe (Name));
          Pkg_Suffix : constant String :=
                         Parent_Prefix (Parent, Pkg)
                         & Pkg & ".Services."
-                        & To_Mixed_Case (Name);
+                        & To_Mixed_Case (Safe (Name));
          Pkg_Name   : constant String := "ROSIDL.Static." & Pkg_Suffix;
          Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
          O   : AAA.Strings.Vector;
@@ -501,6 +512,9 @@ procedure ROSIDL.Generator is
 
       Prefix : constant String := Parent_Prefix (Parent, Pkg);
    begin
+      Put_Line ("[Ada generator] Creating interfaces for "
+                & Identify_Package & "/" & Name);
+
       case Kind is
          when Message =>
             Create_Parent_Package (Parent);
@@ -530,7 +544,8 @@ procedure ROSIDL.Generator is
    ---------------------------
 
    procedure Create_Parent_Package (Portion : String) is
-      Pkg_Name : constant String := "ROSIDL.Static." & To_Mixed_Case (Portion);
+      Pkg_Name : constant String :=
+                   "ROSIDL.Static." & To_Mixed_Case (Safe (Portion));
       Pkg_File : constant String := Pkg_Name_To_File (Pkg_Name);
       O : AAA.Strings.Vector;
    begin
