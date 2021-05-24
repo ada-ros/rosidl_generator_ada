@@ -21,6 +21,8 @@ package ROSIDL.Types is
    --  Types with same restrictions as ROS2 ones:
    --  Some can be used as-is in message accessors, others have Adaified versions
 
+   subtype Size_T is C.Size_T;
+
    type Ids is new Uint8_T;
 
    Bool_Id,
