@@ -492,7 +492,7 @@ procedure ROSIDL.Generator is
          O.Append_Vector
            (Empty_Vector
             & "   package Handling is new Service"
-            & "     (Pkg  => ""std_srvs"","
+            & String'("     (Pkg  => """ & Pkg & """,")
             & String'("      Name => """ & Mixed_Name & """,")
             & String'("      Request_Handling  => " & Pkg_Suffix & "_Request.Handling,")
             & String'("      Response_Handling => " & Pkg_Suffix & "_Response.Handling);"));
