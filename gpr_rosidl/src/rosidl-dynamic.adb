@@ -8,8 +8,11 @@ with Interfaces.C.Strings;
 
 with ROSIDL.Impl.Arrays;
 
-with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
-with Rosidl_Runtime_C_String_Functions_H; use Rosidl_Runtime_C_String_Functions_H;
+with Rosidl_Runtime_C_Rosidl_Runtime_C_String_H;
+use  Rosidl_Runtime_C_Rosidl_Runtime_C_String_H;
+
+with Rosidl_Runtime_C_Rosidl_Runtime_C_String_Functions_H;
+use  Rosidl_Runtime_C_Rosidl_Runtime_C_String_Functions_H;
 
 with System.Address_Image;
 with System.Storage_Elements;
@@ -237,7 +240,9 @@ package body ROSIDL.Dynamic is
       Msg : constant access Message := new Message'(Init (Msg_Support));
       pragma Warnings (On);
    begin
-      return (Msg => Msg,
+      return (Msg => Msg.all'Unchecked_Access,
+              --  Works around an error for dangling reference, but we want it
+              --  like that.
               Ptr => Shared_Messages.Make_Shared (Msg));
    end Init_Shared;
 
@@ -449,7 +454,7 @@ package body ROSIDL.Dynamic is
    ----------------
 
    procedure Set_String (Ref : Ref_Type; Str : String) is
-      type Str_Ptr is access Rosidl_Runtime_C_String_H.Rosidl_Runtime_C_U_String
+      type Str_Ptr is access Rosidl_Runtime_C_Rosidl_Runtime_C_String_H.Rosidl_Runtime_C_U_String
         with Convention => C;
       function To_Str_Ptr is new Ada.Unchecked_Conversion (System.Address, Str_Ptr);
    begin

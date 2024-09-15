@@ -1,4 +1,5 @@
-with Rosidl_Runtime_C_String_Functions_H; use Rosidl_Runtime_C_String_Functions_H;
+with Rosidl_Runtime_C_Rosidl_Runtime_C_String_Functions_H;
+use  Rosidl_Runtime_C_Rosidl_Runtime_C_String_Functions_H;
 
 with Stddef_H;
 

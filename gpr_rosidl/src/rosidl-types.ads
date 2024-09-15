@@ -1,10 +1,11 @@
-private with Ada.Unchecked_Conversion;
+--  private with Ada.Unchecked_Conversion;
 
 with C_Strings;
 
 with Interfaces.C.Extensions;
 
-with Rosidl_Runtime_C_String_H; use Rosidl_Runtime_C_String_H;
+with Rosidl_Runtime_C_Rosidl_Runtime_C_String_H;
+use  Rosidl_Runtime_C_Rosidl_Runtime_C_String_H;
 
 with ROSIDL.Type_Helpers;
 

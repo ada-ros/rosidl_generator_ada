@@ -1,11 +1,10 @@
 with Ada.Unchecked_Conversion;
 
-private with AAA.Strings;
+--  private with AAA.Strings;
 
 with Interfaces.C.Extensions;
-
-with Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
-use  Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
+with rosidl_typesupport_introspection_c_rosidl_typesupport_introspection_c_message_introspection_h;
+use  rosidl_typesupport_introspection_c_rosidl_typesupport_introspection_c_message_introspection_h;
 
 with System;
 

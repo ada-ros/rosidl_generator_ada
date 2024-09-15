@@ -10,8 +10,11 @@ with ROSIDL.Types;
 
 with Shared_Pointers;
 
-with Std_Msgs_Msg_Detail_Multi_Array_Dimension_Ustruct_H; use Std_Msgs_Msg_Detail_Multi_Array_Dimension_Ustruct_H;
-with Std_Msgs_Msg_Detail_Multi_Array_Layout_Ustruct_H;    use Std_Msgs_Msg_Detail_Multi_Array_Layout_Ustruct_H;
+with Std_Msgs_Std_Msgs_Msg_Detail_Multi_Array_Dimension_Ustruct_H;
+use  Std_Msgs_Std_Msgs_Msg_Detail_Multi_Array_Dimension_Ustruct_H;
+
+with Std_Msgs_Std_Msgs_Msg_Detail_Multi_Array_Layout_Ustruct_H;
+use  Std_Msgs_Std_Msgs_Msg_Detail_Multi_Array_Layout_Ustruct_H;
 
 with System;
 
@@ -31,8 +34,9 @@ package ROSIDL.Dynamic is
    type Message (<>) is tagged limited private with
      Constant_Indexing => Reference;
 
-   type Shared_Message (Msg : access Message) is private
-     with Implicit_Dereference => Msg;
+   type Message_Ptr is access all Message;
+
+   type Shared_Message (Msg : Message_Ptr) is private;
    --  Refcounted messages.
    --  IMPORTANT: at this time this is not thread safe not intended for
    --  any other use than to get the return message in Nodes.Client_Call.
@@ -331,8 +335,8 @@ private
 
    package Shared_Messages is new Shared_Pointers (Message);
 
-   type Shared_Message (Msg : access Message) is record
-      Ptr : Shared_Messages.Shared (Element => Msg);
+   type Shared_Message (Msg : Message_Ptr) is record
+      Ptr : Shared_Messages.Shared (Msg);
    end record;
 
 end ROSIDL.Dynamic;

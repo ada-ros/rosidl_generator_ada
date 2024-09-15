@@ -1,7 +1,7 @@
 with Ada.Unchecked_Conversion;
 
-with Rosidl_Runtime_C_Primitives_Sequence_H;
-use  Rosidl_Runtime_C_Primitives_Sequence_H;
+with Rosidl_Runtime_C_Rosidl_Runtime_C_Primitives_Sequence_H;
+use  Rosidl_Runtime_C_Rosidl_Runtime_C_Primitives_Sequence_H;
 
 with System;
 

@@ -1,6 +1,11 @@
 with "ament";
 with "rosidl";
 
+--  with "rclada_common_header_imports";
+--  with "rclada_common_linker_imports";
+--  with "rosidl_generator_ada_header_imports";
+--  with "rosidl_generator_ada_linker_imports";
+
 project Generator is
 
    for Source_Dirs use ("src");

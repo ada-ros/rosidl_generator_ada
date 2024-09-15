@@ -7,8 +7,10 @@ find_package(rclada_common REQUIRED)
 ada_begin_package()
 
 find_package(builtin_interfaces REQUIRED)        # Needed for actions
+find_package(rcutils REQUIRED)                   # Needed for the binding
 find_package(rosidl_default_generators REQUIRED) # To register our generator
 find_package(rosidl_runtime_c REQUIRED)          # Base string type
+find_package(rosidl_typesupport_interface)       # Needed for the binding
 find_package(rosidl_typesupport_introspection_c REQUIRED) # We rely heavily on introspection features
 find_package(std_msgs REQUIRED) # For the multiarrays. We use this in the dynamic binding,
                                 # but since this is deprecated by ROS2, it could conceivably
@@ -26,19 +28,35 @@ ament_register_extension(
         ${PROJECT_NAME}                         # package name
         "cmake/rosidl_generator_ada_generate_interfaces.cmake")
 
-# Import the standard ROS2 string headers
-ada_import_c_libraries(${rosidl_runtime_c_LIBRARIES})
+# Create project to find the standard ROS2 string headers
+ada_gpr_headers(rosidl_generator_ada
+        rosidl_runtime_c
+        rosidl_typesupport_introspection_c
+)
 
-ada_find_package_include_dir(_builtin_include ${builtin_interfaces_DIR})
-ada_find_package_include_dir(_runtime_include ${rosidl_runtime_c_DIR})
-ada_find_package_include_dir(_stdmsgs_include ${std_msgs_DIR})
-ada_find_package_include_dir(_typesupport_introspection_include ${rosidl_typesupport_introspection_c_DIR})
+# Create project for needed linking libs
+ada_gpr_link(rosidl_generator_ada
+        rosidl_runtime_c
+)
+
+ada_find_package_include_dir(_builtin_include builtin_interfaces)
+ada_find_package_include_dir(_rcutils_include rcutils)
+ada_find_package_include_dir(_rosidl_runtime_c_include rosidl_runtime_c)
+ada_find_package_include_dir(_rosidl_typesupport_interface_include rosidl_typesupport_interface)
+ada_find_package_include_dir(_stdmsgs_include std_msgs)
+ada_find_package_include_dir(_typesupport_introspection_include rosidl_typesupport_introspection_c)
 
 file(GLOB _headers
         "${_builtin_include}/builtin_interfaces/msg/*.h"
-        "${_builtin_include}/builtin_interfaces/msg/detail/*.h"
-        "${_runtime_include}/rosidl_runtime_c/*.h"
-        "${_stdmsgs_include}/std_msgs/msg/detail/multi_array*.h" # This should suffice
+        #"${_builtin_include}/builtin_interfaces/msg/detail/*.h"
+        "${_rcutils_include}/rcutils/allocator.h"
+        "${_rcutils_include}/rcutils/types/hash_map.h"
+        "${_rcutils_include}/rcutils/types/rcutils_ret.h"
+        "${_rosidl_runtime_c_include}/rosidl_runtime_c/*.h"
+        "${_rosidl_runtime_c_include}/rosidl_runtime_c/type_description/*.h"
+        #"${_rosidl_typesupport_interface_include}/rosidl_typesupport_interface/*.h"
+        "${_stdmsgs_include}/std_msgs/msg/detail/multi_array_dimension__struct.h" # This should suffice
+        "${_stdmsgs_include}/std_msgs/msg/detail/multi_array_layout__struct.h" # This should suffice
         "${_typesupport_introspection_include}/rosidl_typesupport_introspection_c/*.h"
         # CUSTOM ADDITIONS
         /usr/include/stdint.h
@@ -47,6 +65,9 @@ file(GLOB _headers
 # Paths where the headers we need are located
 list(APPEND _includes
         ${_builtin_include}
+        ${_rcutils_include}
+        ${_rosidl_runtime_c_include}
+        ${_rosidl_typesupport_interface_include}
         ${_runtime_include}
         ${_stdmsgs_include}
         ${_typesupport_introspection_include})

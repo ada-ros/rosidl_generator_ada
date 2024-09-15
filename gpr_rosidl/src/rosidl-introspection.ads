@@ -1,4 +1,4 @@
-private with AAA.Strings;
+--  private with AAA.Strings;
 
 private with Ada.Unchecked_Conversion;
 
@@ -6,11 +6,11 @@ with C_Strings;
 
 with Rosidl.Types;
 
-with Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
-use  Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
+with Rosidl_Typesupport_Introspection_C_Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
+use  Rosidl_Typesupport_Introspection_C_Rosidl_Typesupport_Introspection_C_Message_Introspection_H;
 
-with Rosidl_Typesupport_Introspection_C_Service_Introspection_H;
-use  Rosidl_Typesupport_Introspection_C_Service_Introspection_H;
+with Rosidl_Typesupport_Introspection_C_Rosidl_Typesupport_Introspection_C_Service_Introspection_H;
+use  Rosidl_Typesupport_Introspection_C_Rosidl_Typesupport_Introspection_C_Service_Introspection_H;
 
 package ROSIDL.Introspection is
 

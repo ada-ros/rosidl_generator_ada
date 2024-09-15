@@ -356,12 +356,17 @@ procedure ROSIDL.Generator is
                --  & String'("       Size => "
                --    & Natural'(Support.Message_Class.Size * 8)'Image & ";")
                & ""
+               & String'("pragma Warnings "
+                         & "(Off, ""aggregate not fully initialized"");")
                & String'("pragma Assert (Message'(others => <>)'Size ="
                  & Natural'(Support.Message_Class.Size * 8)'Image
                  & ", ")
                & String'(Tab & Tab & Tab & Tab & Tab
                  & """" & Name & " got size: "" & Message'Size'Image"
-                 & ");"));
+                 & ");")
+               & String'("pragma Warnings "
+                         & "(On, ""aggregate not fully initialized"");")
+              );
             --  Note here that 'Size for the type returns the minimum possible
             --  size (with Pack), not the actual objects' size. In this case,
             --  the C convention is causing some messages to be larger than
@@ -697,7 +702,7 @@ begin
    Create_Project;
 
    --  We may receive more than one import, comma-separated, so...
-   for Import of Split (Find_Argument (Switch_Imported), ',') loop
+   for Import of Vector'(Split (Find_Argument (Switch_Imported), ',')) loop
       Put_Line ("Importing messages from pkg " & Import);
       for Iface of Find_Interfaces (Import) loop
          Create_Interface (Parent => Find_Argument (Switch_Current),

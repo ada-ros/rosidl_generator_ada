@@ -54,7 +54,7 @@ package ROSIDL.Static.Message is
    --  Shared message, only for blocking client calls.
 
    type Shared_Message (Data     : access C_Message;
-                        Dynamic  : access ROSIDL.Dynamic.Message)
+                        Dynamic  : ROSIDL.Dynamic.Message_Ptr)
    is tagged private with Implicit_Dereference => Data;
 
    function New_Shared_Message (From : ROSIDL.Dynamic.Shared_Message)
@@ -81,7 +81,7 @@ private
    --  the call.
 
    type Shared_Message (Data     : access C_Message;
-                        Dynamic  : access ROSIDL.Dynamic.Message)
+                        Dynamic  : ROSIDL.Dynamic.Message_Ptr)
    is tagged record
       Shared_Raw : ROSIDL.Dynamic.Shared_Message (Dynamic);
    end record;
