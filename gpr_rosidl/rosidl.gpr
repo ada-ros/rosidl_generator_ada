@@ -41,6 +41,7 @@ project Rosidl is
    end Builder;
 
    package Compiler is
+      for Local_Configuration_Pragmas use "gnat.adc";
       for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnatf",
                                 "-gnata", "-gnat2012", "-gnato", "-fstack-check"
                                )
